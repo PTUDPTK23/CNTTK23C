@@ -30,7 +30,7 @@ Console.WriteLine($"\nDa tao luot nop: {created?.Id}");
 Console.WriteLine($"Trang thai ban dau: {created?.Status}");
 Console.WriteLine($"Doc lai luot nop: {created?.StudentCode} - {created?.RepositoryUrl}");
 
-// Nac 3: Doc lai theo dung dia chi trong Location
+// Nac 3: Doc lai theo Location
 if (createResponse.Headers.Location != null) {
     var locationResponse = await http.GetAsync(createResponse.Headers.Location);
     if (locationResponse.IsSuccessStatusCode) {
@@ -39,7 +39,7 @@ if (createResponse.Headers.Location != null) {
     }
 }
 
-// Nac 4: Thu gui yeu cau loi 400, doc ApiError khong sap
+// Nac 4: Thu gui yeu cau loi 400
 Console.WriteLine("\nThu gui yeu cau loi: 400 BadRequest");
 var invalidResponse = await http.PostAsJsonAsync(
     $"/api/assignments/{selectedAssignmentId}/submissions",
@@ -52,7 +52,7 @@ static async Task PrintApiErrorAsync(HttpResponseMessage r) {
     Console.WriteLine($"{error?.Code}: {error?.Message}");
 }
 
-// Records
+// Records ban sao o Client
 record AssignmentDto(int Id, string Title, string Description, bool IsOpen);
 record CreateSubmissionRequest(string StudentCode, string RepositoryUrl);
 record SubmissionDto(Guid Id, int AssignmentId, string StudentCode, string RepositoryUrl, string Status, DateTimeOffset ReceivedAt);
