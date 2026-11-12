@@ -1,0 +1,46 @@
+@HostAddress = http://localhost:5100
+
+### 1. Kiểm tra trạng thái máy chủ (GET root)
+GET {{HostAddress}}/
+
+### 2. Lấy danh sách toàn bộ sản phẩm (GET /api/products)
+GET {{HostAddress}}/api/products
+
+### 3. Lấy chi tiết sản phẩm hợp lệ (GET /api/products/1)
+GET {{HostAddress}}/api/products/1
+
+### 4. Lấy chi tiết sản phẩm không tồn tại (GET /api/products/999 - Kỳ vọng 404)
+GET {{HostAddress}}/api/products/999
+
+### 5. Tạo mới sản phẩm hợp lệ (POST /api/products - Kỳ vọng 201)
+POST {{HostAddress}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Lap trinh gRPC",
+  "description": "Tai lieu bai 6",
+  "price": 95000
+}
+
+### 6. Tạo mới sản phẩm lỗi giá âm (POST /api/products - Kỳ vọng 400)
+POST {{HostAddress}}/api/products
+Content-Type: application/json
+
+{
+  "name": "San pham loi",
+  "description": "Gia tri am",
+  "price": -5000
+}
+
+### 7. Cập nhật sản phẩm hợp lệ (PUT /api/products/1 - Kỳ vọng 200 OK)
+PUT {{HostAddress}}/api/products/1
+Content-Type: application/json
+
+{
+  "name": "Lap trinh phan tan nang cao",
+  "description": "Cap nhat noi dung moi",
+  "price": 175000
+}
+
+### 8. Xóa sản phẩm theo ID (DELETE /api/products/2 - Kỳ vọng 204 NoContent)
+DELETE {{HostAddress}}/api/products/2
