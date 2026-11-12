@@ -1,6 +1,11 @@
-# Thư mục nộp bài: Chu Thị Chinh
+# Bài 2: RESTful API cho tương tác Client-Server (EduSubmit)
 
-- **Mã sinh viên:** `dtc245320189`
-- **Lớp:** CNTT K23C
-
-*Sinh viên đẩy bài tập / báo cáo vào thư mục này.* 
+## 1. Các lệnh đã chạy
+- Tạo solution và project:
+  ```powershell
+  dotnet new sln -n RestfulClientServer
+  dotnet new web -n Submission.Api -o src/Submission.Api
+  dotnet new console -n Submission.Client -o src/Submission.Client
+  dotnet sln add src/Submission.Api/Submission.Api.csproj
+  dotnet sln add src/Submission.Client/Submission.Client.csproj
+  dotnet new gitignore
