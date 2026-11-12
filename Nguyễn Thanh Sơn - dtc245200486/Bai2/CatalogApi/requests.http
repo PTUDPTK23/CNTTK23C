@@ -1,0 +1,60 @@
+@api = http://localhost:5100
+
+### 1. Kiem tra may chu dang chay (Health Check) -> 200 OK
+GET {{api}}/
+
+### 2. Lay danh sach toan bo san pham -> 200 OK
+GET {{api}}/api/products
+
+### 3. Lay chi tiet san pham ton tai -> 200 OK
+GET {{api}}/api/products/1
+
+### 4. Lay chi tiet san pham khong ton tai -> 404 Not Found + ApiError
+GET {{api}}/api/products/999
+
+### 5. Tham so route sai kieu du lieu (:int) -> 404 Not Found (Framework)
+GET {{api}}/api/products/abc
+
+### 6. Tao san pham hop le -> 201 Created + Header Location
+POST {{api}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Lap trinh gRPC",
+  "description": "Tai lieu bai 5",
+  "price": 80000
+}
+
+### 7. Tao san pham sai quy tac nghiep vu (ten rong, gia am) -> 400 Bad Request + ApiError
+POST {{api}}/api/products
+Content-Type: application/json
+
+{
+  "name": "",
+  "description": "Khong co ten va gia am",
+  "price": -10000
+}
+
+### 8. Gui yeu cau POST thieu header Content-Type -> 415 Unsupported Media Type
+POST {{api}}/api/products
+
+{
+  "name": "Thieu Header",
+  "price": 50000
+}
+
+### 9. Gui payload JSON sai cu phap (Malformed JSON) -> 400 Bad Request (Framework)
+POST {{api}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Loi JSON",
+  "price": 
+
+### 10. Goi sai phuong thuc HTTP tren endpoint ton tai -> 405 Method Not Allowed (Framework)
+PUT {{api}}/api/products/1
+Content-Type: application/json
+
+{
+  "name": "Khong co PUT"
+}
