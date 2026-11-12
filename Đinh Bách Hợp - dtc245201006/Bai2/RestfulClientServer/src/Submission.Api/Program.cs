@@ -49,6 +49,13 @@ app.MapPost("/api/assignments/{assignmentId:int}/submissions",
         submissions.Add(submission);
         return Results.Created($"/api/submissions/{submission.Id}", submission);
     });
+// GET /api/submissions/{submissionId} : doc lai luot nop theo Location
+app.MapGet("/api/submissions/{submissionId:guid}", (Guid submissionId) => {
+    var submission = submissions.FirstOrDefault(item => item.Id == submissionId);
+    return submission is null
+        ? Results.NotFound(new ApiError("SUBMISSION_NOT_FOUND", "Khong tim thay luot nop."))
+        : Results.Ok(submission);
+});
 
 app.Run();
 
