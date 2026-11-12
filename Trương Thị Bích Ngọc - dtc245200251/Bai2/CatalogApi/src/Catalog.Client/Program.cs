@@ -1,53 +1,45 @@
-﻿using System.Net.Http.Json;
+using System.Net;
+using System.Net.Http.Json;
 
-// Khởi tạo HttpClient trỏ tới địa chỉ của Catalog.Api đang chạy ở cổng 5100
-var client = new HttpClient {
-    BaseAddress = new Uri("http://localhost:5100")
+var apiBaseUrl = args.Length > 0 ? args[0] : "http://localhost:5100";
+using var http = new HttpClient {
+    BaseAddress = new Uri(apiBaseUrl)
 };
 
-Console.WriteLine("=== DANG KET NOI TOI CATALOG.API ===");
-
-try {
-    // 1. Gọi API lấy danh sách sản phẩm (GET /api/products)
-    Console.WriteLine("\n[1] Dang goi GET /api/products...");
-    var products = await client.GetFromJsonAsync<List<ProductDto>>("/api/products");
-    
-    if (products is not null) {
-        Console.WriteLine($"=> Lay thanh cong {products.Count} san pham:");
-        foreach (var p in products) {
-            Console.WriteLine($" - [{p.Id}] {p.Name} | Gia: {p.Price} VND");
-        }
-    }
-
-    // 2. Gọi API lấy chi tiết một sản phẩm theo ID (GET /api/products/{id})
-    Console.WriteLine("\n[2] Dang goi GET /api/products/1 (Xem chi tiet san pham ID = 1)...");
-    var singleProduct = await client.GetFromJsonAsync<ProductDto>("/api/products/1");
-    
-    if (singleProduct is not null) {
-        Console.WriteLine($"=> Tim thay san pham: [{singleProduct.Id}] {singleProduct.Name} - Mo ta: {singleProduct.Description} | Gia: {singleProduct.Price} VND");
-    }
-
-    // 3. Gọi API tạo mới sản phẩm (POST /api/products)
-    Console.WriteLine("\n[3] Dang goi POST /api/products de tao moi...");
-    var newProductRequest = new CreateProductRequest(
-        Name: "Lap trinh Microservices",
-        Description: "Sach chuyen de nang cao",
-        Price: 200000
-    );
-
-    var response = await client.PostAsJsonAsync("/api/products", newProductRequest);
-    
-    if (response.IsSuccessStatusCode) {
-        var createdProduct = await response.Content.ReadFromJsonAsync<ProductDto>();
-        Console.WriteLine($"=> Tao san pham thanh cong! ID moi la: {createdProduct?.Id}");
-    } else {
-        Console.WriteLine($"=> Tao that bai. Ma loi: {response.StatusCode}");
-    }
-
-} catch (Exception ex) {
-    Console.WriteLine($"[LOI KET NOI]: Khong the ket noi toi Api. Hay chac chan rang Catalog.Api dang chay!\nChi tiet: {ex.Message}");
+// Bước 1: lấy danh sách sản phẩm
+var products = await http.GetFromJsonAsync<List<ProductDto>>("/api/products");
+Console.WriteLine("Danh sach san pham:");
+foreach (var p in products ?? []) {
+    Console.WriteLine($" [{p.Id}] {p.Name} - {p.Price:N0} VND");
 }
 
-// DTOs (Phải khớp với bên Api)
+// Bước 2: gửi POST và kiểm tra mã trạng thái TRƯỚC khi đọc body
+var createRequest = new CreateProductRequest(
+    "Nhap mon REST API", "Sach tham khao", 120000);
+var createResponse = await http.PostAsJsonAsync("/api/products", createRequest);
+
+if (createResponse.StatusCode == HttpStatusCode.Created) {
+    var created = await createResponse.Content.ReadFromJsonAsync<ProductDto>();
+    Console.WriteLine($"\nDa tao san pham moi: [{created?.Id}] {created?.Name}");
+    Console.WriteLine($"Doc lai tai: {createResponse.Headers.Location}");
+} else {
+    var error = await createResponse.Content.ReadFromJsonAsync<ApiError>();
+    Console.WriteLine($"\nLoi: {error?.Code} - {error?.Message}");
+    return;
+}
+
+// Bước 3: đọc lại chi tiết một sản phẩm
+var detail = await http.GetFromJsonAsync<ProductDto>("/api/products/1");
+Console.WriteLine($"\nChi tiet san pham 1: {detail?.Name}");
+
+// Bước 4: cố ý gửi dữ liệu sai để quan sát lỗi 400
+var invalidResponse = await http.PostAsJsonAsync("/api/products",
+    new CreateProductRequest("", "", -1));
+Console.WriteLine($"\nThu gui du lieu sai: {(int)invalidResponse.StatusCode} {invalidResponse.StatusCode}");
+var invalidError = await invalidResponse.Content.ReadFromJsonAsync<ApiError>();
+Console.WriteLine($"{invalidError?.Code}: {invalidError?.Message}");
+
+// Khai báo DTO & ApiError khớp hợp đồng JSON với Catalog.Api
 record ProductDto(int Id, string Name, string Description, decimal Price);
 record CreateProductRequest(string Name, string? Description, decimal Price);
+record ApiError(string Code, string Message);
