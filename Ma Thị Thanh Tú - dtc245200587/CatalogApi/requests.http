@@ -1,0 +1,47 @@
+@host = http://localhost:5148
+
+### 1. 200 OK - Trang gốc (kiểm tra dịch vụ đang chạy)
+GET {{host}}/
+Accept: application/json
+
+### 2. 200 OK - Danh sách sản phẩm
+GET {{host}}/api/products
+Accept: application/json
+
+### 3. 200 OK - Chi tiết sản phẩm id = 1
+GET {{host}}/api/products/1
+Accept: application/json
+
+### 4. 404 Not Found - id không tồn tại (có thân ApiError PRODUCT_NOT_FOUND)
+GET {{host}}/api/products/999
+Accept: application/json
+
+### 5. 404 Not Found (thân rỗng) - id là chữ, không khớp ràng buộc {id:int}
+GET {{host}}/api/products/abc
+Accept: application/json
+
+### 6. 201 Created - Tạo sản phẩm hợp lệ (có header Location)
+POST {{host}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Nhap mon REST API",
+  "description": "Sach tham khao",
+  "price": 120000
+}
+
+### 7. 400 Bad Request - Tên rỗng, giá âm (ApiError INVALID_PRODUCT)
+POST {{host}}/api/products
+Content-Type: application/json
+
+{
+  "name": "",
+  "description": "",
+  "price": -1
+}
+
+### 8. 415 Unsupported Media Type - Sai Content-Type
+POST {{host}}/api/products
+Content-Type: text/plain
+
+name=Sach;price=1000
