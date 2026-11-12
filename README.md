@@ -1,12 +1,76 @@
 # Phát triển ứng dụng phân tán (CNTT K23C)
 ### Trường Đại học Công nghệ Thông tin & Truyền thông - Đại học Thái Nguyên
 
-Thư mục nộp bài tập và đồ án của sinh viên lớp Phát triển ứng dụng phân tán (K23.K1.D2.2627.CNTT K23C).
+Thư mục nộp bài tập và dự án của sinh viên lớp Phát triển ứng dụng phân tán (K23.K1.D2.2627.CNTT K23C).
 
-## Hướng dẫn nộp bài
-1. Tìm đúng thư mục theo tên và mã sinh viên của mình: `[Họ và tên] - [Mã sinh viên]`.
-2. Tạo thư mục bài tập tương ứng (ví dụ: `BaiTap1/`, `BTL/`, ...) bên trong thư mục cá nhân.
-3. Commit và push bài làm lên repository hoặc tạo Pull Request.
+## Hướng dẫn nộp bài (Fork + Pull Request)
+> Sinh viên chỉ có quyền **xem** repo này, **không push trực tiếp** được. Mọi bài nộp đều gửi qua **Pull Request (PR)**; giảng viên kiểm tra rồi mới gộp vào.
+
+1. **Fork repo:** bấm nút **Fork** (góc trên bên phải) → **Create fork**. Bạn sẽ có bản sao riêng: `<tài-khoản-github>/CNTTK23C`.
+2. **Thêm bài vào fork của mình:** trong thư mục `[Họ và tên] - [Mã sinh viên]` của mình, tạo thư mục bài (`Bai1/`, `BaiTap1/`, `BTL/`, ...) rồi đưa bài vào.
+   - Trên web: vào thư mục của mình → **Add file → Upload files** → **Commit changes**.
+   - Hoặc dùng git:
+     ```bash
+     git clone https://github.com/<tài-khoản-github>/CNTTK23C.git
+     cd CNTTK23C
+     # chép bài vào thư mục "<Họ và tên> - <Mã sinh viên>/Bai1/"
+     git add .
+     git commit -m "Bai1 - <Mã sinh viên> - <Họ và tên>"
+     git push
+     ```
+3. **Tạo Pull Request:** ở trang fork, bấm **Contribute → Open pull request**. Tiêu đề PR **bắt buộc** theo mẫu: `Bai1 - dtc2452xxxxx - Nguyễn Văn A` (bài 2 thì `Bai2 - ...`). Bấm **Create pull request** là xong.
+4. **Sửa / bổ sung bài:** không tạo PR mới, chỉ cần commit thêm vào fork, PR cũ tự cập nhật. Trước khi làm bài mới, bấm **Sync fork** để fork có nội dung mới nhất.
+
+### Ví dụ: tạo thư mục bài và dự án
+
+Giả sử sinh viên **Nguyễn Văn A – dtc245200xxx**. Trong thư mục của mình, mỗi bài/dự án là một thư mục con:
+
+```
+Nguyễn Văn A - dtc245200xxx/
+├── Bai1/
+│   ├── README.md
+│   └── (mã nguồn, báo cáo ...)
+├── Bai2/
+│   └── ...
+└── DuAn/
+    └── ...
+```
+
+Tạo thư mục và nộp bằng git:
+
+```bash
+cd "Nguyễn Văn A - dtc245200xxx"
+mkdir Bai2          # dự án thì: mkdir DuAn
+# chép bài vào Bai2/
+git add .
+git commit -m "Bai2 - dtc245200xxx - Nguyễn Văn A"
+git push
+```
+
+Sau đó mở Pull Request với tiêu đề `Bai2 - dtc245200xxx - Nguyễn Văn A`.
+
+### Cập nhật fork bằng git pull (trước khi làm bài mới)
+
+Chỉ làm một lần, để máy biết repo gốc của lớp:
+
+```bash
+git remote add upstream https://github.com/PTUDPTK23/CNTTK23C.git
+```
+
+Mỗi lần trước khi làm bài mới:
+
+```bash
+git checkout main
+git pull upstream main    # lấy nội dung mới nhất từ repo của lớp
+git push origin main      # đẩy bản đã cập nhật lên fork của bạn
+```
+
+Nếu làm trên web thì bấm **Sync fork → Update branch** ở trang fork.
+
+### Quy định
+- Chỉ thêm/sửa file **trong thư mục của chính mình**. PR sửa thư mục của bạn khác hoặc file chung (README, .github, ...) sẽ bị từ chối.
+- Hệ thống tự gắn nhãn theo thời điểm mở/cập nhật PR: **Đúng hạn**, **Muộn**, **Quá hạn**.
+- **Bài 1:** đúng hạn trước **19:00 ngày 05/11/2026**; nộp muộn đến **23:59 ngày 05/11/2026**; sau thời điểm này tính là **quá hạn**.
 
 ---
 
@@ -63,3 +127,4 @@ Thư mục nộp bài tập và đồ án của sinh viên lớp Phát triển �
 | 47 | `dtc245200587` | Ma Thị Thanh Tú | [Ma Thị Thanh Tú - dtc245200587](./Ma Thị Thanh Tú - dtc245200587) |
 | 48 | `dtc245200424` | Ma Thị Uyên | [Ma Thị Uyên - dtc245200424](./Ma Thị Uyên - dtc245200424) |
 | 49 | `dtc245200377` | Hoàng Đức Việt | [Hoàng Đức Việt - dtc245200377](./Hoàng Đức Việt - dtc245200377) |
+| 50 | `dtc245200602` | Nguyễn Viết Cường | [Nguyễn Viết Cường - dtc245200602](./Nguyễn Viết Cường - dtc245200602) |
