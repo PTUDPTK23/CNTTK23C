@@ -1,0 +1,78 @@
+@api = http://localhost:5000
+
+### 1. Danh sách bài tập → 200 OK
+GET {{api}}/api/assignments
+
+### 2. Chi tiết bài tập 1 (tồn tại) → 200 OK (Ca 4a)
+GET {{api}}/api/assignments/1
+
+### 3. Bài tập không tồn tại → 404 Not Found + ASSIGNMENT_NOT_FOUND (Ca 4b)
+GET {{api}}/api/assignments/999
+
+### 4. Nộp bài hợp lệ cho bài tập 1 → 201 Created + Location (Ca 5a)
+# @name createSubmission
+POST {{api}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "dtc245200452",
+  "repositoryUrl": "https://github.com/dtc245200452-hub/CNTTK23C"
+}
+
+### 5. Đọc lại lượt nộp vừa tạo theo Location → 200 OK (Ca 6a)
+GET {{api}}/api/submissions/{{createSubmission.response.body.$.id}}
+
+### 6. Lượt nộp không tồn tại → 404 Not Found + SUBMISSION_NOT_FOUND (Ca 6b)
+GET {{api}}/api/submissions/00000000-0000-0000-0000-000000000000
+
+### 7. Nộp bài với dữ liệu rỗng → 400 Bad Request + INVALID_SUBMISSION (Ca 5b)
+POST {{api}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "",
+  "repositoryUrl": ""
+}
+
+### 8. Nộp bài vào bài tập không tồn tại (999) → 404 Not Found + ASSIGNMENT_NOT_FOUND (Ca 5c)
+POST {{api}}/api/assignments/999/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "dtc245200452",
+  "repositoryUrl": "https://github.com/dtc245200452-hub/CNTTK23C"
+}
+
+### 9. Nộp bài bỏ header Content-Type → 415 Unsupported Media Type (Ca 5d)
+POST {{api}}/api/assignments/1/submissions
+
+{
+  "studentCode": "dtc245200452",
+  "repositoryUrl": "https://github.com/dtc245200452-hub/CNTTK23C"
+}
+
+### 10. Nộp bài với body JSON hỏng → 400 Bad Request (Ca 5e)
+POST {{api}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{"studentCode":"dtc245200452",
+
+### 11. Nộp bài thiếu trường repositoryUrl → 400 Bad Request + INVALID_SUBMISSION (Ca 5f)
+POST {{api}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "dtc245200452"
+}
+
+### 12. Gửi phương thức PUT không hỗ trợ → 405 Method Not Allowed (Ca 5g)
+PUT {{api}}/api/assignments/1
+
+### 13. Nộp bài vào bài tập đã đóng (bài 3) → 400 Bad Request + ASSIGNMENT_CLOSED (Ca 5h)
+POST {{api}}/api/assignments/3/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "dtc245200452",
+  "repositoryUrl": "https://github.com/dtc245200452-hub/CNTTK23C"
+}
