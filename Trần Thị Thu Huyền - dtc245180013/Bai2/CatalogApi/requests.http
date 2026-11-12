@@ -1,0 +1,46 @@
+@api = http://localhost:5100
+
+### 1. Health check (mong doi 200 OK)
+GET {{api}}/
+
+### 2. Lay danh sach san pham (mong doi 200 OK)
+GET {{api}}/api/products
+
+### 3. Lay chi tiet san pham id=1 (mong doi 200 OK)
+GET {{api}}/api/products/1
+
+### 4. Lay san pham khong ton tai id=999 (mong doi 404 Not Found + ApiError)
+GET {{api}}/api/products/999
+
+### 5. Sai kieu tham so route id=abc (mong doi 404 Not Found rong)
+GET {{api}}/api/products/abc
+
+### 6. Tao san pham moi hop le (mong doi 201 Created + Location)
+POST {{api}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Thuc hanh Microservices",
+  "description": "Tai lieu bo sung",
+  "price": 180000
+}
+
+### 7. Tao san pham voi gia am (mong doi 400 Bad Request + ApiError)
+POST {{api}}/api/products
+Content-Type: application/json
+
+{
+  "name": "San pham loi",
+  "description": "Gia am khong hop le",
+  "price": -5000
+}
+
+### 8. Gui POST thieu header Content-Type (mong doi 415 Unsupported Media Type)
+POST {{api}}/api/products
+
+{
+  "name": "Thieu Content-Type",
+  "description": "Test 415",
+  "price": 100000
+}
+
