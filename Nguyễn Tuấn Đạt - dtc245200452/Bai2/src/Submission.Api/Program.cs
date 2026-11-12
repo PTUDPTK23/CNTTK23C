@@ -65,8 +65,29 @@ app.MapPost("/api/assignments/{assignmentId:int}/submissions",
     return Results.Created($"/api/submissions/{submission.Id}", submission);
 });
 
-app.Run();
+// Bước 6: GET /api/submissions/{submissionId:guid} -> Đọc lại lượt nộp theo Location (200 hoặc 404)
+app.MapGet("/api/submissions/{submissionId:guid}", (Guid submissionId) =>
+{
+    var submission = submissions.FirstOrDefault(item => item.Id == submissionId);
+    return submission is null
+        ? Results.NotFound(new ApiError("SUBMISSION_NOT_FOUND", "Khong tim thay luot nop."))
+        : Results.Ok(submission);
+});
 
+// Bước 9 (Mở rộng): DELETE /api/submissions/{submissionId:guid} -> Rút lượt nộp (204 hoặc 404)
+app.MapDelete("/api/submissions/{submissionId:guid}", (Guid submissionId) =>
+{
+    var submission = submissions.FirstOrDefault(item => item.Id == submissionId);
+    if (submission is null)
+    {
+        return Results.NotFound(new ApiError("SUBMISSION_NOT_FOUND", "Khong tim thay luot nop."));
+    }
+
+    submissions.Remove(submission);
+    return Results.NoContent();
+});
+
+app.Run();
 
 // Khai báo các kiểu DTO và ApiError ở cuối tệp
 record AssignmentDto(int Id, string Title, string Description, bool IsOpen);
