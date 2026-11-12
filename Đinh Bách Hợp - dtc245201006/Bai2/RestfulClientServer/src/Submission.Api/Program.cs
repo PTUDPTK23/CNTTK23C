@@ -4,7 +4,8 @@ var app = builder.Build();
 // Du lieu mau trong bo nho
 var assignments = new List<AssignmentDto> {
     new(1, "Bai tap REST API", "Thiet ke endpoint...", true),
-    new(2, "Bai tap Client", "Viet console client...", true)
+    new(2, "Bai tap Client", "Viet console client...", true),
+    new(3, "Bai tap 3", "Test", true)
 };
 var submissions = new List<SubmissionDto>();
 
