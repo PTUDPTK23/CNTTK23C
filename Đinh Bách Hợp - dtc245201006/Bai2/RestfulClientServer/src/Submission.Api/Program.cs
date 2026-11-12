@@ -15,7 +15,13 @@ app.MapGet("/", () => Results.Ok(new {
 
 // GET /api/assignments : danh sach bai tap
 app.MapGet("/api/assignments", () => Results.Ok(assignments));
-
+// GET /api/assignments/{assignmentId} : chi tiet mot bai tap
+app.MapGet("/api/assignments/{assignmentId:int}", (int assignmentId) => {
+    var assignment = assignments.FirstOrDefault(item => item.Id == assignmentId);
+    return assignment is null
+        ? Results.NotFound(new ApiError("ASSIGNMENT_NOT_FOUND", "Khong tim thay bai tap."))
+        : Results.Ok(assignment);
+});
 app.Run();
 
 // DTO
