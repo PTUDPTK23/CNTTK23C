@@ -16,6 +16,15 @@ app.MapGet("/", () => Results.Ok(new { service = "Submission.Api", status = "run
 // Bước 3: GET /api/assignments -> Danh sách bài tập (200 OK)
 app.MapGet("/api/assignments", () => Results.Ok(assignments));
 
+// Bước 4: GET /api/assignments/{assignmentId:int} -> Chi tiết một bài tập (200 hoặc 404 kèm ApiError)
+app.MapGet("/api/assignments/{assignmentId:int}", (int assignmentId) =>
+{
+    var assignment = assignments.FirstOrDefault(item => item.Id == assignmentId);
+    return assignment is null
+        ? Results.NotFound(new ApiError("ASSIGNMENT_NOT_FOUND", "Khong tim thay bai tap."))
+        : Results.Ok(assignment);
+});
+
 app.Run();
 
 // Khai báo các kiểu DTO và ApiError ở cuối tệp
