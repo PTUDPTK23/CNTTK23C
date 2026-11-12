@@ -1,0 +1,38 @@
+@api = http://localhost:5100
+
+### 1. GET trạng thái sống (Slide 41)
+GET {{api}}/
+
+### 2. GET danh sách sản phẩm (Slide 45)
+GET {{api}}/api/products
+
+### 3. GET lọc sản phẩm theo từ khóa (Slide 104)
+GET {{api}}/api/products?keyword=REST
+
+### 4. GET chi tiết sản phẩm 1 - 200 OK (Slide 47)
+GET {{api}}/api/products/1
+
+### 5. GET sản phẩm không tồn tại - 404 Not Found (Slide 47)
+GET {{api}}/api/products/999
+
+### 6. POST tạo sản phẩm mới - 201 Created (Slide 51)
+POST {{api}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Lap trinh Mang voi C#",
+  "description": "Tai lieu huong dan lap trinh mang",
+  "price": 135000
+}
+
+### 7. POST dữ liệu không hợp lệ - 400 Bad Request (Slide 51)
+POST {{api}}/api/products
+Content-Type: application/json
+
+{
+  "name": "",
+  "price": -50000
+}
+
+### 8. DELETE xóa sản phẩm - 204 No Content (Slide 104)
+DELETE {{api}}/api/products/3
