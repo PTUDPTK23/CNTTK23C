@@ -1,30 +1,33 @@
 {
   "format": 1,
   "restore": {
-    "/Users/nguyenthanhson/Downloads/PTUDPT-K23C/Nguyễn Thanh Sơn - dtc245200486/Bai1/MiniDistributedSystem/src/Submission.Api/Submission.Api.csproj": {}
+    "D:\\Download\\Documents\\học kì 2 năm 3\\Bai1\\PTUDPT-K23C\\Nguyễn Thanh Sơn - dtc245200486\\Bai1\\MiniDistributedSystem\\src\\Submission.Api\\Submission.Api.csproj": {}
   },
   "projects": {
-    "/Users/nguyenthanhson/Downloads/PTUDPT-K23C/Nguyễn Thanh Sơn - dtc245200486/Bai1/MiniDistributedSystem/src/Submission.Api/Submission.Api.csproj": {
+    "D:\\Download\\Documents\\học kì 2 năm 3\\Bai1\\PTUDPT-K23C\\Nguyễn Thanh Sơn - dtc245200486\\Bai1\\MiniDistributedSystem\\src\\Submission.Api\\Submission.Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/nguyenthanhson/Downloads/PTUDPT-K23C/Nguyễn Thanh Sơn - dtc245200486/Bai1/MiniDistributedSystem/src/Submission.Api/Submission.Api.csproj",
+        "projectUniqueName": "D:\\Download\\Documents\\học kì 2 năm 3\\Bai1\\PTUDPT-K23C\\Nguyễn Thanh Sơn - dtc245200486\\Bai1\\MiniDistributedSystem\\src\\Submission.Api\\Submission.Api.csproj",
         "projectName": "Submission.Api",
-        "projectPath": "/Users/nguyenthanhson/Downloads/PTUDPT-K23C/Nguyễn Thanh Sơn - dtc245200486/Bai1/MiniDistributedSystem/src/Submission.Api/Submission.Api.csproj",
-        "packagesPath": "/Users/nguyenthanhson/.nuget/packages/",
-        "outputPath": "/Users/nguyenthanhson/Downloads/PTUDPT-K23C/Nguyễn Thanh Sơn - dtc245200486/Bai1/MiniDistributedSystem/src/Submission.Api/obj/",
+        "projectPath": "D:\\Download\\Documents\\học kì 2 năm 3\\Bai1\\PTUDPT-K23C\\Nguyễn Thanh Sơn - dtc245200486\\Bai1\\MiniDistributedSystem\\src\\Submission.Api\\Submission.Api.csproj",
+        "packagesPath": "C:\\Users\\ADMIN\\.nuget\\packages\\",
+        "outputPath": "D:\\Download\\Documents\\học kì 2 năm 3\\Bai1\\PTUDPT-K23C\\Nguyễn Thanh Sơn - dtc245200486\\Bai1\\MiniDistributedSystem\\src\\Submission.Api\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/nguyenthanhson/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\ADMIN\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
         ],
         "sources": {
-          "/Users/nguyenthanhson/.dotnet/library-packs": {},
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Users\\ADMIN\\Desktop\\ASP.Net Core\\tài liệu cần thiết\\packages": {},
+          "C:\\Users\\ADMIN\\Desktop\\DinhBachHop - DTC245201006\\tài liệu\\packages": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net10.0": {
+            "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {}
           }
@@ -39,10 +42,11 @@
           "auditLevel": "low",
           "auditMode": "all"
         },
-        "SdkAnalysisLevel": "10.0.200"
+        "SdkAnalysisLevel": "10.0.400"
       },
       "frameworks": {
         "net10.0": {
+          "framework": "net10.0",
           "targetAlias": "net10.0",
           "imports": [
             "net461",
@@ -63,7 +67,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/Users/nguyenthanhson/.dotnet/sdk/10.0.203/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.403/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",

@@ -1,31 +1,28 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Bai1\\EduSubmit-Dtc245200272\\src\\Submission.Api\\Submission.Api.csproj": {}
+    "D:\\Download\\Documents\\học kì 2 năm 3\\Bai1\\PTUDPT-K23C\\Nguyễn Thanh Hải - dtc245200272\\src\\Submission.Api\\Submission.Api.csproj": {}
   },
   "projects": {
-    "C:\\Bai1\\EduSubmit-Dtc245200272\\src\\Submission.Api\\Submission.Api.csproj": {
+    "D:\\Download\\Documents\\học kì 2 năm 3\\Bai1\\PTUDPT-K23C\\Nguyễn Thanh Hải - dtc245200272\\src\\Submission.Api\\Submission.Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Bai1\\EduSubmit-Dtc245200272\\src\\Submission.Api\\Submission.Api.csproj",
+        "projectUniqueName": "D:\\Download\\Documents\\học kì 2 năm 3\\Bai1\\PTUDPT-K23C\\Nguyễn Thanh Hải - dtc245200272\\src\\Submission.Api\\Submission.Api.csproj",
         "projectName": "Submission.Api",
-        "projectPath": "C:\\Bai1\\EduSubmit-Dtc245200272\\src\\Submission.Api\\Submission.Api.csproj",
-        "packagesPath": "C:\\Users\\tinho\\.nuget\\packages\\",
-        "outputPath": "C:\\Bai1\\EduSubmit-Dtc245200272\\src\\Submission.Api\\obj\\",
+        "projectPath": "D:\\Download\\Documents\\học kì 2 năm 3\\Bai1\\PTUDPT-K23C\\Nguyễn Thanh Hải - dtc245200272\\src\\Submission.Api\\Submission.Api.csproj",
+        "packagesPath": "C:\\Users\\ADMIN\\.nuget\\packages\\",
+        "outputPath": "D:\\Download\\Documents\\học kì 2 năm 3\\Bai1\\PTUDPT-K23C\\Nguyễn Thanh Hải - dtc245200272\\src\\Submission.Api\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\tinho\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\ADMIN\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Users\\ADMIN\\Desktop\\ASP.Net Core\\tài liệu cần thiết\\packages": {},
+          "C:\\Users\\ADMIN\\Desktop\\DinhBachHop - DTC245201006\\tài liệu\\packages": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
