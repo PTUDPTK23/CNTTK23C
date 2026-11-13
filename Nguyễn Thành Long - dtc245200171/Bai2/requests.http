@@ -1,0 +1,46 @@
+@api = http://localhost:5100
+
+### 1. Kiem tra API hoat dong -> 200
+GET {{api}}/
+
+### 2. Danh sach san pham -> 200, 3 san pham khi khoi dong moi
+GET {{api}}/api/products
+
+### 3. San pham ton tai -> 200
+GET {{api}}/api/products/1
+
+### 4. Id hop le nhung khong ton tai -> 404 + ApiError
+GET {{api}}/api/products/999
+
+### 5. Id khong phai so nguyen -> 404 tu framework, body rong
+GET {{api}}/api/products/abc
+
+### 6. Tao san pham hop le -> 201 + Location
+# @name createProduct
+POST {{api}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Lap trinh gRPC",
+  "description": "Tai lieu bai 5",
+  "price": 80000
+}
+
+### 7. Du lieu khong hop le -> 400 + ApiError
+POST {{api}}/api/products
+Content-Type: application/json
+
+{
+  "name": "San pham loi",
+  "description": "",
+  "price": -1
+}
+
+### 8. Thieu Content-Type -> 415 tu framework
+POST {{api}}/api/products
+
+{
+  "name": "Lap trinh gRPC",
+  "description": "Tai lieu bai 5",
+  "price": 80000
+}
