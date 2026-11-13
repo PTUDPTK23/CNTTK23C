@@ -1,0 +1,25 @@
+@api = http://localhost:5081
+
+### 1. Kiem tra API dang chay -> 200 OK
+GET {{api}}/
+
+### 2. Chao tieng Viet (mac dinh) -> 200 OK
+GET {{api}}/hello/An?language=vi
+
+### 3. Chao tieng Anh -> 200 OK
+GET {{api}}/hello/An?language=en
+
+### 4. Chao tieng Nhat (Muc 8.5) -> 200 OK
+GET {{api}}/hello/An?language=ja
+
+### 5. Tao loi chao hop le -> 201 Created + header Location
+POST {{api}}/greetings
+Content-Type: application/json
+
+{ "name": "Binh" }
+
+### 6. Ten rong -> 400 Bad Request
+POST {{api}}/greetings
+Content-Type: application/json
+
+{ "name": "" }
