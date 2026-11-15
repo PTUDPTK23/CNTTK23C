@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Báo Cáo Tổng Hợp Kết Quả Thực Hành Bài 2 — RESTful API (.NET 10)</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --card-bg: #161822;
+      --card-border: #26293b;
+      --text-main: #e2e8f0;
+      --text-muted: #94a3b8;
+      --primary: #38bdf8;
+      --primary-hover: #0ea5e9;
+      --success: #34d399;
+      --warning: #fbbf24;
+      --danger: #f87171;
+      --info: #818cf8;
+      --code-bg: #090a0f;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.65;
+      padding: 30px 20px 80px;
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    /* Header styling */
+    header {
+      background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+      border: 1px solid #312e81;
+      border-radius: 16px;
+      padding: 40px 36px;
+      margin-bottom: 40px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+
+    h2.subtitle {
+      font-size: 1.25rem;
+      color: var(--primary);
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .meta-item {
+      font-size: 0.92rem;
+    }
+    .meta-item strong {
+      color: #cbd5e1;
+    }
+    .meta-item span {
+      color: #94a3b8;
+    }
+
+    /* Navigation TOC */
+    nav.toc {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 24px 28px;
+      margin-bottom: 40px;
+    }
+    nav.toc h3 {
+      font-size: 1.15rem;
+      margin-bottom: 16px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    nav.toc ul {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 10px 24px;
+    }
+    nav.toc a {
+      color: var(--text-main);
+      text-decoration: none;
+      font-size: 0.92rem;
+      transition: color 0.2s;
+    }
+    nav.toc a:hover {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+
+    /* Section styling */
+    section {
+      margin-bottom: 60px;
+    }
+
+    .section-header {
+      background: #1e2235;
+      padding: 16px 24px;
+      border-left: 6px solid var(--primary);
+      border-radius: 8px;
+      margin-bottom: 28px;
+    }
+
+    .section-header h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .section-header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-top: 4px;
+    }
+
+    /* Step card */
+    .step-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 28px 28px 24px;
+      margin-bottom: 32px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .step-card h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .badge-200 { background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid #34d399; }
+    .badge-201 { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid #38bdf8; }
+    .badge-400 { background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid #fbbf24; }
+    .badge-404 { background: rgba(248, 113, 113, 0.15); color: #f87171; border: 1px solid #f87171; }
+    .badge-step { background: rgba(129, 140, 248, 0.18); color: #a5b4fc; }
+
+    .step-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 16px;
+    }
+
+    .cmd-box {
+      background-color: var(--code-bg);
+      border: 1px solid #2d3142;
+      border-radius: 8px;
+      padding: 12px 18px;
+      font-family: "Menlo", "SF Mono", monospace;
+      font-size: 0.9rem;
+      color: #f9e2af;
+      margin-bottom: 18px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .cmd-box::before {
+      content: "$ ";
+      color: #34d399;
+      font-weight: bold;
+    }
+
+    .screenshot-frame {
+      margin-top: 14px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #313244;
+      background: #11111b;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .screenshot-frame img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.2s ease-in-out;
+    }
+
+    .screenshot-caption {
+      padding: 8px 16px;
+      background-color: #181825;
+      color: #94a3b8;
+      font-size: 0.82rem;
+      border-top: 1px solid #2b2c3c;
+      font-style: italic;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      background-color: var(--card-bg);
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--card-border);
+    }
+
+    th, td {
+      padding: 14px 18px;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background-color: #1e2235;
+      color: #cbd5e1;
+      font-weight: 600;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    tr:not(:last-child) td {
+      border-bottom: 1px solid #232738;
+    }
+
+    tr:hover td {
+      background-color: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Theory Q&A cards */
+    .qa-card {
+      background: linear-gradient(180deg, #181b2a 0%, #131522 100%);
+      border: 1px solid #2b3149;
+      border-radius: 12px;
+      padding: 24px 28px;
+      margin-bottom: 24px;
+    }
+
+    .qa-card h4 {
+      font-size: 1.15rem;
+      color: #38bdf8;
+      margin-bottom: 12px;
+    }
+
+    .qa-card p {
+      font-size: 0.95rem;
+      color: #cbd5e1;
+      margin-bottom: 10px;
+    }
+
+    .qa-card ul {
+      padding-left: 20px;
+      color: #cbd5e1;
+      font-size: 0.92rem;
+    }
+
+    .qa-card li {
+      margin-bottom: 6px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 60px;
+      padding-top: 24px;
+      border-top: 1px solid var(--card-border);
+      color: var(--text-muted);
+      font-size: 0.88rem;
+    }
+
+    @media (max-width: 768px) {
+      body { padding: 16px 10px 40px; }
+      h1 { font-size: 1.6rem; }
+      header { padding: 24px 18px; }
+      .step-card { padding: 18px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <header>
+    <h1>BÁO CÁO TỔNG HỢP TOÀN DIỆN KẾT QUẢ THỰC HÀNH BÀI 2</h1>
+    <h2 class="subtitle">RESTful API CHO TƯƠNG TÁC CLIENT – SERVER TRÊN NỀN TẢNG .NET 10</h2>
+    <div class="meta-grid">
+      <div class="meta-item"><strong>Sinh viên thực hiện:</strong> <span>Nguyễn Thanh Sơn</span></div>
+      <div class="meta-item"><strong>Môn học:</strong> <span>Lập trình phân tán / RESTful API</span></div>
+      <div class="meta-item"><strong>Nền tảng công nghệ:</strong> <span>.NET 10 SDK | C# Minimal API & Console Client</span></div>
+      <div class="meta-item"><strong>Môi trường:</strong> <span>macOS (Apple Silicon) | Kestrel Server</span></div>
+      <div class="meta-item"><strong>Dự án 1 (Catalog API):</strong> <span>/Users/nguyenthanhson/Desktop/CatalogApi</span></div>
+      <div class="meta-item"><strong>Dự án 2 (EduSubmit):</strong> <span>/Users/nguyenthanhson/Desktop/RestfulClientServer</span></div>
+      <div class="meta-item"><strong>Thư mục ảnh minh chứng:</strong> <span>/Users/nguyenthanhson/Desktop/screenshots_bai2/</span></div>
+      <div class="meta-item"><strong>Ngày hoàn thành:</strong> <span>12/11/2026</span></div>
+    </div>
+  </header>
+
+  <!-- TABLE OF CONTENTS -->
+  <nav class="toc">
+    <h3>📌 Mục Lục Báo Cáo</h3>
+    <ul>
+      <li><a href="#phan-1">Phần 1: Bài 1 — Catalog API (CatalogApi)</a></li>
+      <li><a href="#cat-b1">↳ Bước 1: Biên dịch Solution CatalogApi</a></li>
+      <li><a href="#cat-b2">↳ Bước 2: Health Check GET / (200 OK)</a></li>
+      <li><a href="#cat-b3">↳ Bước 3: GET /api/products (Danh sách)</a></li>
+      <li><a href="#cat-b4">↳ Bước 4: GET /api/products/{id} (200 & 404)</a></li>
+      <li><a href="#cat-b5">↳ Bước 5: POST /api/products (201 & 400)</a></li>
+      <li><a href="#cat-b6">↳ Bước 6: requests.http (10 ca kiểm thử)</a></li>
+      <li><a href="#cat-b7">↳ Bước 7: Console Client chuỗi 4 nấc</a></li>
+      <li><a href="#cat-b8">↳ Bước 8: Git Log 8 commit CatalogApi</a></li>
+      <li><a href="#cat-chaos">↳ Bảng Phá thử Chaos Testing Bài 1</a></li>
+      <li><a href="#phan-2">Phần 2: Bài 2 — EduSubmit (RestfulClientServer)</a></li>
+      <li><a href="#edu-b1">↳ Bước 1: Biên dịch Solution RestfulClientServer</a></li>
+      <li><a href="#edu-b2">↳ Bước 2: Health Check GET / (200 OK)</a></li>
+      <li><a href="#edu-b3">↳ Bước 3: GET /api/assignments (Danh sách)</a></li>
+      <li><a href="#edu-b4">↳ Bước 4: GET /api/assignments/{id} (200 & 404)</a></li>
+      <li><a href="#edu-b5">↳ Bước 5: POST nộp bài 3 cổng (201, 400 Closed, 400 Empty)</a></li>
+      <li><a href="#edu-b6">↳ Bước 6: GET /api/submissions/{guid} (200 & 404)</a></li>
+      <li><a href="#edu-b7">↳ Bước 7: requests.http EduSubmit (11 ca kiểm thử)</a></li>
+      <li><a href="#edu-b8">↳ Bước 8: Submission.Client chuỗi 4 nấc</a></li>
+      <li><a href="#edu-b8b">↳ Bước 8b: Git Log 8 commit EduSubmit</a></li>
+      <li><a href="#edu-chaos">↳ Bảng Phá thử Chaos Testing Bài 2</a></li>
+      <li><a href="#phan-3">Phần 3: Trả Lời 3 Câu Hỏi Lý Thuyết Trọng Tâm</a></li>
+    </ul>
+  </nav>
+
+  <!-- PHẦN 1 -->
+  <section id="phan-1">
+    <div class="section-header">
+      <h2>PHẦN 1: BÀI 1 — CATALOG API (`CatalogApi`)</h2>
+      <p>Web API quản lý danh mục sách và tài liệu học tập, chạy trên cổng <strong>http://localhost:5100</strong>.</p>
+    </div>
+
+    <!-- Bước 1 -->
+    <div class="step-card" id="cat-b1">
+      <h3><span class="badge badge-step">Bước 1</span> Khởi tạo Solution và Kiểm tra Biên dịch</h3>
+      <p class="step-desc">Khởi tạo Solution cấu trúc 2 dự án <code>src/Catalog.Api</code> và <code>src/Catalog.Client</code>, thiết lập file <code>.gitignore</code> và biên dịch toàn bộ mã nguồn.</p>
+      <div class="cmd-box">dotnet build CatalogApi.slnx</div>
+      <div class="screenshot-frame">
+        <img src="screenshots_bai2/bai1_b1_build.png" alt="CatalogApi Bước 1 Build">
+        <div class="screenshot-caption">Minh chứng 1.1: Lệnh dotnet build thành công với 0 cảnh báo, 0 lỗi.</div>
+      </div>
+    </div>
+
+    <!-- Bước 2 -->
+    <div class="step-card" id="cat-b2">
+      <h3><span class="badge badge-step">Bước 2</span> Endpoint Kiểm tra Máy chủ <span class="badge badge-200">200 OK</span></h3>
+      <p class="step-desc">Gửi yêu cầu GET đến gốc <code>/</code> để kiểm tra trạng thái hoạt động của máy chủ Catalog.Api.</p>
+      <div class="cmd-box">curl -i http://localhost:5100/</div>
+      <div class="screenshot-frame">
+        <img src="screenshots_bai2/bai1_b2_health.png" alt="CatalogApi Bước 2 Health">
+        <div class="screenshot-caption">Minh chứng 1.2: Phản hồi 200 OK với JSON {"service":"Catalog.Api","status":"running"}.</div>
+      </div>
+    </div>
+
+    <!-- Bước 3 -->
+    <div class="step-card" id="cat-b3">
+      <h3><span class="badge badge-step">Bước 3</span> Lấy Danh sách Toàn bộ Sản phẩm <span class="badge badge-200">200 OK</span></h3>
+      <p class="step-desc">Truy vấn danh mục sản phẩm từ bộ nhớ trong qua endpoint <code>GET /api/products</code>.</p>
+      <div class="cmd-box">curl -i http://localhost:5100/api/products</div>
+      <div class="screenshot-frame">
+        <img src="screenshots_bai2/bai1_b3_get_products.png" alt="CatalogApi Bước 3 Products">
+        <div class="screenshot-caption">Minh chứng 1.3: Trả về 200 OK và danh sách 3 sản phẩm mẫu dạng mảng JSON.</div>
+      </div>
+    </div>
+
+    <!-- Bước 4 -->
+    <div class="step-card" id="cat-b4">
+      <h3><span class="badge badge-step">Bước 4</span> Tra cứu Chi tiết Sản phẩm theo Id <span class="badge badge-200">200 OK</span> & <span class="badge badge-404">404 NOT FOUND</span></h3>
+      <p class="step-desc">Kiểm thử 2 tình huống: sản phẩm có tồn tại (Id = 1) và sản phẩm không tồn tại (Id = 999).</p>
+      <div class="cmd-box">curl -i http://localhost:5100/api/products/1</div>
+      <div class="screenshot-frame">
+        <img src="screenshots_bai2/bai1_b4_get_detail_200.png" alt="CatalogApi Bước 4 200">
+        <div class="screenshot-caption">Minh chứng 1.4a: Sản phẩm Id=1 tồn tại trả về 200 OK cùng dữ liệu chi tiết.</div>
+      </div>
+      <div style="height: 18px;"></div>
+      <div class="cmd-box">curl -i http://localhost:5100/api/products/999</div>
+      <div class="screenshot-frame">
+        <img src="screenshots_bai2/bai1_b4_get_detail_404.png" alt="CatalogApi Bước 4 404">
+        <div class="screenshot-caption">Minh chứng 1.4b: Sản phẩm Id=999 không tồn tại trả về 404 Not Found kèm ApiError("PRODUCT_NOT_FOUND").</div>
+      </div>
+    </div>
+
+    <!-- Bước 5 -->
+    <div class="step-card" id="cat-b5">
+      <h3><span class="badge badge-step">Bước 5</span> Thêm Sản phẩm Mới <span class="badge badge-201">201 CREATED</span> & <span class="badge badge-400">400 BAD REQUEST</span></h3>
+      <p class="step-desc">Tiếp nhận payload JSON: trường hợp hợp lệ trả về 201 Created + Header Location; trường hợp vi phạm nghiệp vụ trả về 400 Bad Request.</p>
+      <div class="cmd-box">curl -i -X POST http://localhost:5100/api/products -H "Content-Type: application/json" --data @sp-hop-le.json</div>
+      <div class="screenshot-frame">
+        <img src="screenshots_bai2/bai1_b5_post_valid_201.png" alt="CatalogApi Bước 5 201">
+        <div class="screenshot-caption">Minh chứng 1.5a: Thêm thành công sản phẩm mới (Id=4), trả về 201 Created kèm Header Location: /api/products/4.</div>
+      </div>
+      <div style="height: 18px;"></div>
+      <div class="cmd-box">curl -i -X POST http://localhost:5100/api/products -H "Content-Type: application/json" --data @sp-sai.json</div>
+      <div class="screenshot-frame">
+        <img src="screenshots_bai2/bai1_b5_post_invalid_400.png" alt="CatalogApi Bước 5 400">
+        <div class="screenshot-caption">Minh chứng 1.5b: Dữ liệu tên rỗng và giá âm bị từ chối với 400 Bad Request kèm ApiError("INVALID_PRODUCT").</div>
+      </div>
+    </div>
+
+    <!-- Bước 6 -->
+    <div class="step-card" id="cat-b6">
+      <h3><span class="badge badge-step">Bước 6</span> Tập Kịch bản Kiểm thử Tự động <code>requests.http</code></h3>
+      <p class="step-desc">Tập kiểm thử 10 kịch bản bao phủ đầy đủ các mã trạng thái HTTP (200, 201, 400, 404, 415, 405).</p>
+      <div class="cmd-box">cat requests.http</div>
+      <div class="screenshot-frame">
+        <img src="screenshots_bai2/bai1_b6_requests_http.png" alt="CatalogApi Bước 6 requests.http">
+        <div class="screenshot-caption">Minh chứng 1.6: Toàn bộ nội dung tệp requests.http định dạng REST Client chuẩn.</div>
+      </div>
+    </div>
+
+    <!-- Bước 7 -->
+    <div class="step-card" id="cat-b7">
+      <h3><span class="badge badge-step">Bước 7</span> Ứng dụng Console Client Kiểm thử 4 Nấc An toàn</h3>
+      <p class="step-desc">Chạy <code>Catalog.Client</code> thực thi chuỗi giao tiếp 4 nấc: Lấy danh sách -> POST tạo mới -> GET chi tiết theo Location -> Bắt lỗi 400 và in ApiError an toàn không bị sập.</p>
+      <div class="cmd-box">dotnet run --project src/Catalog.Client</div>
+      <div class="screenshot-frame">
+        <img src="screenshots_bai2/bai1_b7_client_run.png" alt="CatalogApi Bước 7 Client">
+        <div class="screenshot-caption">Minh chứng 1.7: Console Client hoàn tất trọn vẹn 4 nấc kiểm thử an toàn.</div>
+      </div>
+    </div>
+
+    <!-- Bước 8 -->
+    <div class="step-card" id="cat-b8">
+      <h3><span class="badge badge-step">Bước 8</span> Lịch sử Commit Git Từng Bước</h3>
+      <p class="step-desc">Mỗi bước trong quá trình thực hành đều được commit riêng biệt với thông điệp rõ ràng, tuân thủ kỷ luật phát triển phần mềm.</p>
+      <div class="cmd-box">git log --oneline</div>
+      <div class="screenshot-frame">
+        <img src="screenshots_bai2/bai1_b8_git_log.png" alt="CatalogApi Bước 8 Git Log">
+        <div class="screenshot-caption">Minh chứng 1.8: 8 commit tương ứng 8 bước thực hành của dự án CatalogApi.</div>
+      </div>
+    </div>
+
+    <!-- Chaos Testing Bài 1 -->
+    <div class="step-card" id="cat-chaos">
+      <h3>🧪 Bảng Phá Thử (Chaos Testing) Bài 1</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>STT</th>
+            <th>Kịch bản phá thử</th>
+            <th>Yêu cầu HTTP</th>
+            <th>Mã kỳ vọng</th>
+            <th>Mã thực tế</th>
+            <th>Đánh giá kết quả</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Tra cứu sản phẩm không có trong DB</td>
+            <td><code>GET /api/products/999</code></td>
+            <td><span class="badge badge-404">404</span></td>
+            <td><span class="badge badge-404">404</span></td>
+            <td>Đạt: Trả về mã lỗi <code>PRODUCT_NOT_FOUND</code></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Truyền tham số route sai kiểu int</td>
+            <td><code>GET /api/products/abc</code></td>
+            <td><span class="badge badge-404">404</span></td>
+            <td><span class="badge badge-404">404</span></td>
+            <td>Đạt: Route constraint <code>:int</code> chặn chuẩn xác</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Tạo sản phẩm với tên để trống</td>
+            <td><code>POST /api/products</code> (name: "")</td>
+            <td><span class="badge badge-400">400</span></td>
+            <td><span class="badge badge-400">400</span></td>
+            <td>Đạt: Trả về lỗi <code>INVALID_PRODUCT</code></td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>Tạo sản phẩm với giá âm (-10000)</td>
+            <td><code>POST /api/products</code> (price: -10000)</td>
+            <td><span class="badge badge-400">400</span></td>
+            <td><span class="badge badge-400">400</span></td>
+            <td>Đạt: Trả về lỗi <code>INVALID_PRODUCT</code></td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>Gửi POST nhưng quên Header Content-Type</td>
+            <td><code>POST /api/products</code> (no header)</td>
+            <td><span class="badge" style="background:#581c87; color:#d8b4fe;">415</span></td>
+            <td><span class="badge" style="background:#581c87; color:#d8b4fe;">415</span></td>
+            <td>Đạt: Kestrel từ chối Unsupported Media Type</td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td>Gửi cú pháp JSON dị dạng (Malformed JSON)</td>
+            <td><code>POST /api/products</code> (JSON thiếu giá trị)</td>
+            <td><span class="badge badge-400">400</span></td>
+            <td><span class="badge badge-400">400</span></td>
+            <td>Đạt: Trình phân tích ASP.NET Core chặn 400 Bad Request</td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td>Gọi sai phương thức HTTP trên URI hợp lệ</td>
+            <td><code>PUT /api/products/1</code></td>
+            <td><span class="badge" style="background:#431407; color:#fdba74;">405</span></td>
+            <td><span class="badge" style="background:#431407; color:#fdba74;">405</span></td>
+            <td>Đạt: Trả về 405 Method Not Allowed</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- PHẦN 2 -->
+  <section id="phan-2">
+    <div class="section-header">
+      <h2>PHẦN 2: BÀI 2 — EDUSUBMIT (`RestfulClientServer`)</h2>
+      <p>Hệ thống nộp bài tập trực tuyến với 3 cổng kiểm tra logic nghiêm ngặt, chạy trên cổng <strong>http://localhost:5000</strong>.</p>
+    </div>
+
+    <!-- Bước 1 -->
+    <div class="step-card" id="edu-b1">
+      <h3><span class="badge badge-step">Bước 1</span> Khởi tạo Solution và Kiểm tra Biên dịch</h3>
+      <p class="step-desc">Khởi tạo Solution <code>RestfulClientServer.slnx</code> gồm <code>src/Submission.Api</code> và <code>src/Submission.Client</code>.</p>
+      <div class="cmd-box">dotnet build RestfulClientServer.slnx</div>
+      <div class="screenshot-frame">
+        <img src="screenshots_bai2/bai2_b1_build.png" alt="EduSubmit Bước 1 Build">
+        <div class="screenshot-caption">Minh chứng 2.1: Lệnh dotnet build thành công với 0 cảnh báo, 0 lỗi.</div>
+      </div>
+    </div>
+
+    <!-- Bước 2 -->
+    <div class="step-card" id="edu-b2">
+      <h3><span class="badge badge-step">Bước 2</span> Endpoint Kiểm tra Máy chủ <span class="badge badge-200">200 OK</span></h3>
+      <p class="step-desc">Kiểm tra khả năng tiếp nhận yêu cầu và xác thực định danh dịch vụ <code>Submission.Api</code>.</p>
+      <div class="cmd-box">curl -i http://localhost:5000/</div>
+      <div class="screenshot-frame">
+        <img src="screenshots_bai2/bai2_b2_health.png" alt="EduSubmit Bước 2 Health">
+        <div class="screenshot-caption">Minh chứng 2.2: Phản hồi 200 OK {"service":"Submission.Api","status":"running"}.</div>
+      </div>
+    </div>
+
+    <!-- Bước 3 -->
+    <div class="step-card" id="edu-b3">
+      <h3><span class="badge badge-step">Bước 3</span> Lấy Danh sách Toàn bộ Bài tập <span class="badge badge-200">200 OK</span></h3>
+      <p class="step-desc">Truy vấn toàn bộ danh sách bài tập (bao gồm bài đang mở và bài đã đóng) qua <code>GET /api/assignments</code>.</p>
+      <div class="cmd-box">curl -i http://localhost:5000/api/assignments</div>
+      <div class="screenshot-frame">
+        <img src="screenshots_bai2/bai2_b3_get_assignments.png" alt="EduSubmit Bước 3 Assignments">
+        <div class="screenshot-caption">Minh chứng 2.3: Danh sách 3 bài tập mẫu với thuộc tính IsOpen thể hiện trạng thái đóng/mở.</div>
+      </div>
+    </div>
+
+    <!-- Bước 4 -->
+    <div class="step-card" id="edu-b4">
+      <h3><span class="badge badge-step">Bước 4</span> Tra cứu Chi tiết Bài tập <span class="badge badge-200">200 OK</span> & <span class="badge badge-404">404 NOT FOUND</span></h3>
+      <p class="step-desc">Kiểm thử tra cứu bài tập tồn tại (Id = 1) và bài tập không tồn tại (Id = 999).</p>
+      <div class="cmd-box">curl -i http://localhost:5000/api/assignments/1</div>
+      <div class="screenshot-frame">
+        <img src="screenshots_bai2/bai2_b4_get_detail_200.png" alt="EduSubmit Bước 4 200">
+        <div class="screenshot-caption">Minh chứng 2.4a: Bài tập 1 tồn tại trả về 200 OK kèm thông tin chi tiết.</div>
+      </div>
+      <div style="height: 18px;"></div>
+      <div class="cmd-box">curl -i http://localhost:5000/api/assignments/999</div>
+      <div class="screenshot-frame">
+        <img src="screenshots_bai2/bai2_b4_get_detail_404.png" alt="EduSubmit Bước 4 404">
+        <div class="screenshot-caption">Minh chứng 2.4b: Bài tập 999 không tồn tại trả về 404 Not Found kèm ApiError("ASSIGNMENT_NOT_FOUND").</div>
+      </div>
+    </div>
+
+    <!-- Bước 5 -->
+    <div class="step-card" id="edu-b5">
+      <h3><span class="badge badge-step">Bước 5</span> Nộp Bài 3 Cổng Kiểm soát <span class="badge badge-201">201 CREATED</span> & <span class="badge badge-400">400 BAD REQUEST</span></h3>
+      <p class="step-desc">Quy trình nộp bài qua 3 cổng: (1) Bài tập tồn tại -> (2) Bài tập còn mở hạn -> (3) Mã SV và URL kho không rỗng.</p>
+      
+      <div class="cmd-box">curl -i -X POST http://localhost:5000/api/assignments/1/submissions -H "Content-Type: application/json" --data @sv001.json</div>
+      <div class="screenshot-frame">
+        <img src="screenshots_bai2/bai2_b5_post_valid_201.png" alt="EduSubmit Bước 5 201">
+        <div class="screenshot-caption">Minh chứng 2.5a: Nộp bài hợp lệ trả về 201 Created kèm Header Location: /api/submissions/{guid}.</div>
+      </div>
+
+      <div style="height: 18px;"></div>
+      <div class="cmd-box">curl -i -X POST http://localhost:5000/api/assignments/3/submissions -H "Content-Type: application/json" --data @sv001.json</div>
+      <div class="screenshot-frame">
+        <img src="screenshots_bai2/bai2_b5_post_invalid_closed_400.png" alt="EduSubmit Bước 5 Closed">
+        <div class="screenshot-caption">Minh chứng 2.5b: Cổng 2 chặn bài tập đã đóng hạn (Id=3) với lỗi 400 ASSIGNMENT_CLOSED.</div>
+      </div>
+
+      <div style="height: 18px;"></div>
+      <div class="cmd-box">curl -i -X POST http://localhost:5000/api/assignments/1/submissions -H "Content-Type: application/json" --data @rong.json</div>
+      <div class="screenshot-frame">
+        <img src="screenshots_bai2/bai2_b5_post_invalid_empty_400.png" alt="EduSubmit Bước 5 Empty">
+        <div class="screenshot-caption">Minh chứng 2.5c: Cổng 3 chặn dữ liệu rỗng với lỗi 400 INVALID_SUBMISSION.</div>
+      </div>
+    </div>
+
+    <!-- Bước 6 -->
+    <div class="step-card" id="edu-b6">
+      <h3><span class="badge badge-step">Bước 6</span> Tra cứu Lượt Nộp theo GUID <span class="badge badge-200">200 OK</span> & <span class="badge badge-404">404 NOT FOUND</span></h3>
+      <p class="step-desc">Tra cứu lượt nộp vừa tạo qua mã GUID ngẫu nhiên và tra cứu một GUID không tồn tại.</p>
+      <div class="cmd-box">curl -i http://localhost:5000/api/submissions/&lt;guid&gt;</div>
+      <div class="screenshot-frame">
+        <img src="screenshots_bai2/bai2_b6_get_submission_guid.png" alt="EduSubmit Bước 6 Tra cứu GUID">
+        <div class="screenshot-caption">Minh chứng 2.6: Tra cứu GUID vừa nộp trả về 200 OK; GUID giả mạo trả về 404 SUBMISSION_NOT_FOUND.</div>
+      </div>
+    </div>
+
+    <!-- Bước 7 -->
+    <div class="step-card" id="edu-b7">
+      <h3><span class="badge badge-step">Bước 7</span> Tập Kịch bản Kiểm thử Tự động <code>requests.http</code></h3>
+      <p class="step-desc">Tập kiểm thử 11 kịch bản toàn diện, sử dụng biến môi trường và biến động <code>{{createSubmission.response.body.$.id}}</code>.</p>
+      <div class="cmd-box">cat requests.http</div>
+      <div class="screenshot-frame">
+        <img src="screenshots_bai2/bai2_b7_requests_http.png" alt="EduSubmit Bước 7 requests.http">
+        <div class="screenshot-caption">Minh chứng 2.7: Nội dung requests.http của dự án RestfulClientServer.</div>
+      </div>
+    </div>
+
+    <!-- Bước 8 -->
+    <div class="step-card" id="edu-b8">
+      <h3><span class="badge badge-step">Bước 8</span> Ứng dụng Console Client Nộp Bài Chuỗi 4 Nấc An toàn</h3>
+      <p class="step-desc">Chạy <code>Submission.Client</code> giao tiếp API qua 4 nấc: Lọc bài đang mở -> Nộp bài -> Đọc lại qua Header Location -> Bắt lỗi 400 xử lý an toàn không sập app.</p>
+      <div class="cmd-box">dotnet run --project src/Submission.Client</div>
+      <div class="screenshot-frame">
+        <img src="screenshots_bai2/bai2_b8_client_run.png" alt="EduSubmit Bước 8 Client">
+        <div class="screenshot-caption">Minh chứng 2.8: Console Client hoàn tất chuỗi 4 nấc phòng thủ an toàn.</div>
+      </div>
+    </div>
+
+    <!-- Bước 8b Git -->
+    <div class="step-card" id="edu-b8b">
+      <h3><span class="badge badge-step">Bước 8b</span> Lịch sử Commit Git Từng Bước</h3>
+      <p class="step-desc">8 commit thể hiện rõ ràng toàn bộ lộ trình hiện thực từ scaffolding đến client hoàn chỉnh.</p>
+      <div class="cmd-box">git log --oneline</div>
+      <div class="screenshot-frame">
+        <img src="screenshots_bai2/bai2_b8_git_log.png" alt="EduSubmit Bước 8b Git Log">
+        <div class="screenshot-caption">Minh chứng 2.8b: 8 commit tương ứng 8 bước thực hành của dự án RestfulClientServer.</div>
+      </div>
+    </div>
+
+    <!-- Chaos Testing Bài 2 -->
+    <div class="step-card" id="edu-chaos">
+      <h3>🧪 Bảng Phá Thử (Chaos Testing) Bài 2</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>STT</th>
+            <th>Kịch bản phá thử</th>
+            <th>Yêu cầu HTTP</th>
+            <th>Mã kỳ vọng</th>
+            <th>Mã thực tế</th>
+            <th>Đánh giá kết quả</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Nộp bài vào bài tập không tồn tại</td>
+            <td><code>POST /api/assignments/999/submissions</code></td>
+            <td><span class="badge badge-404">404</span></td>
+            <td><span class="badge badge-404">404</span></td>
+            <td>Đạt: Cổng 1 chặn trả về <code>ASSIGNMENT_NOT_FOUND</code></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Nộp bài vào bài tập đã đóng hạn (Id=3)</td>
+            <td><code>POST /api/assignments/3/submissions</code></td>
+            <td><span class="badge badge-400">400</span></td>
+            <td><span class="badge badge-400">400</span></td>
+            <td>Đạt: Cổng 2 chặn trả về <code>ASSIGNMENT_CLOSED</code></td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Nộp thiếu mã sinh viên</td>
+            <td><code>POST ...</code> (studentCode: "")</td>
+            <td><span class="badge badge-400">400</span></td>
+            <td><span class="badge badge-400">400</span></td>
+            <td>Đạt: Cổng 3 chặn trả về <code>INVALID_SUBMISSION</code></td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>Nộp thiếu đường dẫn kho GitHub</td>
+            <td><code>POST ...</code> (repositoryUrl: "")</td>
+            <td><span class="badge badge-400">400</span></td>
+            <td><span class="badge badge-400">400</span></td>
+            <td>Đạt: Cổng 3 chặn trả về <code>INVALID_SUBMISSION</code></td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>Tra cứu lượt nộp GUID không tồn tại</td>
+            <td><code>GET /api/submissions/00000000-...</code></td>
+            <td><span class="badge badge-404">404</span></td>
+            <td><span class="badge badge-404">404</span></td>
+            <td>Đạt: Trả về lỗi <code>SUBMISSION_NOT_FOUND</code></td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td>Truyền GUID sai định dạng</td>
+            <td><code>GET /api/submissions/abc</code></td>
+            <td><span class="badge badge-404">404</span></td>
+            <td><span class="badge badge-404">404</span></td>
+            <td>Đạt: Routing constraint <code>:guid</code> chặn chuẩn xác</td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td>Quên header Content-Type khi nộp</td>
+            <td><code>POST ...</code> (no Content-Type)</td>
+            <td><span class="badge" style="background:#581c87; color:#d8b4fe;">415</span></td>
+            <td><span class="badge" style="background:#581c87; color:#d8b4fe;">415</span></td>
+            <td>Đạt: Kestrel từ chối Unsupported Media Type</td>
+          </tr>
+          <tr>
+            <td>8</td>
+            <td>Gọi sai phương thức PUT trên URI hợp lệ</td>
+            <td><code>PUT /api/assignments/1</code></td>
+            <td><span class="badge" style="background:#431407; color:#fdba74;">405</span></td>
+            <td><span class="badge" style="background:#431407; color:#fdba74;">405</span></td>
+            <td>Đạt: Trả về 405 Method Not Allowed</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- PHẦN 3 -->
+  <section id="phan-3">
+    <div class="section-header">
+      <h2>PHẦN 3: GIẢI THÍCH 3 CÂU HỎI LÝ THUYẾT TRỌNG TÂM</h2>
+      <p>Phân tích sâu cơ chế hoạt động của giao thức HTTP và nguyên lý thiết kế hệ thống phân tán RESTful.</p>
+    </div>
+
+    <!-- Câu 1 -->
+    <div class="qa-card">
+      <h4>❓ Câu hỏi 1: Tại sao POST trả về 201 Created thay vì 200 OK? Header Location có vai trò gì?</h4>
+      <p><strong>1. Tại sao trả về 201 Created thay vì 200 OK?</strong></p>
+      <ul>
+        <li>Theo đặc tả chuẩn RFC 9110 (HTTP Semantics), mã <code>200 OK</code> là mã trạng thái chung biểu thị yêu cầu đã được máy chủ tiếp nhận và xử lý thành công.</li>
+        <li>Mã <code>201 Created</code> là mã có ngữ nghĩa chuyên biệt, khẳng định rõ ràng rằng <strong>một hoặc nhiều tài nguyên mới đã được tạo thành công trên hệ thống</strong> sau yêu cầu đó.</li>
+        <li>Việc phân biệt 201 và 200 giúp tầng Client, các dịch vụ Gateway trung gian và hệ thống Proxy nhận biết rành mạch hành động có làm thay đổi trạng thái bền vững (State Mutation / Resource Creation) của máy chủ hay không.</li>
+      </ul>
+      <p style="margin-top: 10px;"><strong>2. Vai trò của Header Location:</strong></p>
+      <ul>
+        <li>Header <code>Location</code> trả về địa chỉ định danh URI duy nhất (Canonical URI) của tài nguyên vừa được tạo (ví dụ: <code>Location: /api/products/4</code> hoặc <code>Location: /api/submissions/e75a5dfa-...</code>).</li>
+        <li>Theo chuẩn RESTful HATEOAS, Client không cần phải tự lắp ghép chuỗi URL hoặc cố gắng bóc tách trường ID bên trong body JSON, mà có thể sử dụng trực tiếp giá trị trong Header Location để điều hướng, hiển thị hoặc gửi truy vấn GET tiếp theo.</li>
+      </ul>
+    </div>
+
+    <!-- Câu 2 -->
+    <div class="qa-card">
+      <h4>❓ Câu hỏi 2: Tại sao phải kiểm tra StatusCode trước khi Deserialize dữ liệu ở Client?</h4>
+      <p><strong>1. Bảo đảm an toàn kiểu dữ liệu (Type Safety):</strong></p>
+      <ul>
+        <li>Khi máy chủ trả về mã thành công (<code>200 OK</code> hoặc <code>201 Created</code>), phần body sẽ mang cấu trúc của DTO dữ liệu chính tắc (ví dụ: <code>ProductDto</code> hoặc <code>SubmissionDto</code>).</li>
+        <li>Khi máy chủ gặp lỗi nghiệp vụ (<code>400 Bad Request</code> hoặc <code>404 Not Found</code>), body sẽ mang cấu trúc của DTO lỗi (ví dụ: <code>ApiError(Code, Message)</code>).</li>
+        <li>Nếu Client tự động giải tuần tự body thành <code>ProductDto</code> khi server vừa trả về lỗi <code>400</code>, bộ parser JSON sẽ không tìm thấy các trường tương ứng, dẫn đến việc DTO nhận toàn giá trị mặc định rỗng (Id=0, Name=null) gây sai lệch nghiệp vụ nghiêm trọng.</li>
+      </ul>
+      <p style="margin-top: 10px;"><strong>2. Phòng chống sập ứng dụng (Fault Tolerance & Defensive Programming):</strong></p>
+      <ul>
+        <li>Kiểm tra <code>response.StatusCode</code> giúp rẽ nhánh luồng thực thi an toàn: giải tuần tự DTO khi thành công, hoặc giải tuần tự <code>ApiError</code> khi thất bại để in thông báo lỗi chính xác ra giao diện người dùng mà không bao giờ làm ứng dụng bị văng ngoại lệ (crash).</li>
+      </ul>
+    </div>
+
+    <!-- Câu 3 -->
+    <div class="qa-card">
+      <h4>❓ Câu hỏi 3: Phân biệt sự khác nhau giữa lỗi 400 Bad Request và 404 Not Found trong thiết kế RESTful API?</h4>
+      <ul>
+        <li>
+          <strong>Mã 400 Bad Request:</strong>
+          <br>Biểu thị lỗi phát sinh từ <strong>dữ liệu đầu vào hoặc vi phạm quy tắc nghiệp vụ (Business Rule Validation)</strong> do Client gửi lên. Máy chủ vẫn tìm thấy và hiểu rõ endpoint đích, nhưng từ chối thực hiện vì dữ liệu không hợp lệ (ví dụ: tên sản phẩm rỗng, giá tiền mang giá trị âm, nộp bài vào bài tập đã hết hạn <code>ASSIGNMENT_CLOSED</code>, hoặc chuỗi JSON bị lỗi cú pháp).
+        </li>
+        <li>
+          <strong>Mã 404 Not Found:</strong>
+          <br>Biểu thị <strong>sự không tồn tại của tài nguyên đích (Resource Absence)</strong> được định danh trong URL yêu cầu. Máy chủ đã kiểm tra trong cơ sở dữ liệu hoặc bảng định tuyến nhưng không tìm thấy thực thể tương ứng (ví dụ: <code>GET /api/products/999</code> khi trong kho chỉ có 3 sản phẩm, hoặc mã GUID của lượt nộp bài không có trong bộ nhớ).
+        </li>
+        <li>
+          <strong>Tóm lược:</strong> <code>400</code> liên quan đến tính hợp lệ của <em>nội dung yêu cầu (Payload/Rules)</em>, còn <code>404</code> liên quan đến sự tồn tại của <em>đối tượng tài nguyên (Resource Identity)</em>.
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2026 Báo Cáo Thực Hành RESTful API — Sinh viên Nguyễn Thanh Sơn. Hoàn thành đầy đủ 100% yêu cầu từ Bước 1 đến Bước 8.</p>
+  </footer>
+
+</div>
+
+</body>
+</html>
