@@ -24,8 +24,7 @@ Mở 2 terminal tại thư mục gốc dự án `CatalogApi`:
 - Có thể dùng thêm tệp `CatalogApi/requests.http` trong Visual Studio hoặc VS Code (REST Client) khi server đang chạy.
 
 ### 2.2. Dự án thực hành `RestfulClientServer` — EduSubmit (Cổng `5000`)
-Mở 2 terminal tại thư mục `Hoàng Đức Việt - dtc245200377/BaiTap2/RestfulClientServer`:
-Mở 2 terminal tại thư mục `Hoàng Đức Việt - dtc245200377/Baitap2/bai2/RestfulClientServer`:
+Mở 2 terminal tại thư mục `Hoàng Đức Việt - dtc245200377/Bai2`:
 
 - **Terminal 1 (Server):**
   ```powershell
@@ -35,7 +34,7 @@ Mở 2 terminal tại thư mục `Hoàng Đức Việt - dtc245200377/Baitap2/ba
   ```powershell
   dotnet run --project src/Submission.Client -- http://localhost:5000
   ```
-- Hoặc kiểm thử các ca HTTP bằng tệp [requests.http](./RestfulClientServer/requests.http).
+- Hoặc kiểm thử các ca HTTP bằng tệp [requests.http](./requests.http).
 
 ---
 
