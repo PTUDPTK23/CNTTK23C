@@ -1,0 +1,46 @@
+
+@api = http://localhost:5100
+
+### 1. Kiem tra server
+GET {{api}}/
+
+### 2. Lay danh sach san pham
+GET {{api}}/api/products
+
+### 3. Lay san pham co ID = 1
+GET {{api}}/api/products/1
+
+### 4. Lay san pham khong ton tai
+GET {{api}}/api/products/999
+
+### 5. ID khong hop le
+GET {{api}}/api/products/abc
+
+### 6. Them san pham hop le
+POST {{api}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Sach lap trinh C#",
+  "description": "Tai lieu hoc C#",
+  "price": 180000
+}
+
+### 7. Them san pham khong hop le
+POST {{api}}/api/products
+Content-Type: application/json
+
+{
+  "name": "",
+  "description": "San pham loi",
+  "price": -100
+}
+
+### 8. Thieu Content-Type
+POST {{api}}/api/products
+
+{
+  "name": "San pham thu nghiem",
+  "description": "Kiem tra loi",
+  "price": 100000
+}
