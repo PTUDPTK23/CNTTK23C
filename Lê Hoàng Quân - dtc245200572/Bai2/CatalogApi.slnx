@@ -2,5 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/Catalog.Api/Catalog.Api.csproj" />
     <Project Path="src/Catalog.Client/Catalog.Client.csproj" />
+    <Project Path="src/Submission.Api/Submission.Api.csproj" />
+    <Project Path="src/Submission.Client/Submission.Client.csproj" />
   </Folder>
 </Solution>
