@@ -1,0 +1,41 @@
+@api = http://localhost:5000
+
+### 1. Lay danh sach bai tap dang mo -> 200 OK
+GET {{api}}/api/assignments
+
+### 2. Chi tiet bai tap hop le -> 200 OK
+GET {{api}}/api/assignments/1
+
+### 3. Bai tap khong ton tai -> 404 ASSIGNMENT_NOT_FOUND
+GET {{api}}/api/assignments/999
+
+### 4. Nop bai cho bai tap 1 hop le -> 201 Created + Location
+# @name createSubmission
+POST {{api}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "SV001",
+  "repositoryUrl": "https://github.com/dtc245200477-pixel/rest-api"
+}
+
+### 5. Doc lai luot nop vua tao theo Id -> 200 OK
+GET {{api}}/api/submissions/{{createSubmission.response.body.$.id}}
+
+### 6. Nop bai thieu thong tin -> 400 INVALID_SUBMISSION
+POST {{api}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "",
+  "repositoryUrl": ""
+}
+
+### 7. Nop bai vao bai tap khong ton tai -> 404 ASSIGNMENT_NOT_FOUND
+POST {{api}}/api/assignments/999/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "SV001",
+  "repositoryUrl": "https://github.com/dtc245200477-pixel/rest-api"
+}
