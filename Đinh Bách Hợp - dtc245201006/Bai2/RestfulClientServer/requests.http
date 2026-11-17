@@ -1,0 +1,32 @@
+@api = http://localhost:5000
+
+### Danh sach bai tap → 200
+GET {{api}}/api/assignments
+
+### Chi tiet bai tap 1 → 200
+GET {{api}}/api/assignments/1
+
+### Bai tap khong ton tai → 404 ASSIGNMENT_NOT_FOUND
+GET {{api}}/api/assignments/999
+
+### Nop bai cho bai tap 1 → 201 Created
+# @name createSubmission
+POST {{api}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{ "studentCode": "SV001", "repositoryUrl": "https://example.com/sv001/rest-api" }
+
+### Doc lai luot nop vua tao → 200
+GET {{api}}/api/submissions/{{createSubmission.response.body.$.id}}
+
+### Body rong → 400 INVALID_SUBMISSION
+POST {{api}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{ "studentCode": "", "repositoryUrl": "" }
+
+### Nop vao bai tap khong ton tai → 404 ASSIGNMENT_NOT_FOUND
+POST {{api}}/api/assignments/999/submissions
+Content-Type: application/json
+
+{ "studentCode": "SV001", "repositoryUrl": "https://example.com/sv001/rest-api" }
