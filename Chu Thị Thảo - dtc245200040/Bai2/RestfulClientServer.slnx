@@ -1,4 +1,8 @@
 <Solution>
+  <Folder Name="/CatalogAPI/">
+    <Project Path="CatalogAPI/Catalog.Api/Catalog.Api.csproj" />
+    <Project Path="CatalogAPI/Catalog.Client/Catalog.Client.csproj" />
+  </Folder>
   <Folder Name="/RestfulClientServer/" />
   <Folder Name="/RestfulClientServer/src/">
     <Project Path="RestfulClientServer/src/Submission.Api/Submission.Api.csproj" />
