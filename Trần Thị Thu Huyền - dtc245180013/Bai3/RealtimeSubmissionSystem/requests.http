@@ -1,0 +1,60 @@
+@host = http://localhost:5000
+
+### 1. Kiem tra trang thai dich vu
+GET {{host}}/
+
+### 2. Lay danh sach bai tap
+GET {{host}}/api/assignments
+
+### 3. Tao luot nop hop le (status = received) -> 201 Created
+# @name createSubmission
+POST {{host}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "dtc245180013",
+  "repositoryUrl": "https://github.com/Huyenxinh/RealtimeSubmissionSystem"
+}
+
+### 4. Doc lai trang thai luot nop: received -> processing -> graded (200 OK)
+GET {{host}}/api/submissions/{{createSubmission.response.body.$.id}}
+
+### 5. Tao luot nop thieu du lieu -> 400 Bad Request
+POST {{host}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "",
+  "repositoryUrl": ""
+}
+
+### 6. Tao luot nop cho bai tap khong ton tai -> 404 Not Found
+POST {{host}}/api/assignments/999/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "dtc245180013",
+  "repositoryUrl": "https://github.com/Huyenxinh/RealtimeSubmissionSystem"
+}
+
+### 7. Doc luot nop khong ton tai -> 404 Not Found
+GET {{host}}/api/submissions/00000000-0000-0000-0000-000000000000
+
+### 8. Bat tay SignalR negotiate -> 200 OK
+POST {{host}}/hubs/submissions/negotiate?negotiateVersion=1
+
+### 9. Sai duong dan hub (thieu s) -> 404 Not Found
+POST {{host}}/hub/submissions/negotiate?negotiateVersion=1
+
+### 10. Bai tap 2: Nop repo khong bat dau bang https:// -> cham failed
+# @name createFailedSubmission
+POST {{host}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "dtc245180013",
+  "repositoryUrl": "http://insecure-repo.com/dtc245180013"
+}
+
+### 11. Doc lai luot nop cham loi: received -> processing -> failed
+GET {{host}}/api/submissions/{{createFailedSubmission.response.body.$.id}}
