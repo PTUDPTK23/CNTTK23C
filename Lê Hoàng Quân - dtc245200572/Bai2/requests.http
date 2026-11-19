@@ -1,0 +1,35 @@
+@baseUrl = http://localhost:5140
+
+### GET danh sách assignments (200)
+GET {{baseUrl}}/api/assignments
+
+### GET assignment đang tồn tại (200)
+GET {{baseUrl}}/api/assignments/1
+
+### GET assignment không tồn tại (404 ASSIGNMENT_NOT_FOUND)
+GET {{baseUrl}}/api/assignments/999
+
+### POST submission hợp lệ (201 Created + Location)
+# @name createSubmission
+POST {{baseUrl}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentName": "Lê Hoàng Quân",
+  "content": "Bài nộp kiểm thử từ requests.http"
+}
+
+### GET submission vừa tạo (200)
+GET {{baseUrl}}/api/submissions/{{createSubmission.response.body.$.id}}
+
+### GET submission không tồn tại (404 SUBMISSION_NOT_FOUND)
+GET {{baseUrl}}/api/submissions/00000000-0000-0000-0000-000000000000
+
+### POST submission không hợp lệ (400 INVALID_SUBMISSION)
+POST {{baseUrl}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentName": " ",
+  "content": ""
+}
