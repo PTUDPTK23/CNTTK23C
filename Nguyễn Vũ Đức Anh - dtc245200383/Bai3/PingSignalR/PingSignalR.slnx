@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Ping.Api/Ping.Api.csproj" />
+  <Project Path="Ping.Client/Ping.Client.csproj" />
+</Solution>
