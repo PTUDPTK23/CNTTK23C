@@ -43,7 +43,7 @@ app.MapGet("/api/submissions/{submissionId:guid}", (Guid submissionId) =>
 });
 
 app.MapPost("/api/assignments/{assignmentId:int}/submissions",
-    (int assignmentId, CreateSubmissionRequest request) =>
+    (int assignmentId, CreateSubmissionRequest request, IHubContext<SubmissionHub> hubContext) =>
 {
     var assignment = assignments.FirstOrDefault(item => item.Id == assignmentId);
     if (assignment is null)
@@ -76,12 +76,78 @@ app.MapPost("/api/assignments/{assignmentId:int}/submissions",
         submissions.Add(submission);
     }
 
+    _ = SimulateGradingAsync(submission.Id, submission.RepositoryUrl, submissions, submissionsLock, hubContext);
+
     return Results.Created($"/api/submissions/{submission.Id}", submission);
 });
 
 app.MapHub<SubmissionHub>("/hubs/submissions");
 
 app.Run();
+
+static async Task SimulateGradingAsync(
+    Guid submissionId,
+    string repositoryUrl,
+    List<SubmissionDto> submissions,
+    object submissionsLock,
+    IHubContext<SubmissionHub> hubContext)
+{
+    try
+    {
+        await Task.Delay(TimeSpan.FromSeconds(1));
+        await UpdateStatusAsync(submissionId, "processing", submissions, submissionsLock, hubContext);
+
+        await Task.Delay(TimeSpan.FromSeconds(2));
+        // Bai tap 2 (Slide 62): RepositoryUrl khong bat dau bang https:// -> failed
+        var finalStatus = repositoryUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
+            ? "graded"
+            : "failed";
+        await UpdateStatusAsync(submissionId, finalStatus, submissions, submissionsLock, hubContext);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"[Grading Error] {submissionId}: {ex.Message}");
+    }
+}
+
+static async Task UpdateStatusAsync(
+    Guid submissionId,
+    string status,
+    List<SubmissionDto> submissions,
+    object submissionsLock,
+    IHubContext<SubmissionHub> hubContext)
+{
+    SubmissionDto? updatedSubmission = null;
+    lock (submissionsLock)
+    {
+        var index = submissions.FindIndex(item => item.Id == submissionId);
+        if (index >= 0)
+        {
+            updatedSubmission = submissions[index] with
+            {
+                Status = status,
+                UpdatedAt = DateTimeOffset.UtcNow
+            };
+            submissions[index] = updatedSubmission;
+        }
+    }
+
+    if (updatedSubmission is null)
+    {
+        return;
+    }
+
+    var groupName = SubmissionGroups.ForSubmission(submissionId);
+    var message = new SubmissionStatusMessage(
+        updatedSubmission.Id,
+        updatedSubmission.Status,
+        updatedSubmission.UpdatedAt);
+
+    Console.WriteLine($"[Push] {groupName} -> {updatedSubmission.Status}");
+    await hubContext.Clients
+        .Group(groupName)
+        .SendAsync("SubmissionStatusChanged", message);
+}
 
 sealed class SubmissionHub : Hub
 {
@@ -109,4 +175,5 @@ record SubmissionDto(
     string Status,
     DateTimeOffset ReceivedAt,
     DateTimeOffset UpdatedAt);
+record SubmissionStatusMessage(Guid SubmissionId, string Status, DateTimeOffset UpdatedAt);
 record ApiError(string Code, string Message);
