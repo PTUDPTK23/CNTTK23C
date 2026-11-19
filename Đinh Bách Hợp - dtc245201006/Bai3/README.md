@@ -71,4 +71,26 @@ Giải thích:
 
 ## Phần B: EduSubmit realtime
 
+## EduSubmit - Bước 1: tạo solution
+
+![build](anh/edusubmit-b1-build.png)
+Thấy: dotnet build báo Build succeeded, 0 Error(s).
+Giải thích: solution có 2 project (máy chủ Submission.RealtimeApi, máy khách Submission.RealtimeClient); build trước khi viết code để chắc môi trường và gói NuGet ổn.
+
 ## Trả lời 3 câu hỏi đầu giờ
+
+1. **Máy chủ có thể chủ động báo cho máy khách không?**
+   Có, nếu máy khách mở sẵn một kết nối lâu dài (WebSocket qua SignalR). Khi có sự kiện, máy chủ tự gửi bằng `Clients.Group(...).SendAsync(...)`. Nếu gửi từ ngoài hub (như tác vụ chấm bài nền) thì dùng `IHubContext`.
+
+2. **REST và SignalR chia việc thế nào?**
+   REST tạo và đọc tài nguyên, có mã trạng thái rõ ràng (201, 400, 404). SignalR chỉ đẩy các thay đổi phát sinh sau yêu cầu ban đầu. SignalR không thay thế REST, vì trạng thái đúng nhất vẫn lấy từ REST.
+
+3. **Nếu đứt mạng đúng lúc máy chủ báo "đã chấm xong" thì sao?**
+   Tin đó bị mất vì SignalR không lưu tin chờ gửi lại. `WithAutomaticReconnect` nối lại nhưng với ConnectionId mới, nên nhóm cũ cũng mất. Máy khách phải gọi `WatchSubmission` lại và gọi `GET /api/submissions/{id}` để lấy trạng thái cuối. Tóm lại: push để nhanh, REST để chắc.
+
+## Thiết kế kênh thời gian thực EduSubmit
+
+1. Sự kiện: mỗi lần trạng thái lượt nộp đổi (received → processing → graded).
+2. Gửi cho ai: Clients.Group("submission:{id}"), chỉ máy khách đang theo dõi đúng lượt nộp đó.
+3. Gửi kèm gì: record SubmissionStatusMessage(Guid SubmissionId, string Status, DateTimeOffset UpdatedAt).
+4. Mất kết nối: SignalR không lưu tin; gọi lại GET /api/submissions/{id} để lấy trạng thái.
