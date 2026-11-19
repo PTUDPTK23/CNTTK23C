@@ -77,6 +77,12 @@ Giải thích:
 Thấy: dotnet build báo Build succeeded, 0 Error(s).
 Giải thích: solution có 2 project (máy chủ Submission.RealtimeApi, máy khách Submission.RealtimeClient); build trước khi viết code để chắc môi trường và gói NuGet ổn.
 
+## EduSubmit - Bước 2: REST + UpdatedAt + lock
+
+![post201](anh/edusubmit-b2-post201.png)
+Thấy: POST trả 201 Created, có header Location, body có status received và updatedAt.
+Giải thích: UpdatedAt cho biết lần đổi trạng thái gần nhất; lock tránh hai luồng (HTTP và tác vụ nền) cùng sửa danh sách.
+
 ## Trả lời 3 câu hỏi đầu giờ
 
 1. **Máy chủ có thể chủ động báo cho máy khách không?**
