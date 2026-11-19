@@ -1,0 +1,51 @@
+@host = http://localhost:5000
+@pingHost = http://localhost:5200
+
+### 1. GET / -> 200
+GET {{host}}/
+
+### 2. GET danh sach bai tap -> 200
+GET {{host}}/api/assignments
+
+### 3. Tao luot nop -> 201 + Location, status = received
+# @name createSubmission
+POST {{host}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{ "studentCode": "SV001",
+  "repositoryUrl": "https://example.com/sv001/signalr" }
+
+### 4. Doc lai: received -> processing -> graded (bam nhieu lan se thay doi)
+GET {{host}}/api/submissions/{{createSubmission.response.body.$.id}}
+
+### 5. POST thieu du lieu (thieu repositoryUrl) -> 400
+POST {{host}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{ "studentCode": "SV001" }
+
+### 6. POST bai 99 (khong ton tai) -> 404
+POST {{host}}/api/assignments/99/submissions
+Content-Type: application/json
+
+{ "studentCode": "SV001",
+  "repositoryUrl": "https://example.com/sv001/signalr" }
+
+### 7. GET id trong -> 404
+GET {{host}}/api/submissions/
+
+### 8. Bat tay SignalR -> 200 + connectionId
+POST {{host}}/hubs/submissions/negotiate?negotiateVersion=1
+
+### 9. Sai duong dan hub -> 404
+POST {{host}}/hub/submissions/negotiate?negotiateVersion=1
+
+### 10. Bai tap da dong nop -> 400 ASSIGNMENT_CLOSED (them)
+POST {{host}}/api/assignments/2/submissions
+Content-Type: application/json
+
+{ "studentCode": "SV001",
+  "repositoryUrl": "https://example.com/sv001/signalr" }
+
+### 11. Bat tay hub Ping cong 5200 -> 200 (yeu cau kiem tra so 7)
+POST {{pingHost}}/hubs/ping/negotiate?negotiateVersion=1
