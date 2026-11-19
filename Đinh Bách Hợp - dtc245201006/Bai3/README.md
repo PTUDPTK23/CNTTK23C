@@ -32,6 +32,17 @@ Thử thách (An, Bình trong nhóm; Chi không ở nhóm nào):
 - Chi gọi SendToGroup("lop-hoc-01","x"): An và Bình nhận, Chi không nhận vì không phải thành viên.
 - Bình gọi Broadcast("y"): cả 3 người nhận.
 
+### Bước 6: Vòng đời và tự nối lại
+
+![noilai](anh/buoc6-noilai.png)
+Thấy: tắt máy chủ thì máy khách in "Dang ket noi lai...", bật lại thì in "Da ket noi lai" với ConnectionId khác ban đầu.
+Giải thích:
+
+- ConnectionId đổi: máy chủ coi đây là kết nối MỚI.
+- Nhóm bị mất: nhóm gắn với ConnectionId cũ, muốn ở lại nhóm phải gọi lại JoinGroup trong Reconnected.
+- Tin gửi lúc rớt mất hẳn: SignalR không lưu tin chờ gửi lại.
+- Lịch thử lại mặc định của WithAutomaticReconnect: 0s, 2s, 10s, 30s; hết 4 lần thì Closed.
+
 ## Phần B: EduSubmit realtime
 
 ## Trả lời 3 câu hỏi đầu giờ
