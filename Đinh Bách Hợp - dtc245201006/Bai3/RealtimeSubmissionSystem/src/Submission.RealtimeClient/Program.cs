@@ -26,7 +26,40 @@ connection.On<SubmissionStatusMessage>("SubmissionStatusChanged", m =>
 await connection.StartAsync();
 Console.WriteLine("Da ket noi SignalR.");
 
-// === Bước 6 sẽ chèn thêm code ở ĐÂY ===
+// ① REST: lấy danh sách bài tập
+var assignments = await http.GetFromJsonAsync<List<AssignmentDto>>("/api/assignments");
+var selected = assignments?.FirstOrDefault();
+if (selected is null) { Console.WriteLine("Khong co bai tap nao."); return; }
+Console.WriteLine($"Chon bai tap: {selected.Id} - {selected.Title}");
+
+// ② REST: tạo lượt nộp (phải là 201 mới đọc tiếp)
+var createResponse = await http.PostAsJsonAsync(
+    $"/api/assignments/{selected.Id}/submissions",
+    new CreateSubmissionRequest(studentCode, $"https://example.com/{studentCode}/signalr"));
+
+if (createResponse.StatusCode != HttpStatusCode.Created)
+{
+    var error = await createResponse.Content.ReadFromJsonAsync<ApiError>();
+    Console.WriteLine($"Loi {(int)createResponse.StatusCode}: {error?.Code} - {error?.Message}");
+    return;
+}
+
+var created = await createResponse.Content.ReadFromJsonAsync<SubmissionDto>();
+Console.WriteLine($"Da tao luot nop: {created!.Id}");
+Console.WriteLine($"Trang thai REST ban dau: {created.Status}");
+
+// ③ SignalR: xin theo dõi đúng lượt nộp này (chỉ làm được SAU khi có id)
+await connection.InvokeAsync("WatchSubmission", created.Id.ToString());
+
+// ④ Chờ thông báo graded, tối đa 10 giây
+Console.WriteLine("Dang cho thong bao trang thai tu may chu...");
+var completed = await Task.WhenAny(gradedNotification.Task, Task.Delay(TimeSpan.FromSeconds(10)));
+if (completed != gradedNotification.Task)
+    Console.WriteLine("Qua thoi gian cho thong bao graded.");
+
+// ⑤ REST: đọc lại trạng thái cuối (REST là nguồn sự thật)
+var latest = await http.GetFromJsonAsync<SubmissionDto>($"/api/submissions/{created.Id}");
+Console.WriteLine($"Trang thai doc lai bang REST: {latest?.Status}");
 
 record AssignmentDto(int Id, string Title, DateTimeOffset Deadline);
 record CreateSubmissionRequest(string StudentCode, string RepositoryUrl);

@@ -101,6 +101,12 @@ Giải thích: POST trả 201 ngay rồi tác vụ nền chấm bài (Task.Delay
 Thấy: máy khách in "Da ket noi SignalR."
 Giải thích: máy khách dùng HttpClient cho REST và HubConnection cho SignalR trên cùng một URL gốc. Phải đăng ký On("SubmissionStatusChanged") trước StartAsync để không lỡ tin; tên thông điệp phải khớp từng chữ với SendAsync ở máy chủ.
 
+## EduSubmit - Bước 6: POST → Watch → chờ → GET
+
+![graded](anh/edusubmit-graded.png)
+Thấy: máy khách (bên phải) in đủ 8 dòng; hai thông báo SignalR (processing, graded) cách nhau khoảng 2 giây mà máy khách không hề hỏi. Máy chủ (bên trái) in [Hub] theo dõi rồi [Push] processing, graded.
+Giải thích: REST tạo lượt nộp (201) và đọc trạng thái cuối; SignalR chỉ báo các thay đổi phát sinh sau đó. Thứ tự phải đúng: On → StartAsync → POST → Watch → GET. Trạng thái cuối luôn lấy lại bằng REST vì tin đẩy có thể bị lỡ.
+
 ## Trả lời 3 câu hỏi đầu giờ
 
 1. **Máy chủ có thể chủ động báo cho máy khách không?**
