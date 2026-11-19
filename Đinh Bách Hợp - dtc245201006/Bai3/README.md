@@ -135,6 +135,16 @@ Giải thích: REST tạo lượt nộp (201) và đọc trạng thái cuối; S
 
 **Giải thích:** máy chủ chưa chạy nên lần nối đầu tiên (StartAsync) thất bại. WithAutomaticReconnect chỉ cứu được kết nối đã mở rồi mới rớt, không tự thử lại lần nối đầu.
 
+### Thí nghiệm 3: sửa WithUrl thành /hub/submissions (thiếu chữ s)
+
+**Dự đoán:** máy chủ trả 404 Not Found ở bước negotiate nên máy khách báo lỗi ngay khi StartAsync.
+
+![tn3](anh/edusubmit-tn3.png)
+
+**Kết quả thật:** máy khách ném HttpRequestException với mã 404 (Not Found) ngay khi StartAsync, lỗi nằm trong NegotiateAsync.
+
+**Giải thích:** lỗi xảy ra ở bước negotiate vì đường dẫn /hub/submissions không tồn tại trên máy chủ. WithUrl phải khớp chính xác với MapHub là /hubs/submissions.
+
 ## Trả lời 3 câu hỏi đầu giờ
 
 1. **Máy chủ có thể chủ động báo cho máy khách không?**
