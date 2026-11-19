@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/EduSubmit.Api/EduSubmit.Api.csproj" />
+    <Project Path="src/EduSubmit.Client/EduSubmit.Client.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,25 @@
+@baseUrl = http://localhost:5201
+
+### 1. Nop bai hop le (Tra ve 201 Created -> sau 2s SignalR in 'graded')
+POST {{baseUrl}}/api/submissions
+Content-Type: application/json
+
+{
+  "studentId": "dtc245200652",
+  "assignment": "Bai3-SignalR"
+}
+
+### 2. Lay danh sach bai nop (Tra ve 200 OK)
+GET {{baseUrl}}/api/submissions
+
+### 3. Nop bai thieu du lieu (Tra ve 400 Bad Request)
+POST {{baseUrl}}/api/submissions
+Content-Type: application/json
+
+{
+  "studentId": "",
+  "assignment": ""
+}
+
+### 4. Tra cuu ma bai nop khong ton tai (Tra ve 404 Not Found)
+GET {{baseUrl}}/api/submissions/SUB-0000
