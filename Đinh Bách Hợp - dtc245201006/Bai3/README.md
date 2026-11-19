@@ -155,6 +155,16 @@ Giải thích: REST tạo lượt nộp (201) và đọc trạng thái cuối; S
 
 **Giải thích:** On đăng ký theo tên thông điệp, tên "SubmissionStatusChange" không khớp "SubmissionStatusChanged" ở SendAsync nên máy khách bỏ qua thông điệp mà không báo lỗi. Sai tên chiều máy chủ gửi xuống máy khách thì im lặng, rất khó phát hiện. REST vẫn cho trạng thái đúng.
 
+### Thí nghiệm 5: chờ 4 giây rồi mới gọi WatchSubmission
+
+**Dự đoán:** máy chủ chấm xong sau 3 giây, trước khi máy khách vào nhóm, nên máy khách không nhận thông báo nào; nhưng REST đọc lại vẫn là graded.
+
+![tn5](anh/edusubmitb7-tn5.png)
+
+**Kết quả thật:** máy khách không nhận thông báo SignalR nào, sau 10 giây in "Qua thoi gian cho thong bao graded.", REST đọc lại ra graded.
+
+**Giải thích:** bài được chấm xong sau 3 giây, máy chủ đã đẩy processing và graded vào nhóm khi chưa có ai trong nhóm. Máy khách vào nhóm lúc 4 giây nên lỡ cả hai tin. SignalR không lưu tin để gửi lại, vì vậy REST là nguồn sự thật. Thiết kế đúng: push để nhanh, REST để chắc.
+
 ## Trả lời 3 câu hỏi đầu giờ
 
 1. **Máy chủ có thể chủ động báo cho máy khách không?**
