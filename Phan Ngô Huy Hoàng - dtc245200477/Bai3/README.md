@@ -13,20 +13,35 @@
 ```text
 Phan Ngô Huy Hoàng - dtc245200477/
 └── Bai3/
-    ├── README.md                          # Nhật ký, câu trả lời và báo cáo thí nghiệm
-    ├── PingSignalR/                       # Phần 1: Demo cơ chế PingSignalR
+    ├── README.md                          # Báo cáo, nhật ký thí nghiệm & hình ảnh
+    ├── anh/                               # Thư mục chứa đầy đủ ảnh minh chứng các bước
+    │   ├── buoc1-build.png
+    │   ├── buoc2-negotiate.png
+    │   ├── buoc2-ping-api.png
+    │   ├── buoc4-echo.png
+    │   ├── buoc5-nhom.png
+    │   ├── buoc6-noilai.png
+    │   ├── buoc7-loi1.png
+    │   ├── buoc7-loi2.png
+    │   ├── buoc7-loi3.png
+    │   ├── edusubmit-api.png
+    │   ├── edusubmit-graded.png
+    │   ├── edusubmit-requests.png
+    │   ├── edusubmit-requests-200.png
+    │   └── edusubmit-requests-400.png
+    ├── PingSignalR/                       # Phần 1: PingSignalR (cổng 5200)
     │   ├── PingSignalR.slnx
     │   ├── .gitignore
     │   └── src/
-    │       ├── Ping.Api/                  # Máy chủ SignalR Hub (cổng 5200)
-    │       └── Ping.Client/               # Máy khách Console SignalR
-    └── RealtimeSubmissionSystem/          # Phần 2: Hệ thống nộp bài EduSubmit Realtime
+    │       ├── Ping.Api/
+    │       └── Ping.Client/
+    └── RealtimeSubmissionSystem/          # Phần 2: EduSubmit Realtime (cổng 5000)
         ├── RealtimeSubmissionSystem.slnx
-        ├── requests.http                  # 9 ca kiểm thử REST & Bắt tay SignalR
+        ├── requests.http
         ├── .gitignore
         └── src/
-            ├── Submission.RealtimeApi/    # Máy chủ REST + SignalR Hub (cổng 5000)
-            └── Submission.RealtimeClient/ # Máy khách phối hợp REST + SignalR
+            ├── Submission.RealtimeApi/
+            └── Submission.RealtimeClient/
 ```
 
 ---
@@ -54,22 +69,99 @@ Phan Ngô Huy Hoàng - dtc245200477/
 
 ---
 
-## 4. Kết quả chạy máy khách EduSubmit (8 dòng chuẩn)
+## 4. Nhật ký minh chứng hình ảnh từng bước (Slide 22 - 23)
 
-Khi khởi chạy máy chủ `Submission.RealtimeApi` (cổng 5000) và chạy máy khách `Submission.RealtimeClient`, kết quả in ra đúng chuẩn 8 dòng:
+### Bước 1: Tạo solution, project và build thử
+![buoc1-build](anh/buoc1-build.png)
+- **Thấy:** Build cả hai solution `PingSignalR` và `RealtimeSubmissionSystem` thành công 100%, `Build succeeded. 0 Error(s)`.
+- **Giải thích:** Tạo danh bạ quản lý project và tải đầy đủ gói `Microsoft.AspNetCore.SignalR.Client` cho Client.
 
-```text
-Da ket noi SignalR.
-Chon bai tap: 1 - Bai tap SignalR
-Da tao luot nop: 2e1c071e-9271-4a57-b2e1-454378f8cb61
-Trang thai REST ban dau: received
-Dang cho thong bao trang thai tu may chu...
-Thong bao SignalR: 2e1c071e-9271-4a57-b2e1-454378f8cb61 -> processing luc 14:40:01
-Thong bao SignalR: 2e1c071e-9271-4a57-b2e1-454378f8cb61 -> graded luc 14:40:03
-Trang thai doc lai bang REST: graded
-```
+---
 
-*(Máy khách tự động thoát sau khi nhận xong trạng thái `graded`).*
+### Bước 2: Máy chủ Ping.Api & Bắt tay negotiate
+![buoc2-ping-api](anh/buoc2-ping-api.png)
+![buoc2-negotiate](anh/buoc2-negotiate.png)
+- **Thấy:** Máy chủ Ping.Api khởi chạy tại cổng `http://localhost:5200`. Lệnh `curl.exe -X POST "http://localhost:5200/hubs/ping/negotiate?negotiateVersion=1"` trả về `connectionId` và danh sách các cơ chế truyền tải hỗ trợ.
+- **Giải thích:** Bước negotiate là bắt tay HTTP đầu tiên để máy chủ và máy khách đàm phán phương thức truyền thông (ưu tiên WebSocket, sau đó đến SSE, LongPolling).
+
+---
+
+### Bước 3 & 4: Máy khách An kết nối và nhận Echo
+![buoc4-echo](anh/buoc4-echo.png)
+- **Thấy:** Máy khách `An` kết nối thành công tới Hub, gọi `Echo` và nhận được phản hồi riêng `[Echo] Echo: Xin chao SignalR tu An`.
+- **Giải thích:** Sử dụng `Clients.Caller.SendAsync` để trả lời riêng người gọi qua kết nối hai chiều trên cùng một kênh.
+
+---
+
+### Bước 5: Phát rộng (Broadcast) và Nhóm (Group)
+![buoc5-nhom](anh/buoc5-nhom.png)
+- **Thấy:** Máy khách `Binh` tham gia nhóm `lop-hoc-01`. Cửa sổ của `An` nhận được thông báo nhóm `[Group]` và tin nhắn phát rộng `[Broadcast]` từ `Binh`, nhưng không nhận tin `[Echo]` của `Binh`.
+- **Giải thích:** `Clients.Group` chỉ gửi cho thành viên trong nhóm; `Clients.All` phát cho mọi kết nối; `Clients.Caller` chỉ gửi riêng cho người gọi.
+
+---
+
+### Bước 6: Vòng đời kết nối và tự động kết nối lại
+![buoc6-noilai](anh/buoc6-noilai.png)
+- **Thấy:** Khi máy chủ Ping.Api bị ngắt (Ctrl+C) và bật lại, màn hình máy khách hiển thị:
+  - `[Lifecycle] Dang ket noi lai...`
+  - `[Lifecycle] Da ket noi lai: y_H55w57`
+  - `[System] Client y_H55w57 da ket noi.`
+- **Giải thích:** `WithAutomaticReconnect()` tự động phục hồi kết nối ngầm khi mạng chập chờn với một `ConnectionId` mới mà chương trình không bị crash.
+
+---
+
+### Bước 7: Ba thí nghiệm lỗi điển hình (Slide 40)
+
+#### Lỗi 1: Máy chủ chưa chạy
+![buoc7-loi1](anh/buoc7-loi1.png)
+- **Thấy:** `Unhandled exception. System.Net.Http.HttpRequestException: No connection could be made because the target machine actively refused it. (localhost:5200)`.
+- **Giải thích:** `StartAsync` ném ngoại lệ ngay lập tức nếu chưa mở được kết nối ban đầu. `WithAutomaticReconnect` chỉ cứu kết nối đã từng mở thành công.
+
+#### Lỗi 2: Sai đường dẫn Hub
+![buoc7-loi2](anh/buoc7-loi2.png)
+- **Thấy:** `HTTP/1.1 404 Not Found` khi gọi vào URL `/hub/ping` (thiếu `s`).
+- **Giải thích:** Bước negotiate gửi qua HTTP, đường dẫn phía client cấu hình bắt buộc phải khớp tuyệt đối với route đăng ký tại `app.MapHub`.
+
+#### Lỗi 3: Sai tên phương thức / không truyền đúng tham số
+![buoc7-loi3](anh/buoc7-loi3.png)
+- **Thấy:** `HTTP/1.1 400 Bad Request: Connection ID required`.
+- **Giải thích:** Hub SignalR không phục vụ như một endpoint REST thông thường mà yêu cầu `Connection ID` và bắt tay đúng giao thức. Nếu máy khách đăng ký sai tên sự kiện ở `On(...)`, máy chủ đẩy tin về sẽ bị im lặng hoàn toàn.
+
+---
+
+### Bước 8: Khởi chạy máy chủ EduSubmit Realtime
+![edusubmit-api](anh/edusubmit-api.png)
+- **Thấy:** Máy chủ `Submission.RealtimeApi` lắng nghe tại cổng `http://localhost:5000`, nạp đồng thời Minimal API REST và SignalR Hub `/hubs/submissions`.
+- **Giải thích:** Cung cấp nguồn sự thật qua REST và kênh đẩy thông báo nền thông qua `IHubContext<SubmissionHub>`.
+
+---
+
+### Bước 9: Máy khách EduSubmit chạy 2 kênh đạt chuẩn 8 dòng
+![edusubmit-graded](anh/edusubmit-graded.png)
+- **Thấy:** Màn hình máy khách in đúng chuẩn **8 dòng** và tự động thoát:
+  ```text
+  Da ket noi SignalR.
+  Chon bai tap: 1 - Bai tap SignalR
+  Da tao luot nop: d06cc72c-739d-45f1-912d-3db910794501
+  Trang thai REST ban dau: received
+  Dang cho thong bao trang thai tu may chu...
+  Thong bao SignalR: d06cc72c-739d-45f1-912d-3db910794501 -> processing luc 15:06:55
+  Thong bao SignalR: d06cc72c-739d-45f1-912d-3db910794501 -> graded luc 15:06:57
+  Trang thai doc lai bang REST: graded
+  ```
+- **Giải thích:** Máy khách tạo bài qua REST (201 Created), sau đó tham gia nhóm SignalR `submission:{id}` để nhận cập nhật tức thời khi máy chủ chấm bài ở nền, cuối cùng chốt trạng thái bằng REST.
+
+---
+
+### Bước 10: Kiểm thử 9 ca trong `requests.http`
+![edusubmit-requests-200](anh/edusubmit-requests-200.png)
+![edusubmit-requests-400](anh/edusubmit-requests-400.png)
+![edusubmit-requests](anh/edusubmit-requests.png)
+- **Thấy:**
+  - `GET /api/assignments` $\rightarrow$ `HTTP/1.1 200 OK`.
+  - `POST /api/assignments/1/submissions` thiếu body $\rightarrow$ `HTTP/1.1 400 Bad Request`.
+  - `POST /hubs/submissions/negotiate?negotiateVersion=1` $\rightarrow$ `HTTP/1.1 200 OK` trả về `connectionId`.
+- **Giải thích:** Hệ thống xử lý đầy đủ các trường hợp mã trạng thái HTTP chuẩn mực và bước bắt tay của SignalR.
 
 ---
 
@@ -85,21 +177,7 @@ Trang thai doc lai bang REST: graded
 
 ---
 
-## 6. Kiểm thử 9 ca trong `requests.http` (Slide 61)
-
-1. `GET /` $\rightarrow$ `200 OK` (Kiểm tra service running).
-2. `GET /api/assignments` $\rightarrow$ `200 OK` (Danh sách bài tập).
-3. `POST /api/assignments/1/submissions` $\rightarrow$ `201 Created` + Header `Location` + Body `status: "received"`.
-4. `GET /api/submissions/{id}` $\rightarrow$ `200 OK` (Quan sát trạng thái đổi dần sang `processing` rồi `graded`).
-5. `POST /api/assignments/1/submissions` (thiếu trường) $\rightarrow$ `400 Bad Request` (`INVALID_SUBMISSION`).
-6. `POST /api/assignments/999/submissions` $\rightarrow$ `404 Not Found` (`ASSIGNMENT_NOT_FOUND`).
-7. `GET /api/submissions/{guid rỗng}` $\rightarrow$ `404 Not Found` (`SUBMISSION_NOT_FOUND`).
-8. `POST /hubs/submissions/negotiate?negotiateVersion=1` $\rightarrow$ `200 OK` kèm `connectionId` và danh sách transports.
-9. `POST /hub/submissions/negotiate?negotiateVersion=1` $\rightarrow$ `404 Not Found` (sai route).
-
----
-
-## 7. Câu hỏi ôn tập và mở rộng (Slide 68)
+## 6. Câu hỏi ôn tập và thảo luận (Slide 68)
 
 - **Polling vs Push:** Polling tốn rất nhiều request lặp vô ích (hơn 90% dữ liệu không đổi), gây lãng phí CPU và băng thông mạng, đồng thời tạo độ trễ. Push thiết lập 1 kết nối duy nhất, máy chủ chỉ gửi dữ liệu khi có thay đổi thực sự $\rightarrow$ độ trễ gần như bằng 0, tiết kiệm tài nguyên.
 - **WebSocket vs SignalR:** WebSocket là giao thức mạng tầng ứng dụng (RFC 6455) duy trì kênh 2 chiều toàn công song. SignalR là thư viện cấp cao đóng gói bên trên WebSocket, bổ sung RPC, Hub, Groups, cơ chế tự động kết nối lại và tự động hạ cấp xuống Server-Sent Events / Long Polling nếu môi trường mạng chặn WebSocket.
