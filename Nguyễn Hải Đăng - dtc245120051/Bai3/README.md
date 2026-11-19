@@ -1,0 +1,6 @@
+![alt text](buoc1-build-1.jpg)
+![alt text](bbuoc2-nigotiate-1.jpg)
+![alt text](buoc4-echo.png)
+![alt text](buoc5-nhom.png)
+![alt text](buoc6-noilai.png)
+![alt text](buoc7-loi1-1.png)
