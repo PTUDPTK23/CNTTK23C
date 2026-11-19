@@ -125,6 +125,16 @@ Giải thích: REST tạo lượt nộp (201) và đọc trạng thái cuối; S
 
 **Giải thích:** mỗi máy khách gọi WatchSubmission với id của chính mình nên được thêm vào nhóm submission:{id} riêng. Máy chủ gửi bằng Clients.Group nên chỉ thành viên của nhóm đó nhận được. Nhóm tách người nhận, giữ riêng tư cho từng sinh viên và tiết kiệm đường truyền.
 
+### Thí nghiệm 2: chạy máy khách khi máy chủ chưa chạy
+
+**Dự đoán:** máy khách báo lỗi không kết nối được ngay lúc StartAsync và dừng chương trình, không tự thử lại.
+
+![tn2](anh/edusubmit-tn2.png)
+
+**Kết quả thật:** máy khách ném HttpRequestException, báo Connection refused tại localhost:5000 và dừng ngay.
+
+**Giải thích:** máy chủ chưa chạy nên lần nối đầu tiên (StartAsync) thất bại. WithAutomaticReconnect chỉ cứu được kết nối đã mở rồi mới rớt, không tự thử lại lần nối đầu.
+
 ## Trả lời 3 câu hỏi đầu giờ
 
 1. **Máy chủ có thể chủ động báo cho máy khách không?**
