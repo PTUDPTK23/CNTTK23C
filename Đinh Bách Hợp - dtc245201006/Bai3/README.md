@@ -61,6 +61,14 @@ Giải thích:
 - Thấy: HttpRequestException với mã 404 (Not Found).
 - Giải thích: lỗi xảy ra ở bước negotiate. Đường dẫn trong WithUrl phải khớp từng chữ với MapHub<PingHub>("/hubs/ping").
 
+#### Lỗi 3: Sai tên thông điệp
+
+![loi3](anh/buoc7-loi3.png)
+
+- Làm gì: sửa On("EchoResponse") thành On("EchoRespone") (thiếu một chữ s).
+- Thấy: không có lỗi nào, nhưng không in dòng [Echo]; các dòng [System], [Group], [Broadcast] vẫn hiện bình thường.
+- Giải thích: chiều hub gửi về máy khách chỉ khớp bằng chuỗi tên, nên sai một chữ thì không có lỗi biên dịch, không có lỗi chạy, chỉ là không nhận được gì. Khi "không nhận được gì", việc đầu tiên là so tên hai phía.
+
 ## Phần B: EduSubmit realtime
 
 ## Trả lời 3 câu hỏi đầu giờ
