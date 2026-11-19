@@ -1,4 +1,4 @@
-﻿# Bai 3: SignalR - Đinh Bách Hợp - dtc245201006
+# Bai 3: SignalR - Đinh Bách Hợp - dtc245201006
 
 ## Phần A: PingSignalR
 
@@ -111,15 +111,9 @@ Giải thích: REST tạo lượt nộp (201) và đọc trạng thái cuối; S
 
 ### Thí nghiệm 1: chạy 2 máy khách SV001 và SV002 cùng lúc
 
-**Dự đoán:** mỗi máy khách chỉ nhận thông báo của lượt nộp do chính nó tạo, không thấy của máy kia.
-
-## EduSubmit - Bước 7: 5 thí nghiệm phân tán
-
-### Thí nghiệm 1: chạy 2 máy khách SV001 và SV002 cùng lúc
-
 **Dự đoán:** mỗi máy khách chỉ nhận thông báo của lượt nộp do chính nó tạo, không thấy thông báo của máy kia.
 
-![tn1](anh/edusubmit-tn1.png)
+![tn1](anh/edusubmitb7-tn1.png)
 
 **Kết quả thật:** SV001 tạo lượt nộp 8cb1cadb và chỉ nhận processing, graded của lượt nộp này. SV002 tạo lượt nộp b3f06b91 và chỉ nhận processing, graded của lượt nộp b3f06b91. Hai id khác nhau, thông báo không bị trộn lẫn. Máy chủ ghi hai dòng [Hub] theo dõi hai nhóm submission khác nhau.
 
@@ -129,7 +123,7 @@ Giải thích: REST tạo lượt nộp (201) và đọc trạng thái cuối; S
 
 **Dự đoán:** máy khách báo lỗi không kết nối được ngay lúc StartAsync và dừng chương trình, không tự thử lại.
 
-![tn2](anh/edusubmit-tn2.png)
+![tn2](anh/edusubmitb7-tn2.png)
 
 **Kết quả thật:** máy khách ném HttpRequestException, báo Connection refused tại localhost:5000 và dừng ngay.
 
@@ -139,7 +133,7 @@ Giải thích: REST tạo lượt nộp (201) và đọc trạng thái cuối; S
 
 **Dự đoán:** máy chủ trả 404 Not Found ở bước negotiate nên máy khách báo lỗi ngay khi StartAsync.
 
-![tn3](anh/edusubmit-tn3.png)
+![tn3](anh/edusubmitb7-tn3.png)
 
 **Kết quả thật:** máy khách ném HttpRequestException với mã 404 (Not Found) ngay khi StartAsync, lỗi nằm trong NegotiateAsync.
 
@@ -149,7 +143,7 @@ Giải thích: REST tạo lượt nộp (201) và đọc trạng thái cuối; S
 
 **Dự đoán:** không có lỗi nào nhưng máy khách không in thông báo SignalR; sau 10 giây báo hết thời gian chờ, rồi REST vẫn đọc ra graded.
 
-![tn4](anh/edusubmit-tn4.png)
+![tn4](anh/edusubmitb7-tn4.png)
 
 **Kết quả thật:** không có lỗi nào và không có dòng "Thong bao SignalR". Sau 10 giây in "Qua thoi gian cho thong bao graded." rồi REST đọc lại ra graded. Máy chủ vẫn in [Push] bình thường.
 
@@ -181,21 +175,37 @@ File `RealtimeSubmissionSystem/requests.http` gồm 9 ca, chạy bằng extensio
 | 8   | negotiate /hubs/submissions      | 200         | 200     |
 | 9   | negotiate /hub/submissions (sai) | 404         | 404     |
 
-![201](anh/edusubmitb8-201.png)
+![ca1+2](anh/edusubmitb8ca1+2.png)
+
+Ca 1 và 2: GET / và GET /api/assignments đều trả 200 OK.
+
+![ca3](anh/edusubmitb8ca3.png)
 
 Ca 3: tạo lượt nộp trả 201 Created, có header Location, status là received.
 
-![400](anh/edusubmitb8-400.png)
+![ca4](anh/edusubmitb8ca4.png)
+
+Ca 4: đọc lại lượt nộp trả 200 OK, trạng thái đổi dần received, processing, graded.
+
+![ca5](anh/edusubmitb8ca5.png)
 
 Ca 5: thiếu studentCode và repositoryUrl nên trả 400 Bad Request (INVALID_REQUEST).
 
-![404](anh/edusubmitb8-404.png)
+![ca6](anh/edusubmitb8ca6.png)
 
 Ca 6: bài tập 99 không tồn tại nên trả 404 Not Found (ASSIGNMENT_NOT_FOUND).
 
-![negotiate](anh/edusubmitb8-negotiate.png)
+![ca7](anh/edusubmitb8ca7.png)
 
-Ca 8: bước bắt tay SignalR trả 200 OK, có connectionId và ba cơ chế truyền tải WebSockets, ServerSentEvents, LongPolling. Ca 9 sai đường dẫn hub trả 404.
+Ca 7: id lượt nộp không tồn tại nên trả 404 Not Found (SUBMISSION_NOT_FOUND).
+
+![ca8](anh/edusubmitb8ca8.png)
+
+Ca 8: bước bắt tay SignalR trả 200 OK, có connectionId và ba cơ chế truyền tải WebSockets, ServerSentEvents, LongPolling.
+
+![ca9](anh/edusubmitb8ca9.png)
+
+Ca 9: sai đường dẫn hub (/hub/submissions) nên trả 404 Not Found, vì đường dẫn phải khớp MapHub là /hubs/submissions.
 
 ## Trả lời 3 câu hỏi đầu giờ
 
