@@ -14,4 +14,8 @@
 ![echo](anh/buoc4-echo.png)
 - **Thấy:** Máy khách kết nối thành công tới `/hubs/ping` với `ConnectionId` trùng khớp trên log máy chủ; khi gửi tin nhắn từ `Ping.Client`, máy chủ nhận và phản hồi lại ngay `<< Echo: <tin nhắn>`.
 - **Giải thích:** Client gọi phương thức `Echo` trên Hub qua `InvokeAsync`, máy chủ xử lý và gọi ngược lại sự kiện `"Echo"` phía người gọi thông qua `Clients.Caller.SendAsync`.
+## Bước 5: Kiểm thử tự động kết nối lại (WithAutomaticReconnect)
+![alt text](buoc5-reconnect.png)
+- **Thấy:** Khi tắt máy chủ đột ngột, máy khách chuyển sang trạng thái `[!] Dang ket noi lai...`; ngay sau khi khởi động lại máy chủ, máy khách tự động phục hồi kết nối, nhận `ConnectionId` mới và tiếp tục gửi/nhận `Echo` bình thường[cite: 16, 17].
+- **Giải thích:** Cấu hình `.WithAutomaticReconnect()` giúp `HubConnection` tự động thử kết nối lại theo các khoảng trễ mặc định (0s, 2s, 10s, 30s) và cấp phát `ConnectionId` mới khi phiên kết nối được khôi phục.
 
