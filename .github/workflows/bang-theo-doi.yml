@@ -1,0 +1,55 @@
+# Tạo bảng theo dõi + điểm MỘT LẦN sau hạn chót, lưu ở nhánh "bang-theo-doi"
+# Xem/tải: https://github.com/PTUDPTK23/CNTTK23C/tree/bang-theo-doi
+# Điểm GV nhập tay: sửa file _BangTheoDoi/DiemGV_BaiN.csv (ô trống = dùng điểm máy gợi ý).
+# Tự chạy lúc 00:05 ngày 06/11 (giờ VN) = 17:05 UTC ngày 05/11.
+# Muốn tạo lại bảng (sau khi merge thêm bài, nhập điểm...): tab Actions -> Run workflow.
+# Bài sau: sửa khối env + dòng cron cho khớp hạn chót mới (cron tính theo giờ UTC = giờ VN - 7).
+name: Bang theo doi nop bai
+on:
+  schedule:
+    - cron: "5 17 5 11 *"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: bang-theo-doi
+  cancel-in-progress: false
+env:
+  BAI: "1"
+  DUNG_HAN: "2026-11-05 19:00"
+  HAN_CHOT: "2026-11-05 23:59"
+jobs:
+  cap-nhat:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install openpyxl==3.1.5
+      - name: Tao bang
+        run: |
+          mkdir -p /tmp/out
+          python .github/scripts/bang_theo_doi.py . --bai "$BAI" --dung-han "$DUNG_HAN" --han "$HAN_CHOT" \
+            --url "https://github.com/${{ github.repository }}" --diem-gv "_BangTheoDoi/DiemGV_Bai${BAI}.csv" \
+            -o "/tmp/out/TheoDoi_Bai${BAI}.xlsx"
+          # Bản CSV để so sánh: chỉ lưu khi tình hình nộp bài / điểm thật sự thay đổi
+          python -c "import csv,openpyxl,sys; ws=openpyxl.load_workbook(sys.argv[1]).worksheets[0]; csv.writer(open(sys.argv[2],'w',newline='',encoding='utf-8-sig')).writerows(ws.iter_rows(values_only=True))" \
+            "/tmp/out/TheoDoi_Bai${BAI}.xlsx" "/tmp/out/TheoDoi_Bai${BAI}.csv"
+      # Bảng được lưu ở nhánh riêng "bang-theo-doi" để không vướng luật khóa nhánh main
+      - name: Luu len nhanh bang-theo-doi
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git fetch origin bang-theo-doi; then
+            git worktree add /tmp/bang origin/bang-theo-doi && cd /tmp/bang && git checkout -B bang-theo-doi
+          else
+            git worktree add --detach /tmp/bang && cd /tmp/bang && git checkout --orphan bang-theo-doi && git rm -rfq .
+          fi
+          cp /tmp/out/* .
+          git add -A
+          if git diff --cached --quiet -- "TheoDoi_Bai${BAI}.csv"; then echo "Khong co thay doi"; exit 0; fi
+          git commit -m "Cap nhat bang theo doi Bai ${BAI}"
+          git push origin bang-theo-doi

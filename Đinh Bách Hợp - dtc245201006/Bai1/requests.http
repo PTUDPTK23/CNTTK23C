@@ -1,0 +1,36 @@
+@api = http://localhost:5000
+
+### 1. Kiem tra API chay -> 200 OK
+GET {{api}}/
+
+### 2. Lay danh sach bai tap -> 200 OK
+GET {{api}}/api/assignments
+
+### 3. Nop bai hop le -> 201 Created
+POST {{api}}/api/submissions
+Content-Type: application/json
+
+{
+  "assignmentId": 1,
+  "studentCode": "dtc245201006",
+  "repositoryUrl": "https://github.com/minesan2297/EduSubmit-dtc245201006"
+}
+
+### 4. Nop bai thieu thong tin -> 400 Bad Request
+POST {{api}}/api/submissions
+Content-Type: application/json
+
+{
+  "assignmentId": 0,
+  "studentCode": "",
+  "repositoryUrl": ""
+}
+
+### 5. Doc luot nop hop le -> 200 OK (Bước 12)
+# Chu y: Thay ma Guid bang Id nhan duoc tu request so 3
+@submissionId = 00000000-0000-0000-0000-000000000000
+GET {{api}}/api/submissions/{{submissionId}}
+
+### 6. Doc luot nop khong ton tai -> 404 Not Found (Bước 12)
+GET {{api}}/api/submissions/00000000-0000-0000-0000-000000000000
+
