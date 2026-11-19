@@ -14,6 +14,9 @@ var assignments = new List<AssignmentDto>
 var submissions = new List<SubmissionDto>();
 var submissionsLock = new object();
 
+// 0. Kiem tra tinh trang may chu (cho Ca 1 trong requests.http)
+app.MapGet("/", () => Results.Ok("RealtimeSubmissionSystem API is running"));
+
 // 1. Lay danh sach bai tap
 app.MapGet("/api/assignments", () => Results.Ok(assignments));
 
