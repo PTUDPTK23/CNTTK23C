@@ -53,6 +53,14 @@ Giải thích:
 - Thấy: máy khách dừng với HttpRequestException, không kết nối được tới localhost:5200.
 - Giải thích: chưa có tiến trình nào lắng nghe cổng 5200. WithAutomaticReconnect chỉ cứu kết nối ĐÃ mở, không tự thử lại lần nối đầu tiên.
 
+#### Lỗi 2: Sai đường dẫn hub
+
+![loi2](anh/buoc7-loi2.png)
+
+- Làm gì: sửa WithUrl thành /hub/ping (thiếu chữ s).
+- Thấy: HttpRequestException với mã 404 (Not Found).
+- Giải thích: lỗi xảy ra ở bước negotiate. Đường dẫn trong WithUrl phải khớp từng chữ với MapHub<PingHub>("/hubs/ping").
+
 ## Phần B: EduSubmit realtime
 
 ## Trả lời 3 câu hỏi đầu giờ
