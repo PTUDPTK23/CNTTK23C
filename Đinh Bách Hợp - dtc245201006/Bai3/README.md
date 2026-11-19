@@ -165,6 +165,38 @@ Giải thích: REST tạo lượt nộp (201) và đọc trạng thái cuối; S
 
 **Giải thích:** bài được chấm xong sau 3 giây, máy chủ đã đẩy processing và graded vào nhóm khi chưa có ai trong nhóm. Máy khách vào nhóm lúc 4 giây nên lỡ cả hai tin. SignalR không lưu tin để gửi lại, vì vậy REST là nguồn sự thật. Thiết kế đúng: push để nhanh, REST để chắc.
 
+## EduSubmit - Bước 8: requests.http
+
+File `RealtimeSubmissionSystem/requests.http` gồm 9 ca, chạy bằng extension REST Client:
+
+| Ca  | Yêu cầu                          | Mã mong đợi | Mã thật |
+| --- | -------------------------------- | ----------- | ------- |
+| 1   | GET /                            | 200         | 200     |
+| 2   | GET /api/assignments             | 200         | 200     |
+| 3   | POST tạo lượt nộp hợp lệ         | 201         | 201     |
+| 4   | GET lượt nộp vừa tạo             | 200         | 200     |
+| 5   | POST thiếu dữ liệu               | 400         | 400     |
+| 6   | POST bài tập 99                  | 404         | 404     |
+| 7   | GET id không tồn tại             | 404         | 404     |
+| 8   | negotiate /hubs/submissions      | 200         | 200     |
+| 9   | negotiate /hub/submissions (sai) | 404         | 404     |
+
+![201](anh/edusubmitb8-201.png)
+
+Ca 3: tạo lượt nộp trả 201 Created, có header Location, status là received.
+
+![400](anh/edusubmitb8-400.png)
+
+Ca 5: thiếu studentCode và repositoryUrl nên trả 400 Bad Request (INVALID_REQUEST).
+
+![404](anh/edusubmitb8-404.png)
+
+Ca 6: bài tập 99 không tồn tại nên trả 404 Not Found (ASSIGNMENT_NOT_FOUND).
+
+![negotiate](anh/edusubmitb8-negotiate.png)
+
+Ca 8: bước bắt tay SignalR trả 200 OK, có connectionId và ba cơ chế truyền tải WebSockets, ServerSentEvents, LongPolling. Ca 9 sai đường dẫn hub trả 404.
+
 ## Trả lời 3 câu hỏi đầu giờ
 
 1. **Máy chủ có thể chủ động báo cho máy khách không?**
