@@ -1,0 +1,47 @@
+@host = http://localhost:5000
+
+### 1. GET / - Kiem tra may chu dang chay
+GET {{host}}/
+
+### 2. GET /api/assignments - Danh sach bai tap
+GET {{host}}/api/assignments
+
+### 3. POST /api/assignments/1/submissions - Tao luot nop hop le -> 201 + Location, status = received
+# @name createSubmission
+POST {{host}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "SV001",
+  "repositoryUrl": "https://example.com/sv001/signalr"
+}
+
+### 4. GET /api/submissions/{id} - Doc lai luot nop: received -> processing -> graded
+GET {{host}}/api/submissions/{{createSubmission.response.body.$.id}}
+
+### 5. POST /api/assignments/1/submissions - Thieu du lieu (studentCode/repositoryUrl rong) -> 400
+POST {{host}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "",
+  "repositoryUrl": ""
+}
+
+### 6. POST /api/assignments/999/submissions - Bai tap khong ton tai -> 404
+POST {{host}}/api/assignments/999/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "SV001",
+  "repositoryUrl": "https://example.com/sv001/signalr"
+}
+
+### 7. GET /api/submissions/{id} - Luot nop khong ton tai -> 404
+GET {{host}}/api/submissions/00000000-0000-0000-0000-000000000000
+
+### 8. POST /hubs/submissions/negotiate - Bat tay SignalR thanh cong -> 200 + connectionId
+POST {{host}}/hubs/submissions/negotiate?negotiateVersion=1
+
+### 9. POST /hub/submissions/negotiate - Sai duong dan hub (thieu s) -> 404
+POST {{host}}/hub/submissions/negotiate?negotiateVersion=1
