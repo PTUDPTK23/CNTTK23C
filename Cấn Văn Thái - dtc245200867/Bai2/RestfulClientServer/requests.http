@@ -1,0 +1,55 @@
+@api = http://localhost:5000
+
+### 1. Kiểm tra trạng thái máy chủ -> 200 OK
+GET {{api}}/
+
+### 2. Lấy danh sách bài tập -> 200 OK
+GET {{api}}/api/assignments
+
+### 3. Xem chi tiết bài tập 1 -> 200 OK
+GET {{api}}/api/assignments/1
+
+### 4. Bài tập không tồn tại -> 404 Not Found (ASSIGNMENT_NOT_FOUND)
+GET {{api}}/api/assignments/999
+
+### 5. Tuyến không khớp kiểu int -> 404 Not Found (Framework trả body rỗng)
+GET {{api}}/api/assignments/abc
+
+### 6. Nộp bài hợp lệ cho bài tập 1 -> 201 Created
+# @name createSubmission
+POST {{api}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "DTC245200867",
+  "repositoryUrl": "https://github.com/vanthai02032006/PTUDPT-K23C"
+}
+
+### 7. Đọc lại lượt nộp vừa tạo -> 200 OK
+GET {{api}}/api/submissions/{{createSubmission.response.body.$.id}}
+
+### 8. Nộp thiếu thông tin -> 400 Bad Request (INVALID_SUBMISSION)
+POST {{api}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "",
+  "repositoryUrl": ""
+}
+
+### 9. Nộp vào bài tập đã đóng (bài 2) -> 400 Bad Request (ASSIGNMENT_CLOSED)
+POST {{api}}/api/assignments/2/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "DTC245200867",
+  "repositoryUrl": "https://github.com/vanthai02032006/PTUDPT-K23C"
+}
+
+### 10. Thiếu Content-Type -> 415 Unsupported Media Type
+POST {{api}}/api/assignments/1/submissions
+
+{
+  "studentCode": "DTC245200867",
+  "repositoryUrl": "https://github.com/vanthai02032006/PTUDPT-K23C"
+}
