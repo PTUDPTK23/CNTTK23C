@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">VS Code mockup - Build va API tests</title>
+  <desc id="desc">Giao dien mo phong VS Code terminal hien ket qua build va API da xac minh, khong phai screenshot.</desc>
+  <defs><style>
+    .ui{font:13px 'Segoe UI',Arial,sans-serif;fill:#cccccc}.muted{fill:#858585}.code{font:14px Consolas,monospace;fill:#d4d4d4}.ln{font:13px Consolas,monospace;fill:#858585}.blue{fill:#9cdcfe}.green{fill:#89d185}.yellow{fill:#dcdcaa}.orange{fill:#ce9178}
+  </style></defs>
+  <rect width="1600" height="900" fill="#1e1e1e"/>
+  <rect width="1600" height="34" fill="#323233"/>
+  <text x="18" y="23" class="ui" fill="#75beff">◆</text><text x="43" y="23" class="ui">File   Edit   Selection   View   Go   Run   Terminal   Help</text>
+  <text x="800" y="23" class="ui muted" text-anchor="middle">Program.cs - Ping.Api - Visual Studio Code</text><text x="1545" y="23" class="ui muted">—   □   ×</text>
+  <rect y="34" width="1600" height="34" fill="#252526"/>
+  <rect x="0" y="34" width="48" height="832" fill="#333333"/>
+  <text x="15" y="108" class="ui" font-size="21">▤</text><text x="15" y="157" class="ui muted" font-size="21">⌕</text><text x="15" y="205" class="ui muted" font-size="21">⑂</text><text x="15" y="253" class="ui muted" font-size="21">▷</text>
+  <rect x="48" y="68" width="244" height="798" fill="#252526"/>
+  <text x="64" y="96" class="ui">EXPLORER</text><text x="64" y="128" class="ui">⌄  BAI3</text>
+  <text x="82" y="158" class="ui muted">⌄  src</text><text x="101" y="185" class="ui muted">⌄  Ping.Api</text>
+  <rect x="48" y="195" width="244" height="24" fill="#37373d"/><text x="120" y="212" class="ui">Program.cs</text>
+  <text x="101" y="245" class="ui muted">Ping.Api.csproj</text><text x="101" y="272" class="ui muted">⌄ Properties</text>
+  <text x="101" y="301" class="ui muted">⌄ Ping.Client</text><text x="120" y="328" class="ui muted">Program.cs</text>
+  <text x="82" y="360" class="ui muted">PingSignalR.slnx</text><text x="82" y="388" class="ui muted">README.md</text><text x="82" y="416" class="ui muted">requests.http</text>
+  <rect x="292" y="68" width="1308" height="34" fill="#252526"/><rect x="292" y="68" width="180" height="34" fill="#1e1e1e"/>
+  <text x="311" y="90" class="ui">C# Program.cs</text><text x="449" y="90" class="ui muted">×</text><text x="508" y="90" class="ui muted">Ping.Api  ›  Program.cs</text>
+  <rect x="292" y="102" width="1308" height="420" fill="#1e1e1e"/>
+  <text x="316" y="137" class="ln">1</text><text x="352" y="137" class="code"><tspan fill="#c586c0">using</tspan> Microsoft.AspNetCore.SignalR;</text>
+  <text x="316" y="166" class="ln">2</text><text x="352" y="166" class="code"></text>
+  <text x="316" y="195" class="ln">3</text><text x="352" y="195" class="code"><tspan fill="#569cd6">var</tspan> builder = WebApplication.CreateBuilder(args);</text>
+  <text x="316" y="224" class="ln">4</text><text x="352" y="224" class="code">builder.Services.AddSignalR();</text>
+  <text x="316" y="253" class="ln">5</text><text x="352" y="253" class="code"><tspan fill="#569cd6">var</tspan> app = builder.Build();</text>
+  <text x="316" y="282" class="ln">6</text><text x="352" y="282" class="code">app.MapGet(<tspan fill="#ce9178">"/"</tspan>, () =&gt; <tspan fill="#4ec9b0">new</tspan> { service = <tspan fill="#ce9178">"PingApi"</tspan>, status = <tspan fill="#ce9178">"running"</tspan> });</text>
+  <text x="316" y="311" class="ln">7</text><text x="352" y="311" class="code">app.MapHub&lt;PingHub&gt;(<tspan fill="#ce9178">"/hubs/ping"</tspan>);</text>
+  <text x="316" y="340" class="ln">8</text><text x="352" y="340" class="code">app.Run();</text>
+  <text x="316" y="369" class="ln">9</text><text x="352" y="369" class="code"></text>
+  <text x="316" y="398" class="ln">10</text><text x="352" y="398" class="code"><tspan fill="#569cd6">sealed class</tspan> PingHub : Hub</text>
+  <text x="316" y="427" class="ln">11</text><text x="352" y="427" class="code">{ <tspan fill="#569cd6">public async Task</tspan> Echo(<tspan fill="#569cd6">string</tspan> message) =&gt; Clients.Caller.SendAsync(<tspan fill="#ce9178">"EchoResponse"</tspan>, message); }</text>
+  <rect x="292" y="522" width="1308" height="344" fill="#1e1e1e"/>
+  <rect x="292" y="522" width="1308" height="31" fill="#252526"/>
+  <text x="312" y="544" class="ui muted">PROBLEMS</text><text x="416" y="544" class="ui muted">OUTPUT</text><text x="492" y="544" class="ui">TERMINAL</text>
+  <rect x="490" y="550" width="73" height="2" fill="#007acc"/>
+  <text x="316" y="580" class="code"><tspan fill="#569cd6">PS</tspan> C:\Users\My-PC\Downloads\Bai3&gt; dotnet build</text>
+  <text x="316" y="607" class="code green">Build succeeded.</text><text x="316" y="634" class="code">    0 Warning(s)</text><text x="316" y="661" class="code">    0 Error(s)</text>
+  <text x="316" y="704" class="code"><tspan fill="#569cd6">PS</tspan> C:\Users\My-PC\Downloads\Bai3&gt; curl.exe http://localhost:5200/</text>
+  <text x="316" y="731" class="code">{<tspan fill="#ce9178">"service"</tspan>:<tspan fill="#ce9178">"PingApi"</tspan>,<tspan fill="#ce9178">"status"</tspan>:<tspan fill="#ce9178">"running"</tspan>}</text>
+  <text x="316" y="767" class="code"><tspan fill="#569cd6">PS</tspan> ...&gt; curl.exe -X POST http://localhost:5200/hubs/ping/negotiate?negotiateVersion=1</text>
+  <text x="316" y="794" class="code">HTTP 200 | WebSockets | ServerSentEvents | LongPolling</text>
+  <text x="316" y="823" class="code muted">GET /hubs/ping -> 400     POST /hub/ping/negotiate -> 404</text>
+  <rect y="866" width="1600" height="34" fill="#007acc"/><text x="16" y="888" class="ui" fill="#ffffff">&gt;&lt;  Bai3</text>
+  <text x="1210" y="888" class="ui" fill="#ffffff">Ln 1, Col 1   Spaces: 4   UTF-8   CRLF   C#</text>
+  <rect x="1363" y="837" width="220" height="22" rx="4" fill="#3c341d" stroke="#ad8e42"/>
+  <text x="1473" y="852" text-anchor="middle" class="ui" fill="#ffe09a" font-size="11">MOCKUP TAO TU NOI DUNG THAT</text>
+</svg>

@@ -1,0 +1,52 @@
+@submissionApi = http://localhost:5000
+@pingApi = http://localhost:5200
+@repositoryUrl = https://github.com/example/PingSignalR
+
+### 1. Submission API health
+GET {{submissionApi}}/
+
+### 2. List assignments
+GET {{submissionApi}}/api/assignments
+
+### 3. Create a valid submission; keep the returned Location header
+# @name createSubmission
+POST {{submissionApi}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "SV001",
+  "repositoryUrl": "{{repositoryUrl}}"
+}
+
+### 4. After five seconds, GET the Location returned by createSubmission; expected status: graded
+GET {{submissionApi}}{{createSubmission.response.headers.Location}}
+
+### 5. Missing required submission data
+POST {{submissionApi}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{}
+
+### 6. Assignment does not exist
+POST {{submissionApi}}/api/assignments/999/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "SV001",
+  "repositoryUrl": "{{repositoryUrl}}"
+}
+
+### 7. Submission resource does not exist
+GET {{submissionApi}}/api/submissions/00000000-0000-0000-0000-000000000000
+
+### 8. Submission SignalR negotiate
+POST {{submissionApi}}/hubs/submissions/negotiate?negotiateVersion=1
+
+### 9. Incorrect SignalR hub path
+POST {{submissionApi}}/hub/submissions/negotiate?negotiateVersion=1
+
+### 10. Ping API health
+GET {{pingApi}}/
+
+### 11. Ping SignalR negotiate
+POST {{pingApi}}/hubs/ping/negotiate?negotiateVersion=1

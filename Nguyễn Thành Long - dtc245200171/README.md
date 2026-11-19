@@ -7,3 +7,4 @@
 ## Danh sách bài nộp:
 - [Bài 1 - Tổng quan hệ thống và MEP](bai1.md)
 - [Bài 2 - RESTful API cho tương tác client–server](bai2.md)
+- [Bài 3 - Giao tiếp thời gian thực với SignalR: PingSignalR & EduSubmit Realtime](bai3.md)

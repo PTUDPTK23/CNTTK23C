@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">VS Code mockup - Hai client SignalR</title>
+  <desc id="desc">Giao dien mo phong VS Code voi hai terminal PowerShell cho client An va Binh, dua tren ket qua kiem thu. Khong phai screenshot.</desc>
+  <defs><style>
+    .ui{font:13px 'Segoe UI',Arial,sans-serif;fill:#cccccc}.muted{fill:#858585}.code{font:13px Consolas,monospace;fill:#d4d4d4}.green{fill:#89d185}.yellow{fill:#dcdcaa}.orange{fill:#ce9178}.blue{fill:#9cdcfe}
+  </style></defs>
+  <rect width="1600" height="900" fill="#1e1e1e"/>
+  <rect width="1600" height="34" fill="#323233"/><text x="18" y="23" class="ui" fill="#75beff">◆</text>
+  <text x="43" y="23" class="ui">File   Edit   Selection   View   Go   Run   Terminal   Help</text>
+  <text x="800" y="23" class="ui muted" text-anchor="middle">Terminal - PingSignalR - Visual Studio Code</text><text x="1545" y="23" class="ui muted">—   □   ×</text>
+  <rect y="34" width="1600" height="34" fill="#252526"/><rect x="0" y="34" width="48" height="832" fill="#333333"/>
+  <text x="15" y="108" class="ui" font-size="21">▤</text><text x="15" y="157" class="ui muted" font-size="21">⌕</text><text x="15" y="205" class="ui muted" font-size="21">⑂</text><text x="15" y="253" class="ui muted" font-size="21">▷</text>
+  <rect x="48" y="68" width="244" height="798" fill="#252526"/><text x="64" y="96" class="ui">EXPLORER</text><text x="64" y="128" class="ui">⌄  BAI3</text>
+  <text x="82" y="158" class="ui muted">⌄  src</text><text x="101" y="185" class="ui muted">⌄  Ping.Api</text><text x="120" y="212" class="ui muted">Program.cs</text><text x="120" y="239" class="ui muted">PingHub.cs</text>
+  <text x="101" y="271" class="ui muted">⌄  Ping.Client</text><text x="120" y="298" class="ui muted">Program.cs</text>
+  <text x="82" y="331" class="ui muted">PingSignalR.slnx</text><text x="82" y="359" class="ui muted">README.md</text><text x="82" y="387" class="ui muted">requests.http</text>
+  <rect x="292" y="68" width="1308" height="34" fill="#252526"/>
+  <text x="314" y="90" class="ui muted">PROBLEMS</text><text x="422" y="90" class="ui muted">OUTPUT</text><text x="500" y="90" class="ui">TERMINAL</text>
+  <rect x="498" y="96" width="72" height="2" fill="#007acc"/>
+  <rect x="292" y="102" width="1308" height="764" fill="#1e1e1e"/>
+  <rect x="292" y="102" width="1308" height="32" fill="#252526"/>
+  <text x="314" y="124" class="ui">powershell</text><text x="430" y="124" class="ui muted">powershell</text>
+  <text x="1571" y="124" class="ui muted">＋  ▾  □  ×</text>
+  <line x1="944" y1="134" x2="944" y2="866" stroke="#3e3e42" stroke-width="1"/>
+  <text x="318" y="161" class="ui" fill="#dcdcaa">AN - Client console</text>
+  <text x="318" y="194" class="code"><tspan class="blue">PS</tspan> C:\Users\My-PC\Downloads\Bai3&gt; dotnet run --project src/Ping.Client -- http://localhost:5200 An</text>
+  <text x="318" y="226" class="code green">An da ket noi den PingApi</text>
+  <text x="318" y="254" class="code">[System] Client &lt;id&gt; da ket noi.</text>
+  <text x="318" y="282" class="code">[Group] &lt;id&gt; da tham gia nhom lop-hoc-01</text>
+  <text x="318" y="327" class="code"><tspan class="blue">An&gt;</tspan> broadcast Xin chao tat ca tu An</text>
+  <text x="318" y="355" class="code">[Broadcast] Xin chao tat ca tu An</text>
+  <text x="318" y="383" class="code">[Broadcast] Xin chao tat ca tu An</text>
+  <text x="318" y="429" class="code"><tspan class="blue">An&gt;</tspan> group Thong bao nhom tu An</text>
+  <text x="318" y="457" class="code">[Group] Thong bao nhom tu An</text>
+  <text x="318" y="503" class="code"><tspan class="blue">An&gt;</tspan> echo Xin chao tu An</text>
+  <text x="318" y="531" class="code">[Echo] Echo: Xin chao tu An</text>
+  <text x="318" y="577" class="code"><tspan class="blue">An&gt;</tspan> bad</text>
+  <text x="318" y="605" class="code orange">[InvocationError] Method does not exist</text>
+  <text x="318" y="651" class="code green">An nhan Echo rieng, broadcast va group</text>
+  <text x="318" y="693" class="code muted">Client connection established</text>
+  <text x="968" y="161" class="ui" fill="#dcdcaa">BINH - Client console</text>
+  <text x="968" y="194" class="code"><tspan class="blue">PS</tspan> C:\Users\My-PC\Downloads\Bai3&gt; dotnet run --project src/Ping.Client -- http://localhost:5200 Binh</text>
+  <text x="968" y="226" class="code green">Binh da ket noi den PingApi</text>
+  <text x="968" y="254" class="code">[System] Client &lt;id&gt; da ket noi.</text>
+  <text x="968" y="282" class="code">[Group] &lt;id&gt; da tham gia nhom lop-hoc-01</text>
+  <text x="968" y="327" class="code">[Broadcast] Xin chao tat ca tu An</text>
+  <text x="968" y="355" class="code">[Group] Thong bao nhom tu An</text>
+  <text x="968" y="401" class="code muted">Khong co [Echo] tu lenh rieng cua An</text>
+  <text x="968" y="445" class="code">Binh&gt; echo Xin chao tu Binh</text>
+  <text x="968" y="473" class="code">[Echo] Echo: Xin chao tu Binh</text>
+  <text x="968" y="519" class="code">Binh&gt; bad</text>
+  <text x="968" y="547" class="code orange">[InvocationError] Method does not exist</text>
+  <text x="968" y="593" class="code green">Binh nhan broadcast va group cua An</text>
+  <text x="968" y="637" class="code muted">Echo chi phan hoi caller; khong phat cho client khac</text>
+  <text x="968" y="681" class="code muted">Hai client da join group: lop-hoc-01</text>
+  <rect y="866" width="1600" height="34" fill="#007acc"/><text x="16" y="888" class="ui" fill="#ffffff">&gt;&lt;  Bai3</text>
+  <text x="1210" y="888" class="ui" fill="#ffffff">PowerShell   UTF-8   CRLF</text>
+  <rect x="1363" y="837" width="220" height="22" rx="4" fill="#3c341d" stroke="#ad8e42"/>
+  <text x="1473" y="852" text-anchor="middle" class="ui" fill="#ffe09a" font-size="11">MOCKUP TAO TU NOI DUNG THAT</text>
+</svg>
