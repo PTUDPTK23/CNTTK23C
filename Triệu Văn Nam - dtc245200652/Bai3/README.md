@@ -22,3 +22,18 @@
 ![broadcast-group](anh/buoc6-broadcast-group.png)
 - **Thấy:** Tin nhắn `/all` được phát quảng bá tới tất cả máy khách (`[Broadcast - Nam]: Chao ca lop`); khi tham gia phòng bằng `/join K23C` và gửi `/room K23C ...`, hệ thống thông báo vào phòng và chuyển tin nhắn tới đúng các thành viên thuộc nhóm `K23C`
 - **Giải thích:** Máy chủ dùng `Clients.All.SendAsync` để gửi thông báo toàn cục, và dùng `Groups.AddToGroupAsync` kết hợp `Clients.Group(roomName).SendAsync` để phân tách luồng giao tiếp theo từng phòng riêng biệt.
+## Bước 7: Kiểm thử ba lỗi cố ý trong SignalR
+### Lỗi 1: Sai đường dẫn Hub URL (404 Not Found)
+![loi1](anh/buoc7-loi1.png)
+- **Thấy:** Máy khách báo lỗi `HttpRequestException: Response status code does not indicate success: 404 (Not Found)` khi kết nối tới `/hubs/sai-url`.
+- **Giải thích:** Endpoint không tồn tại trên máy chủ nên quá trình thương lượng kết nối (`negotiate`) thất bại với mã HTTP 404.
+
+### Lỗi 2: Gọi sai tên phương thức trên Hub (Method does not exist)
+![loi2](anh/buoc7-loi2.png)
+- **Thấy:** Máy khách ném ngoại lệ `HubException: Failed to invoke 'EchoSaiTen' due to an error on the server. HubException: Method does not exist.`.
+- **Giải thích:** Máy chủ không tìm thấy phương thức public nào khớp với chuỗi tên truyền vào `InvokeAsync`.
+
+### Lỗi 3: Lệch tên sự kiện lắng nghe phía Client
+![loi3](anh/buoc7-loi3.png)
+- **Thấy:** Máy khách gửi tin nhắn `Test loi 3` nhưng không nhận được dòng phản hồi nào.
+- **Giải thích:** Tên sự kiện đăng ký ở `connection.On("EchoKhacTen", ...)` không khớp với sự kiện `"Echo"` mà máy chủ phát về qua `SendAsync` nên gói tin bị bỏ qua âm thầm.

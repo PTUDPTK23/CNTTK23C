@@ -10,7 +10,6 @@ var connection = new HubConnectionBuilder()
     .WithUrl(hubUrl)
     .WithAutomaticReconnect()
     .Build();
-
 connection.On<string>("Echo", reply => Console.WriteLine($"<< {reply}"));
 connection.On<string, string>("ReceiveBroadcast", (user, msg) =>
     Console.WriteLine($"[Broadcast - {user}]: {msg}"));
