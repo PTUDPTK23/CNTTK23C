@@ -63,7 +63,7 @@ REST và SignalR không thay thế nhau mà bổ trợ cho nhau:
 ### Bước 5: Thêm phát rộng và nhóm, ba phạm vi gửi trong cùng một hub
 | Phía Máy chủ (Ping.Api) | Phía Máy khách (Ping.Client) |
 |:---:|:---:|
-| ![Bước 5 - Api](img/Bước%205%20-%20thêm%20phát%20rộng%20và%20nhóm%20(Api).png) | ![Bước 5 - Client](img/Bước%205%20-%20thêm%20phát%20rộng%20và%20nhóm%20(Client).png) |
+| ![Bước 5 - Api](img/Bước%205%20-%20thêm%20phát%20rộng%20và%20nhóm%20-%20Api.png) | ![Bước 5 - Client](img/Bước%205%20-%20thêm%20phát%20rộng%20và%20nhóm%20-%20Client.png) |
 * **Thao tác:**
   * Tại Hub: Thêm `Broadcast(message)` sử dụng `Clients.All`, `JoinGroup(groupName)` sử dụng `Groups.AddToGroupAsync`, và `SendToGroup(groupName, message)` sử dụng `Clients.Group`.
   * Tại Client: Đăng ký nghe sự kiện `BroadcastMessage`, `GroupMessage`, đồng thời gọi các hàm tương ứng trên hub.
