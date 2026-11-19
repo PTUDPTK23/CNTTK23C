@@ -33,3 +33,29 @@ Dang cho thong bao trang thai tu may chu...
 Thong bao SignalR: 820aff42-1170-4433-b86d-5d88b9ef1769 -> processing luc 15:31:17
 Thong bao SignalR: 820aff42-1170-4433-b86d-5d88b9ef1769 -> graded luc 15:31:19
 Trang thai doc lai bang REST: graded
+## Ảnh minh chứng kết quả chạy thực tế
+
+### Minh chứng 1
+![Minh chứng 1](images/image1.png)
+
+### Minh chứng 2
+![Minh chứng 2](images/image2.png)
+
+### Minh chứng 3
+![Minh chứng 3](images/image3.png)
+
+### Minh chứng 4
+![Minh chứng 4](images/image4.png)
+
+### Minh chứng 5
+![Minh chứng 5](images/image5.png)
+
+### Minh chứng 6
+![Minh chứng 6](images/image6.png)
+
+### Minh chứng 7
+![Minh chứng 7](images/image7.png)
+
+### Minh chứng 8
+![Minh chứng 8](images/image8.png)
+
