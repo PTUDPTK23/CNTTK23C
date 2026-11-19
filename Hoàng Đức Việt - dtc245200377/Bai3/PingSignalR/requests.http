@@ -1,0 +1,11 @@
+@host = http://localhost:5200
+
+### 1. Kiem tra REST API trang thai dich vu
+GET {{host}}/
+
+### 2. Bat tay SignalR Negotiate lay connectionId va transport options
+POST {{host}}/hubs/ping/negotiate?negotiateVersion=1
+
+### 3. Goi truc tiep hub bang HTTP thuong (Mong doi: 400 Bad Request - Connection ID required)
+GET {{host}}/hubs/ping
+
