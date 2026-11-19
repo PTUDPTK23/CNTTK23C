@@ -1,0 +1,46 @@
+@api = http://localhost:5100
+
+### 1. Kiểm tra máy chủ → 200 OK
+GET {{api}}/
+
+### 2. Danh sách sản phẩm → 200 OK
+GET {{api}}/api/products
+
+### 3. Sản phẩm tồn tại (id=1) → 200 OK
+GET {{api}}/api/products/1
+
+### 4. Sản phẩm không tồn tại (id=999) → 404 Not Found + ApiError
+GET {{api}}/api/products/999
+
+### 5. ID không phải số nguyên (id=abc) → 404 Not Found (body rỗng)
+GET {{api}}/api/products/abc
+
+### 6. Tạo sản phẩm hợp lệ → 201 Created + Location
+POST {{api}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Lap trinh gRPC",
+  "description": "Tai lieu bai 5",
+  "price": 80000
+}
+
+### 7. Giá âm → 400 Bad Request + ApiError
+POST {{api}}/api/products
+Content-Type: application/json
+
+{
+  "name": "San pham loi",
+  "description": "",
+  "price": -1
+}
+
+### 8. Gửi kiểu nội dung không phải JSON → 415 Unsupported Media Type
+POST {{api}}/api/products
+Content-Type: text/plain
+
+{
+  "name": "Lap trinh gRPC",
+  "description": "Tai lieu bai 5",
+  "price": 80000
+}
