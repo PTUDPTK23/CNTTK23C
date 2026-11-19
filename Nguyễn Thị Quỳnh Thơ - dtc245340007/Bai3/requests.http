@@ -1,0 +1,47 @@
+@host = http://localhost:5000
+
+### 1. GET / - Kiem tra dich vu
+GET {{host}}/
+
+### 2. GET /api/assignments - Danh sach bai tap
+GET {{host}}/api/assignments
+
+### 3. POST hop le - Tao luot nop moi -> 201 Created + Location
+# @name createSubmission
+POST {{host}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "dtc245340007",
+  "repositoryUrl": "https://github.com/dtc245340007/realtime-submission"
+}
+
+### 4. GET /api/submissions/{id} - Doc lai trang thai (received -> processing -> graded)
+GET {{host}}/api/submissions/{{createSubmission.response.body.$.id}}
+
+### 5. POST thieu du lieu (thieu studentCode) -> 400 Bad Request
+POST {{host}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "",
+  "repositoryUrl": "https://github.com/dtc245340007/realtime-submission"
+}
+
+### 6. POST bai tap khong ton tai -> 404 Not Found
+POST {{host}}/api/assignments/999/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "dtc245340007",
+  "repositoryUrl": "https://github.com/dtc245340007/realtime-submission"
+}
+
+### 7. GET bai nop khong ton tai (Guid ngau nhien) -> 404 Not Found
+GET {{host}}/api/submissions/00000000-0000-0000-0000-000000000000
+
+### 8. POST negotiate - Bat tay SignalR thanh cong -> 200 OK + connectionId
+POST {{host}}/hubs/submissions/negotiate?negotiateVersion=1
+
+### 9. POST negotiate sai duong dan hub -> 404 Not Found
+POST {{host}}/hub/submissions/negotiate?negotiateVersion=1
