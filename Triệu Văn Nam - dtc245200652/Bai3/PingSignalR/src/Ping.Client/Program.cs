@@ -2,32 +2,24 @@
 
 const string hubUrl = "http://localhost:5200/hubs/ping";
 
+Console.Write("Nhap ten cua ban: ");
+var userName = Console.ReadLine();
+if (string.IsNullOrWhiteSpace(userName)) userName = "User-" + Random.Shared.Next(100, 999);
+
 var connection = new HubConnectionBuilder()
     .WithUrl(hubUrl)
     .WithAutomaticReconnect()
     .Build();
 
-// Đăng ký lắng nghe sự kiện "Echo" từ máy chủ gửi về
-connection.On<string>("Echo", reply =>
-{
-    Console.WriteLine($"<< {reply}");
-});
-
-connection.Reconnecting += err =>
-{
-    Console.WriteLine($"[!] Dang ket noi lai... ({err?.Message})");
-    return Task.CompletedTask;
-};
-
-connection.Reconnected += id =>
-{
-    Console.WriteLine($"[+] Da ket noi lai! ConnectionId moi: {id}");
-    return Task.CompletedTask;
-};
+connection.On<string>("Echo", reply => Console.WriteLine($"<< {reply}"));
+connection.On<string, string>("ReceiveBroadcast", (user, msg) =>
+    Console.WriteLine($"[Broadcast - {user}]: {msg}"));
+connection.On<string, string, string>("ReceiveRoomMessage", (room, user, msg) =>
+    Console.WriteLine($"[Phong {room} - {user}]: {msg}"));
 
 await connection.StartAsync();
-Console.WriteLine($"Da ket noi toi {hubUrl} (ConnectionId: {connection.ConnectionId})");
-Console.WriteLine("Nhap tin nhan va nhan Enter (go 'exit' de thoat):");
+Console.WriteLine($"Da ket noi toi {hubUrl} (Id: {connection.ConnectionId})");
+Console.WriteLine("Cu phap: '/all <tin>' | '/join <phong>' | '/room <phong> <tin>' | 'exit'");
 
 while (true)
 {
@@ -35,7 +27,24 @@ while (true)
     if (string.IsNullOrWhiteSpace(line)) continue;
     if (line.Equals("exit", StringComparison.OrdinalIgnoreCase)) break;
 
-    await connection.InvokeAsync("Echo", line);
+    if (line.StartsWith("/all "))
+    {
+        await connection.InvokeAsync("Broadcast", userName, line[5..]);
+    }
+    else if (line.StartsWith("/join "))
+    {
+        await connection.InvokeAsync("JoinRoom", line[6..].Trim(), userName);
+    }
+    else if (line.StartsWith("/room "))
+    {
+        var parts = line[6..].Split(' ', 2);
+        if (parts.Length == 2)
+            await connection.InvokeAsync("SendToRoom", parts[0], userName, parts[1]);
+    }
+    else
+    {
+        await connection.InvokeAsync("Echo", line);
+    }
 }
 
 await connection.StopAsync();

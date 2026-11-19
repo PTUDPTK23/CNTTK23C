@@ -15,7 +15,10 @@
 - **Thấy:** Máy khách kết nối thành công tới `/hubs/ping` với `ConnectionId` trùng khớp trên log máy chủ; khi gửi tin nhắn từ `Ping.Client`, máy chủ nhận và phản hồi lại ngay `<< Echo: <tin nhắn>`.
 - **Giải thích:** Client gọi phương thức `Echo` trên Hub qua `InvokeAsync`, máy chủ xử lý và gọi ngược lại sự kiện `"Echo"` phía người gọi thông qua `Clients.Caller.SendAsync`.
 ## Bước 5: Kiểm thử tự động kết nối lại (WithAutomaticReconnect)
-![alt text](buoc5-reconnect.png)
-- **Thấy:** Khi tắt máy chủ đột ngột, máy khách chuyển sang trạng thái `[!] Dang ket noi lai...`; ngay sau khi khởi động lại máy chủ, máy khách tự động phục hồi kết nối, nhận `ConnectionId` mới và tiếp tục gửi/nhận `Echo` bình thường[cite: 16, 17].
+![reconnect](anh/buoc5-reconnect.png)
+- **Thấy:** Khi tắt máy chủ đột ngột, máy khách chuyển sang trạng thái `[!] Dang ket noi lai...`; ngay sau khi khởi động lại máy chủ, máy khách tự động phục hồi kết nối, nhận `ConnectionId` mới và tiếp tục gửi/nhận `Echo` bình thường
 - **Giải thích:** Cấu hình `.WithAutomaticReconnect()` giúp `HubConnection` tự động thử kết nối lại theo các khoảng trễ mặc định (0s, 2s, 10s, 30s) và cấp phát `ConnectionId` mới khi phiên kết nối được khôi phục.
-
+## Bước 6: Giao tiếp Broadcast (Clients.All) và theo nhóm (Groups)
+![broadcast-group](anh/buoc6-broadcast-group.png)
+- **Thấy:** Tin nhắn `/all` được phát quảng bá tới tất cả máy khách (`[Broadcast - Nam]: Chao ca lop`); khi tham gia phòng bằng `/join K23C` và gửi `/room K23C ...`, hệ thống thông báo vào phòng và chuyển tin nhắn tới đúng các thành viên thuộc nhóm `K23C`
+- **Giải thích:** Máy chủ dùng `Clients.All.SendAsync` để gửi thông báo toàn cục, và dùng `Groups.AddToGroupAsync` kết hợp `Clients.Group(roomName).SendAsync` để phân tách luồng giao tiếp theo từng phòng riêng biệt.
