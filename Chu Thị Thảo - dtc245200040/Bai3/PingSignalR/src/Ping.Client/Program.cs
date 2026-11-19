@@ -9,10 +9,24 @@ await using var connection = new HubConnectionBuilder()
     .WithAutomaticReconnect()
     .Build();
 
-// 2. Đăng ký hàm xử lý thông điệp (đặt TRƯỚC StartAsync)
+// 2. Đăng ký hàm xử lý thông điệp & vòng đời (đặt TRƯỚC StartAsync)
 connection.On<string>("EchoResponse", msg => Console.WriteLine($"[Echo] {msg}"));
 connection.On<string>("BroadcastMessage", m => Console.WriteLine($"[Broadcast] {m}"));
 connection.On<string>("GroupMessage", m => Console.WriteLine($"[Group] {m}"));
+connection.On<string>("SystemMessage", m => Console.WriteLine($"[System] {m}"));
+
+connection.Reconnecting += _ => {
+    Console.WriteLine("[Lifecycle] Dang ket noi lai...");
+    return Task.CompletedTask;
+};
+connection.Reconnected += newId => {
+    Console.WriteLine($"[Lifecycle] Da ket noi lai: {newId?[..8]}");
+    return Task.CompletedTask;
+};
+connection.Closed += _ => {
+    Console.WriteLine("[Lifecycle] Ket noi da dong.");
+    return Task.CompletedTask;
+};
 
 // 3. Mở kết nối
 await connection.StartAsync();
