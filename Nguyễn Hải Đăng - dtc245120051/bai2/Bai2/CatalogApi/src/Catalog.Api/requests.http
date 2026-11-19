@@ -1,0 +1,45 @@
+@baseUrl = http://localhost:5100
+
+### 1. Kiểm tra trạng thái máy chủ
+GET {{baseUrl}}/
+
+### 2. Lấy danh sách toàn bộ sản phẩm
+GET {{baseUrl}}/api/products
+
+### 3. Lấy chi tiết sản phẩm hợp lệ (200 OK)
+GET {{baseUrl}}/api/products/1
+
+### 4. Lấy chi tiết sản phẩm không tồn tại (404 Not Found - có JSON lỗi)
+GET {{baseUrl}}/api/products/999
+
+### 5. Lấy chi tiết với ID sai kiểu dữ liệu (404 Not Found - body rỗng)
+GET {{baseUrl}}/api/products/abc
+
+### 6. Tạo mới sản phẩm hợp lệ (201 Created)
+POST {{baseUrl}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Lap trinh gRPC",
+  "description": "Tai lieu bai 5",
+  "price": 80000
+}
+
+### 7. Tạo mới sản phẩm lỗi giá âm (400 Bad Request)
+POST {{baseUrl}}/api/products
+Content-Type: application/json
+
+{
+  "name": "San pham loi",
+  "description": "",
+  "price": -1
+}
+
+### 8. Tạo mới thiếu Content-Type (415 Unsupported Media Type)
+POST {{baseUrl}}/api/products
+
+{
+  "name": "Thieu header",
+  "description": "",
+  "price": 50000
+}
