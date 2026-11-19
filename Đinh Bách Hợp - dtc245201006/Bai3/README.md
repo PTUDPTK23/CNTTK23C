@@ -95,6 +95,12 @@ Giải thích: hub chỉ có một việc là đưa kết nối vào nhóm submi
 Thấy: ba lần GET cho trạng thái received → processing → graded, updatedAt tăng dần; máy chủ in [Push] processing và graded.
 Giải thích: POST trả 201 ngay rồi tác vụ nền chấm bài (Task.Delay giả lập). Máy chủ lưu dữ liệu trước, đẩy thông báo sau, nên ai đọc REST ngay khi nhận tin cũng thấy đúng. Ngoài hub phải dùng IHubContext để gửi, vì đối tượng hub chỉ sống trong một lời gọi.
 
+## EduSubmit - Bước 5: máy khách mở hai kênh
+
+![ketnoi](anh/edusubmit-b5-ketnoi.png)
+Thấy: máy khách in "Da ket noi SignalR."
+Giải thích: máy khách dùng HttpClient cho REST và HubConnection cho SignalR trên cùng một URL gốc. Phải đăng ký On("SubmissionStatusChanged") trước StartAsync để không lỡ tin; tên thông điệp phải khớp từng chữ với SendAsync ở máy chủ.
+
 ## Trả lời 3 câu hỏi đầu giờ
 
 1. **Máy chủ có thể chủ động báo cho máy khách không?**
