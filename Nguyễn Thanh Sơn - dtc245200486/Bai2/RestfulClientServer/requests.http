@@ -1,0 +1,58 @@
+@api = http://localhost:5000
+
+### 1. Kiem tra trang thai may chu API -> 200 OK
+GET {{api}}/
+
+### 2. Lay danh sach tat ca bai tap -> 200 OK
+GET {{api}}/api/assignments
+
+### 3. Lay chi tiet bai tap hop le -> 200 OK
+GET {{api}}/api/assignments/1
+
+### 4. Lay bai tap khong ton tai -> 404 ASSIGNMENT_NOT_FOUND
+GET {{api}}/api/assignments/999
+
+### 5. Nop bai tap 1 hop le -> 201 Created + Header Location
+# @name createSubmission
+POST {{api}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "SV001",
+  "repositoryUrl": "https://example.com/sv001/rest-api"
+}
+
+### 6. Doc lai luot nop vua tao qua Location ID -> 200 OK
+GET {{api}}/api/submissions/{{createSubmission.response.body.$.id}}
+
+### 7. Nop bai tap 1 voi body rong -> 400 INVALID_SUBMISSION
+POST {{api}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "",
+  "repositoryUrl": ""
+}
+
+### 8. Nop vao bai tap da dong -> 400 ASSIGNMENT_CLOSED
+POST {{api}}/api/assignments/3/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "SV001",
+  "repositoryUrl": "https://example.com/sv001/rest-api"
+}
+
+### 9. Doc luot nop khong ton tai -> 404 SUBMISSION_NOT_FOUND
+GET {{api}}/api/submissions/00000000-0000-0000-0000-000000000000
+
+### 10. Nop thieu Content-Type header -> 415 Unsupported Media Type
+POST {{api}}/api/assignments/1/submissions
+
+{
+  "studentCode": "SV001",
+  "repositoryUrl": "https://example.com/sv001/rest-api"
+}
+
+### 11. Sai phuong thuc HTTP tren URI hop le -> 405 Method Not Allowed
+PUT {{api}}/api/assignments/1
