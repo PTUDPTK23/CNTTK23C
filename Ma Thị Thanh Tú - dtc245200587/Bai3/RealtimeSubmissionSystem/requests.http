@@ -1,0 +1,55 @@
+@host = http://localhost:5000
+
+### 1. GET / -> 200
+GET {{host}}/
+
+### 2. GET danh sách bài tập -> 200
+GET {{host}}/api/assignments
+
+### 3. Tạo lượt nộp hợp lệ -> 201 + Location, status = received
+# @name createSubmission
+POST {{host}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "DTC245200587",
+  "repositoryUrl": "https://github.com/Thanhtu278/EduSubmit-DTC245200587"
+}
+
+### 4. Đọc lại lượt nộp (bấm nhiều lần để thấy received -> processing -> graded) -> 200
+GET {{host}}/api/submissions/{{createSubmission.response.body.$.id}}
+
+### 5. POST thiếu dữ liệu -> 400
+POST {{host}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "",
+  "repositoryUrl": "not-a-valid-url"
+}
+
+### 6. POST bài 99 (không tồn tại) -> 404
+POST {{host}}/api/assignments/99/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "DTC245200587",
+  "repositoryUrl": "https://github.com/Thanhtu278/EduSubmit-DTC245200587"
+}
+
+### 7. GET id rỗng / không tồn tại -> 404
+GET {{host}}/api/submissions/00000000-0000-0000-0000-000000000000
+
+### 8. Bắt tay SignalR (negotiate) -> 200 + connectionId
+POST {{host}}/hubs/submissions/negotiate?negotiateVersion=1
+
+### 9. Sai đường dẫn hub -> 404
+POST {{host}}/hub/submissions/negotiate?negotiateVersion=1
+```
+
+---
+
+### 2. Cách chạy kiểm tra 9 ca
+1. **Đảm bảo máy chủ đang chạy** ở cổng `5000`:
+   ```powershell
+   dotnet run --project src/Submission.RealtimeApi --urls http://localhost:5000
