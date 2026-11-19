@@ -1,0 +1,98 @@
+### ==============================================================================
+### requests.http - Bộ kiểm thử các ca HTTP cho EduSubmit API (Bai 2)
+### Sinh viên: Hoàng Trang Hiên - MSSV: DTC245200494 - Lớp: K23C
+### ==============================================================================
+
+@api = http://localhost:5000
+
+### 1. Kiem tra dich vu dang chay -> 200 OK
+GET {{api}}/
+
+### 2. Lay danh sach tat ca bai tap -> 200 OK
+GET {{api}}/api/assignments
+
+### 3. Lay chi tiet bai tap hop le (Id = 1) -> 200 OK
+GET {{api}}/api/assignments/1
+
+### 4. Lay chi tiet bai tap khong ton tai (Id = 999) -> 404 ASSIGNMENT_NOT_FOUND (Handler tra)
+GET {{api}}/api/assignments/999
+
+### 5. Goi route sai kieu du lieu {assignmentId:int} thanh chuoi 'abc' -> 404 Not Found (Framework tra, body rong)
+GET {{api}}/api/assignments/abc
+
+### 6. Ca 5a: Nop bai hop le cho bai tap 1 -> 201 Created + Header Location
+# @name createSubmission
+POST {{api}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "dtc245200494",
+  "repositoryUrl": "https://github.com/dtc245200494-hue/CNTTK23C"
+}
+
+### 7. Ca 6a: Doc lai luot nop vua tao theo Id (lay tu header Location / body ca 6) -> 200 OK
+GET {{api}}/api/submissions/{{createSubmission.response.body.$.id}}
+
+### 8. Ca 6b: Doc luot nop voi Guid khong ton tai -> 404 SUBMISSION_NOT_FOUND (Handler tra)
+GET {{api}}/api/submissions/00000000-0000-0000-0000-000000000000
+
+### 9. Ca 5b: Nop bai voi body rong -> 400 INVALID_SUBMISSION (Handler tra)
+POST {{api}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "",
+  "repositoryUrl": ""
+}
+
+### 10. Ca 5f: Nop bai thieu truong repositoryUrl -> 400 INVALID_SUBMISSION (Handler tra)
+POST {{api}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "DTC245200494"
+}
+
+### 11. Ca 5c: Nop bai vao bai tap khong ton tai (999) -> 404 ASSIGNMENT_NOT_FOUND (Handler tra)
+POST {{api}}/api/assignments/999/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "dtc245200494",
+  "repositoryUrl": "https://github.com/dtc245200494-hue/CNTTK23C"
+}
+
+### 12. Ca 5h: Nop bai vao bai tap da dong (Id = 3, IsOpen = false) -> 400 ASSIGNMENT_CLOSED (Handler tra)
+POST {{api}}/api/assignments/3/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "dtc245200494",
+  "repositoryUrl": "https://github.com/dtc245200494-hue/CNTTK23C"
+}
+
+### 13. [Buoc 9 Mo rong] Ca 9c: Nop lai bai tap da nop -> 409 DUPLICATE_SUBMISSION (Handler tra)
+POST {{api}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "dtc245200494",
+  "repositoryUrl": "https://github.com/dtc245200494-hue/CNTTK23C"
+}
+
+### 14. [Buoc 9 Mo rong] Ca 9d: Rut lai luot nop da tao (DELETE) -> 204 No Content
+DELETE {{api}}/api/submissions/{{createSubmission.response.body.$.id}}
+
+### 15. [Buoc 9 Mo rong] Ca 9e: Rut lai luot nop da bi xoa -> 404 SUBMISSION_NOT_FOUND
+DELETE {{api}}/api/submissions/{{createSubmission.response.body.$.id}}
+
+### 16. Ca 5d: Gui yeu cau thieu header Content-Type -> 415 Unsupported Media Type (Framework tra)
+POST {{api}}/api/assignments/1/submissions
+
+{
+  "studentCode": "dtc245200494",
+  "repositoryUrl": "https://github.com/dtc245200494-hue/CNTTK23C"
+}
+
+### 17. Ca 5g: Sai phuong thuc HTTP (PUT vao /api/assignments/1) -> 405 Method Not Allowed (Framework tra)
+PUT {{api}}/api/assignments/1
