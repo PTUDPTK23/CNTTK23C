@@ -1,0 +1,47 @@
+@host = http://localhost:5000
+
+### Ca 1: GET / - Kiem tra may chu dang chay (200 OK)
+GET {{host}}/
+
+### Ca 2: GET /api/assignments - Lay danh sach bai tap (200 OK)
+GET {{host}}/api/assignments
+
+### Ca 3: POST /api/assignments/1/submissions - Tao luot nop hop le (201 Created + Location)
+# @name createSubmission
+POST {{host}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "SV001",
+  "repositoryUrl": "https://example.com/sv001/signalr"
+}
+
+### Ca 4: GET /api/submissions/{id} - Doc lai luot nop (200 OK, bam nhieu lan thay: received -> processing -> graded)
+GET {{host}}/api/submissions/{{createSubmission.response.body.$.id}}
+
+### Ca 5: POST thieu du lieu (thieu studentCode hoac repositoryUrl) -> 400 Bad Request
+POST {{host}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "",
+  "repositoryUrl": "https://example.com/sv001/signalr"
+}
+
+### Ca 6: POST vao bai tap khong ton tai (ID = 999) -> 404 Not Found
+POST {{host}}/api/assignments/999/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "SV001",
+  "repositoryUrl": "https://example.com/sv001/signalr"
+}
+
+### Ca 7: GET voi id luot nop khong ton tai -> 404 Not Found
+GET {{host}}/api/submissions/00000000-0000-0000-0000-000000000000
+
+### Ca 8: Bat tay SignalR dung endpoint -> 200 OK + tra connectionId
+POST {{host}}/hubs/submissions/negotiate?negotiateVersion=1
+
+### Ca 9: Bat tay SignalR sai endpoint hub -> 404 Not Found
+POST {{host}}/hub/submissions/negotiate?negotiateVersion=1
