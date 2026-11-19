@@ -1,0 +1,46 @@
+using Microsoft.AspNetCore.SignalR.Client;
+
+var serverUrl = args.Length > 0 ? args[0].TrimEnd('/') : "http://localhost:5200";
+var name = args.Length > 1 ? args[1] : "Client";
+const string groupName = "lop-hoc-01";
+
+// 1. Xay dung ket noi toi hub
+await using var connection = new HubConnectionBuilder()
+    .WithUrl($"{serverUrl}/hubs/ping")
+    .WithAutomaticReconnect()
+    .Build();
+
+// 2. Dang ky ham xu ly cho tung TEN thong diep (truoc StartAsync)
+connection.On<string>("EchoRespone", m => Console.WriteLine($"[Echo] {m}"));
+connection.On<string>("BroadcastMessage", m => Console.WriteLine($"[Broadcast] {m}"));
+connection.On<string>("GroupMessage", m => Console.WriteLine($"[Group] {m}"));
+connection.On<string>("SystemMessage", m => Console.WriteLine($"[System] {m}"));
+
+connection.Reconnecting += _ =>
+{
+    Console.WriteLine("[Lifecycle] Dang ket noi lai...");
+    return Task.CompletedTask;
+};
+connection.Reconnected += async newId =>
+{
+    Console.WriteLine($"[Lifecycle] Da ket noi lai: {newId?[..8]}");
+    // ConnectionId moi => nhom cu mat, phai vao lai
+    await connection.InvokeAsync("JoinGroup", groupName);
+};
+connection.Closed += _ =>
+{
+    Console.WriteLine("[Lifecycle] Ket noi da dong.");
+    return Task.CompletedTask;
+};
+
+// 3. Mo ket noi
+await connection.StartAsync();
+Console.WriteLine($"{name} da ket noi den PingApi. ConnectionId: {connection.ConnectionId?[..8]}");
+
+await connection.InvokeAsync("Echo", $"Xin chao SignalR tu {name}");
+await connection.InvokeAsync("JoinGroup", groupName);
+await connection.InvokeAsync("SendToGroup", groupName, $"Thong bao nhom tu {name}");
+await connection.InvokeAsync("Broadcast", $"Xin chao tat ca tu {name}");
+
+Console.WriteLine("Dang cho thong diep... Nhan Enter de thoat.");
+Console.ReadLine();
