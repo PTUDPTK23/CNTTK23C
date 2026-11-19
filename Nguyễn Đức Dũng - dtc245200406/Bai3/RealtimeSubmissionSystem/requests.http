@@ -1,0 +1,47 @@
+@host = http://localhost:5000
+
+### 1. Health check
+GET {{host}}/
+
+### 2. List assignments
+GET {{host}}/api/assignments
+
+### 3. Create a valid submission (201 Created)
+# @name createSubmission
+POST {{host}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "SV001",
+  "repositoryUrl": "https://example.com/SV001/signalr"
+}
+
+### 4. Get the created submission (200 OK)
+GET {{host}}/api/submissions/{{createSubmission.response.body.$.id}}
+
+### 5. Create a submission with missing data (400 Bad Request)
+POST {{host}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "SV001",
+  "repositoryUrl": " "
+}
+
+### 6. Submit to a missing assignment (404 Not Found)
+POST {{host}}/api/assignments/99/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "SV001",
+  "repositoryUrl": "https://example.com/SV001/signalr"
+}
+
+### 7. Get a missing submission (404 Not Found)
+GET {{host}}/api/submissions/00000000-0000-0000-0000-000000000000
+
+### 8. SignalR negotiate at the correct hub path (200 OK)
+POST {{host}}/hubs/submissions/negotiate?negotiateVersion=1
+
+### 9. SignalR negotiate at the incorrect hub path (404 Not Found)
+POST {{host}}/hub/submissions/negotiate?negotiateVersion=1
