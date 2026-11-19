@@ -1,0 +1,44 @@
+@api = http://localhost:5100
+
+### Danh sách sản phẩm → 200
+GET {{api}}/api/products
+
+### Lấy chi tiết sản phẩm tồn tại → 200
+GET {{api}}/api/products/1
+
+### Sản phẩm không tồn tại → 404 + ApiError
+GET {{api}}/api/products/999
+
+### Sai định dạng id (không phải số) → 404 rỗng (Framework)
+GET {{api}}/api/products/abc
+
+### Tạo sản phẩm hợp lệ → 201 Created + Location
+POST {{api}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Lap trinh gRPC",
+  "description": "Tai lieu bai 5",
+  "price": 80000
+}
+
+### Tạo sản phẩm dữ liệu sai (giá âm) → 400 Bad Request
+POST {{api}}/api/products
+Content-Type: application/json
+
+{
+  "name": "San pham loi",
+  "description": "",
+  "price": -1
+}
+
+### Thiếu Content-Type → 415 Unsupported Media Type
+POST {{api}}/api/products
+
+{
+  "name": "Lap trinh gRPC",
+  "price": 80000
+}
+
+### Phương thức không được hỗ trợ (PUT /api/products) → 405 Method Not Allowed
+PUT {{api}}/api/products
