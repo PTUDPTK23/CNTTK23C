@@ -145,6 +145,16 @@ Giải thích: REST tạo lượt nộp (201) và đọc trạng thái cuối; S
 
 **Giải thích:** lỗi xảy ra ở bước negotiate vì đường dẫn /hub/submissions không tồn tại trên máy chủ. WithUrl phải khớp chính xác với MapHub là /hubs/submissions.
 
+### Thí nghiệm 4: sửa On("SubmissionStatusChanged") thành On("SubmissionStatusChange")
+
+**Dự đoán:** không có lỗi nào nhưng máy khách không in thông báo SignalR; sau 10 giây báo hết thời gian chờ, rồi REST vẫn đọc ra graded.
+
+![tn4](anh/edusubmit-tn4.png)
+
+**Kết quả thật:** không có lỗi nào và không có dòng "Thong bao SignalR". Sau 10 giây in "Qua thoi gian cho thong bao graded." rồi REST đọc lại ra graded. Máy chủ vẫn in [Push] bình thường.
+
+**Giải thích:** On đăng ký theo tên thông điệp, tên "SubmissionStatusChange" không khớp "SubmissionStatusChanged" ở SendAsync nên máy khách bỏ qua thông điệp mà không báo lỗi. Sai tên chiều máy chủ gửi xuống máy khách thì im lặng, rất khó phát hiện. REST vẫn cho trạng thái đúng.
+
 ## Trả lời 3 câu hỏi đầu giờ
 
 1. **Máy chủ có thể chủ động báo cho máy khách không?**
