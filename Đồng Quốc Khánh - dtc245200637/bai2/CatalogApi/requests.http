@@ -1,0 +1,33 @@
+@api = http://localhost:5100
+
+### Bước 2: Kiểm tra máy chủ đang chạy → 200 OK
+GET {{api}}/
+
+### Bước 3: Danh sách sản phẩm → 200 OK (mảng JSON)
+GET {{api}}/api/products
+
+### Bước 4a: Sản phẩm có Id = 1 → 200 OK
+GET {{api}}/api/products/1
+
+### Bước 4b: Sản phẩm không tồn tại → 404 + ApiError
+GET {{api}}/api/products/999
+
+### Bước 4c: Id không phải số → 404, body rỗng (framework trả)
+GET {{api}}/api/products/abc
+
+### Bước 5: Tạo sản phẩm hợp lệ → 201 Created + Location
+POST {{api}}/api/products
+Content-Type: application/json
+
+{ "name": "Lap trinh gRPC", "description": "Tai lieu bai 5", "price": 80000 }
+
+### Bước 5: Tạo sản phẩm giá âm → 400 + ApiError
+POST {{api}}/api/products
+Content-Type: application/json
+
+{ "name": "San pham loi", "description": "", "price": -1 }
+
+### Bước 5: Tạo sản phẩm thiếu Content-Type → 415
+POST {{api}}/api/products
+
+{ "name": "Lap trinh gRPC", "description": "Tai lieu bai 5", "price": 80000 }
