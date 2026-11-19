@@ -1,0 +1,59 @@
+@baseUrl = http://localhost:5000
+
+### 1. List submissions
+GET {{baseUrl}}/api/submissions
+Accept: application/json
+
+### 2. OpenAPI document
+GET {{baseUrl}}/openapi/v1.json
+Accept: application/json
+
+### 3. Create a submission (save the returned id as createSubmission)
+# @name createSubmission
+POST {{baseUrl}}/api/submissions
+Content-Type: application/json
+
+{
+  "studentName": "Nguyen Van A",
+  "assignmentName": "Bai tap SignalR"
+}
+
+### 4. Read the created submission
+@submissionId = {{createSubmission.response.body.$.id}}
+GET {{baseUrl}}/api/submissions/{{submissionId}}
+Accept: application/json
+
+### 5. Reject a missing student name
+POST {{baseUrl}}/api/submissions
+Content-Type: application/json
+
+{
+  "studentName": " ",
+  "assignmentName": "Bai tap SignalR"
+}
+
+### 6. Reject a missing assignment name
+POST {{baseUrl}}/api/submissions
+Content-Type: application/json
+
+{
+  "studentName": "Nguyen Van A",
+  "assignmentName": ""
+}
+
+### 7. Return 404 for an unknown submission
+GET {{baseUrl}}/api/submissions/00000000-0000-0000-0000-000000000000
+Accept: application/json
+
+### 8. Reject null request fields
+POST {{baseUrl}}/api/submissions
+Content-Type: application/json
+
+{
+  "studentName": null,
+  "assignmentName": "Bai tap SignalR"
+}
+
+### 9. SignalR negotiate endpoint
+POST {{baseUrl}}/hubs/submissions/negotiate?negotiateVersion=1
+Content-Length: 0
