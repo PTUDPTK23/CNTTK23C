@@ -1,0 +1,47 @@
+@host = http://localhost:5200
+
+### 1. GET / -> 200
+GET {{host}}/
+
+### 2. GET danh sach bai tap -> 200
+GET {{host}}/api/assignments
+
+### 3. POST hop le -> 201 + Location, status = received
+# @name createSubmission
+POST {{host}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "SV001",
+  "repositoryUrl": "https://example.com/sv001/signalr"
+}
+
+### 4. GET luot nop -> 200 (Bam nhieu lan thay doi: received -> processing -> graded)
+GET {{host}}/api/submissions/{{createSubmission.response.body.$.id}}
+
+### 5. POST thieu du lieu -> 400
+POST {{host}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "",
+  "repositoryUrl": "khong-phai-url"
+}
+
+### 6. POST bai 99 (khong ton tai) -> 404
+POST {{host}}/api/assignments/99/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "SV001",
+  "repositoryUrl": "https://example.com/sv001/signalr"
+}
+
+### 7. GET id rong -> 404
+GET {{host}}/api/submissions/00000000-0000-0000-0000-000000000000
+
+### 8. negotiate (Bat tay SignalR) -> 200 + connectionId
+POST {{host}}/hubs/submissions/negotiate?negotiateVersion=1
+
+### 9. sai hub (Sai duong dan hub) -> 404
+POST {{host}}/hub/submissions/negotiate?negotiateVersion=1
