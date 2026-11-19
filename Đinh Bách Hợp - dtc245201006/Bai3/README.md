@@ -43,6 +43,16 @@ Giải thích:
 - Tin gửi lúc rớt mất hẳn: SignalR không lưu tin chờ gửi lại.
 - Lịch thử lại mặc định của WithAutomaticReconnect: 0s, 2s, 10s, 30s; hết 4 lần thì Closed.
 
+### Bước 7: Ba thí nghiệm lỗi
+
+#### Lỗi 1: Máy chủ chưa chạy
+
+![loi1](anh/buoc7-loi1.png)
+
+- Làm gì: tắt máy chủ rồi chạy máy khách.
+- Thấy: máy khách dừng với HttpRequestException, không kết nối được tới localhost:5200.
+- Giải thích: chưa có tiến trình nào lắng nghe cổng 5200. WithAutomaticReconnect chỉ cứu kết nối ĐÃ mở, không tự thử lại lần nối đầu tiên.
+
 ## Phần B: EduSubmit realtime
 
 ## Trả lời 3 câu hỏi đầu giờ
