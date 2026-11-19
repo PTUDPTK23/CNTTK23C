@@ -8,4 +8,4 @@
   dotnet new console -n Submission.Client -o src/Submission.Client
   dotnet sln add src/Submission.Api/Submission.Api.csproj
   dotnet sln add src/Submission.Client/Submission.Client.csproj
-  dotnet new gitignore
+  dotnet new gitignore  
