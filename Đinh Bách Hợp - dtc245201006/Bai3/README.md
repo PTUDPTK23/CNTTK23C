@@ -83,6 +83,12 @@ Giải thích: solution có 2 project (máy chủ Submission.RealtimeApi, máy k
 Thấy: POST trả 201 Created, có header Location, body có status received và updatedAt.
 Giải thích: UpdatedAt cho biết lần đổi trạng thái gần nhất; lock tránh hai luồng (HTTP và tác vụ nền) cùng sửa danh sách.
 
+## EduSubmit - Bước 3: SubmissionHub và nhóm submission:{id}
+
+![negotiate](anh/edusubmit-b3-negotiate.png)
+Thấy: negotiate ở /hubs/submissions trả connectionId cùng 3 cách truyền tải; sai đường dẫn /hub/submissions trả 404.
+Giải thích: hub chỉ có một việc là đưa kết nối vào nhóm submission:{id}. Nhóm theo lượt nộp giúp riêng tư (SV này không thấy bài SV khác) và tiết kiệm băng thông.
+
 ## Trả lời 3 câu hỏi đầu giờ
 
 1. **Máy chủ có thể chủ động báo cho máy khách không?**

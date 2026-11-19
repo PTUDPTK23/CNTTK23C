@@ -1,4 +1,7 @@
+using Microsoft.AspNetCore.SignalR; // MỚI
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSignalR(); // MỚI
 var app = builder.Build();
 
 var assignments = new List<AssignmentDto>
@@ -7,7 +10,7 @@ var assignments = new List<AssignmentDto>
     new(2, "Bai tap da dong", new DateTimeOffset(2020, 1, 1, 0, 0, 0, TimeSpan.Zero))
 };
 var submissions = new List<SubmissionDto>();
-var submissionsLock = new object(); // tác vụ nền + HTTP cùng sửa danh sách
+var submissionsLock = new object();
 
 app.MapGet("/", () => Results.Ok(new { service = "RealtimeApi", status = "running" }));
 
@@ -44,6 +47,8 @@ app.MapPost("/api/assignments/{assignmentId:int}/submissions",
     return Results.Created($"/api/submissions/{submission.Id}", submission);
 });
 
+app.MapHub<SubmissionHub>("/hubs/submissions"); // MỚI
+
 app.Run();
 
 record AssignmentDto(int Id, string Title, DateTimeOffset Deadline);
@@ -51,3 +56,21 @@ record CreateSubmissionRequest(string? StudentCode, string? RepositoryUrl);
 record SubmissionDto(Guid Id, int AssignmentId, string StudentCode, string RepositoryUrl,
     string Status, DateTimeOffset ReceivedAt, DateTimeOffset UpdatedAt);
 record ApiError(string Code, string Message);
+
+// MỚI: hub mỏng, chỉ đưa kết nối vào nhóm của lượt nộp
+sealed class SubmissionHub : Hub
+{
+    public async Task WatchSubmission(string submissionId)
+    {
+        var group = SubmissionGroups.ForSubmission(submissionId);
+        await Groups.AddToGroupAsync(Context.ConnectionId, group);
+        Console.WriteLine($"[Hub] {Context.ConnectionId[..8]} theo doi {group}");
+    }
+}
+
+// MỚI: một chỗ duy nhất sinh tên nhóm
+static class SubmissionGroups
+{
+    public static string ForSubmission(Guid id) => ForSubmission(id.ToString());
+    public static string ForSubmission(string id) => $"submission:{id}";
+}
