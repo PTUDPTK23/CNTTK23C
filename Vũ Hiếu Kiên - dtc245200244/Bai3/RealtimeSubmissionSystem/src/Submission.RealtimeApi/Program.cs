@@ -1,4 +1,8 @@
+using Microsoft.AspNetCore.SignalR;
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSignalR();
+
 var app = builder.Build();
 
 var assignments = new List<AssignmentDto>
@@ -75,7 +79,25 @@ app.MapPost("/api/assignments/{assignmentId:int}/submissions",
     return Results.Created($"/api/submissions/{submission.Id}", submission);
 });
 
+app.MapHub<SubmissionHub>("/hubs/submissions");
+
 app.Run();
+
+sealed class SubmissionHub : Hub
+{
+    public async Task WatchSubmission(string submissionId)
+    {
+        var groupName = SubmissionGroups.ForSubmission(submissionId);
+        await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+        Console.WriteLine($"[Hub] {Context.ConnectionId[..Math.Min(8, Context.ConnectionId.Length)]} theo doi {groupName}");
+    }
+}
+
+static class SubmissionGroups
+{
+    public static string ForSubmission(Guid submissionId) => ForSubmission(submissionId.ToString());
+    public static string ForSubmission(string submissionId) => $"submission:{submissionId}";
+}
 
 record AssignmentDto(int Id, string Title, string Description, bool IsOpen);
 record CreateSubmissionRequest(string StudentCode, string RepositoryUrl);
