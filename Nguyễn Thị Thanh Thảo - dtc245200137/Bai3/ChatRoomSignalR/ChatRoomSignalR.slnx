@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ChatRoom.Api/ChatRoom.Api.csproj" />
+    <Project Path="src/ChatRoom.Client/ChatRoom.Client.csproj" />
+  </Folder>
+</Solution>
