@@ -1,0 +1,79 @@
+@api = http://localhost:5000
+
+### Ca 1: Kiem tra may chu dang chay -> 200
+GET {{api}}/
+
+### Ca 2: Danh sach bai tap -> 200
+GET {{api}}/api/assignments
+
+### Ca 3: Chi tiet mot bai tap ton tai -> 200
+GET {{api}}/api/assignments/1
+
+### Ca 4: Bai tap khong ton tai -> 404 + ApiError (ASSIGNMENT_NOT_FOUND)
+GET {{api}}/api/assignments/999
+
+### Ca 5: Bai tap sai kieu id (chu thay vi so) -> 404 (framework)
+GET {{api}}/api/assignments/abc
+
+### Ca 6: Nop bai hop le cho bai tap 1 -> 201 Created + Location
+# @name createSubmission
+POST {{api}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "SV001",
+  "repositoryUrl": "https://example.com/sv001/rest-api"
+}
+
+### Ca 7: Doc lai luot nop vua tao theo id -> 200
+GET {{api}}/api/submissions/{{createSubmission.response.body.$.id}}
+
+### Ca 8: Nop bai cho bai tap khong ton tai -> 404 + ApiError (ASSIGNMENT_NOT_FOUND)
+POST {{api}}/api/assignments/999/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "SV002",
+  "repositoryUrl": "https://example.com/sv002/rest-api"
+}
+
+### Ca 9: Nop bai vao bai tap da dong -> 400 + ApiError (ASSIGNMENT_CLOSED)
+POST {{api}}/api/assignments/3/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "SV003",
+  "repositoryUrl": "https://example.com/sv003/rest-api"
+}
+
+### Ca 10: Nop thieu du lieu (rong) -> 400 + ApiError (INVALID_SUBMISSION)
+POST {{api}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "",
+  "repositoryUrl": ""
+}
+
+### Ca 11: Nop bai thieu Content-Type -> 415 Unsupported Media Type
+POST {{api}}/api/assignments/1/submissions
+
+{
+  "studentCode": "SV004",
+  "repositoryUrl": "https://example.com/sv004/rest-api"
+}
+
+### Ca 12: Nop trung bai tap 1 cung SV001 (Mo rong Buoc 9) -> 409 Conflict (DUPLICATE_SUBMISSION)
+POST {{api}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "SV001",
+  "repositoryUrl": "https://example.com/sv001/rest-api"
+}
+
+### Ca 13: Xoa luot nop vua tao (Mo rong Buoc 9) -> 204 No Content
+DELETE {{api}}/api/submissions/{{createSubmission.response.body.$.id}}
+
+### Ca 14: Doc lai luot nop da xoa -> 404 (SUBMISSION_NOT_FOUND)
+GET {{api}}/api/submissions/{{createSubmission.response.body.$.id}}
