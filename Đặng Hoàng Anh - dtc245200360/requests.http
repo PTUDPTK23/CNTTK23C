@@ -1,0 +1,67 @@
+@api = http://localhost:5000
+
+### 1. Kiem tra may chu -> 200
+GET {{api}}/
+
+### 2. Danh sach bai tap -> 200
+GET {{api}}/api/assignments
+
+### 3. Chi tiet bai tap 1 -> 200
+GET {{api}}/api/assignments/1
+
+### 4. Bai tap khong ton tai -> 404 ASSIGNMENT_NOT_FOUND
+GET {{api}}/api/assignments/999
+
+### 5. Nop bai cho bai tap 1 -> 201 Created + Location
+# @name createSubmission
+POST {{api}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{ "studentCode": "SV001", "repositoryUrl": "https://example.com/sv001/rest-api" }
+
+### 6. Doc lai luot nop vua tao (lay id tu phan hoi 5) -> 200
+GET {{api}}/api/submissions/{{createSubmission.response.body.$.id}}
+
+### 7. Nop bai thieu du lieu -> 400 INVALID_SUBMISSION
+POST {{api}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{ "studentCode": "", "repositoryUrl": "" }
+
+### 8. Nop vao bai tap khong ton tai -> 404 ASSIGNMENT_NOT_FOUND
+POST {{api}}/api/assignments/999/submissions
+Content-Type: application/json
+
+{ "studentCode": "SV001", "repositoryUrl": "https://example.com/sv001/rest-api" }
+
+### 9. Nop vao bai tap da dong -> 400 ASSIGNMENT_CLOSED
+POST {{api}}/api/assignments/3/submissions
+Content-Type: application/json
+
+{ "studentCode": "SV001", "repositoryUrl": "https://example.com/sv001/rest-api" }
+
+### 10. Luot nop khong ton tai -> 404 SUBMISSION_NOT_FOUND
+GET {{api}}/api/submissions/00000000-0000-0000-0000-000000000000
+
+### 11. Thieu Content-Type -> 415
+POST {{api}}/api/assignments/1/submissions
+
+{ "studentCode": "SV001", "repositoryUrl": "https://example.com/sv001" }
+
+### 12. JSON sai cu phap -> 400
+POST {{api}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{ "studentCode": "SV001",
+
+### 13. Thieu repositoryUrl -> 400
+POST {{api}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{ "studentCode": "SV001" }
+
+### 14. PUT khong ho tro -> 405
+PUT {{api}}/api/assignments/1
+Content-Type: application/json
+
+{}
