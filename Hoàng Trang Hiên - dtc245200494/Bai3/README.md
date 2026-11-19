@@ -105,22 +105,74 @@ REST và SignalR không thay thế nhau mà bổ trợ cho nhau:
 
 ---
 
-## III. Hệ thống nộp bài thời gian thực EduSubmit (`RealtimeSubmissionSystem`)
+## III. Các bước thực hành EduSubmit Realtime (Phần 3)
 
-### 1. Kết quả chạy máy khách EduSubmit (Slide 57, 71)
-Máy khách `Submission.RealtimeClient` thực thi đúng chuẩn 8 dòng và tự động thoát:
-```text
-Da ket noi SignalR.
-Chon bai tap: 1 - Bai tap SignalR
-Da tao luot nop: ea702ca2-f52b-49cc-a675-851a81c743d1
-Trang thai REST ban dau: received
-Dang cho thong bao trang thai tu may chu...
-Thong bao SignalR: ea702ca2-f52b-49cc-a675-851a81c743d1 -> processing
-Thong bao SignalR: ea702ca2-f52b-49cc-a675-851a81c743d1 -> graded
-Trang thai doc lai bang REST: graded
-```
+### Bước 1: Tạo solution mới với hai project như Bài 2, thêm gói cho máy khách
+![Bước 1 - tạo solution mới với hai project như Bài 2, thêm gói cho máy khách](img/Bước%201%20-%20tạo%20solution%20mới%20với%20hai%20project%20như%20Bài%202,%20thêm%20gói%20cho%20máy%20khách.png)
+* **Thao tác:**
+  * Tạo solution `RealtimeSubmissionSystem.slnx`.
+  * Tạo project máy chủ `Submission.RealtimeApi` (template web, chạy cổng 5000).
+  * Tạo project máy khách `Submission.RealtimeClient` (template console).
+  * Cài đặt gói `Microsoft.AspNetCore.SignalR.Client --version 10.0.15` cho máy khách.
+  * Cấu hình `Directory.Build.props` và `.gitignore` để build thành công 0 Warning, 0 Error.
 
-### 2. Bảng 5 thí nghiệm phân tán (Slide 58 - 59)
+---
+
+### Bước 2: Dán phần REST của Bài 2, thêm UpdatedAt và một khóa dữ liệu
+![Bước 2 - dán phần REST của Bài 2, thêm UpdatedAt và khóa dữ liệu](img/Bước%202%20-%20dán%20phần%20REST%20của%20Bài%202,%20thêm%20UpdatedAt%20và%20khóa%20dữ%20liệu.png)
+* **Thao tác:**
+  * Kế thừa toàn bộ endpoint REST Bài 2: `GET /api/assignments`, `POST /api/assignments/{id}/submissions`, `GET /api/submissions/{id}`.
+  * Thêm thuộc tính `UpdatedAt` vào `SubmissionDto` để lưu thời điểm cập nhật trạng thái gần nhất.
+  * Thêm `submissionsLock` với từ khóa `lock` để bảo vệ tài nguyên danh sách khi tác vụ nền và HTTP request cùng truy cập đồng thời.
+
+---
+
+### Bước 3: Hub mỏng chỉ làm một việc, đưa kết nối vào nhóm của lượt nộp
+![Bước 3 - hub mỏng đưa kết nối vào nhóm của lượt nộp](img/Bước%203%20-%20hub%20mỏng%20đưa%20kết%20nối%20vào%20nhóm%20của%20lượt%20nộp.png)
+* **Thao tác:**
+  * Đăng ký SignalR và ánh xạ hub: `app.MapHub<SubmissionHub>("/hubs/submissions")`.
+  * Khai báo `SubmissionHub` với phương thức duy nhất `WatchSubmission(submissionId)` đưa máy khách vào nhóm `submission:{id}`.
+  * Kiểm tra bắt tay thành công với `curl -X POST "http://localhost:5000/hubs/submissions/negotiate?negotiateVersion=1"` trả về HTTP 200 và `connectionId`.
+
+---
+
+### Bước 4: POST nhận thêm IHubContext và khởi động chấm bài ở nền
+![Bước 4 kiểm tra - REST thấy trạng thái đổi dần](img/Bước%204%20kiểm%20tra%20-%20REST%20thấy%20trạng%20thái%20đổi%20dần%20từ%20received%20sang%20processing%20và%20graded.png)
+* **Thao tác:**
+  * Tại endpoint POST, inject `IHubContext<SubmissionHub> hubContext`.
+  * Khởi động tác vụ nền bất đồng bộ `_ = SimulateGradingAsync(...)` không `await` để trả về HTTP 201 Created ngay lập tức.
+  * Tác vụ nền dùng `Task.Delay`: sau 1 giây cập nhật `processing` và đẩy vào nhóm; sau 2 giây tiếp cập nhật `graded` và đẩy vào nhóm.
+* **Kết quả kiểm tra:** Gọi curl GET nhiều lần liên tiếp thấy trạng thái đổi dần từ `received` $\rightarrow$ `processing` $\rightarrow$ `graded`.
+
+---
+
+### Bước 5 & 6: Máy khách mở hai kênh, tạo lượt nộp bằng REST, theo dõi bằng SignalR, chốt lại bằng REST
+![Bước 5 & 6 - máy khách mở hai kênh và theo dõi lượt nộp](img/Bước%205%20&%206%20-%20máy%20khách%20mở%20hai%20kênh%20và%20theo%20dõi%20lượt%20nộp.png)
+* **Thao tác:**
+  * Khởi tạo đồng thời `HttpClient` (kênh REST) và `HubConnection` (kênh SignalR).
+  * Đăng ký lắng nghe sự kiện `connection.On<SubmissionStatusMessage>("SubmissionStatusChanged", ...)`.
+  * Dùng `TaskCompletionSource` làm chuông báo hiệu khi nhận được trạng thái `graded`.
+  * Trình tự: `POST nộp bài` $\rightarrow$ `lấy ID` $\rightarrow$ `gọi WatchSubmission vào nhóm` $\rightarrow$ `chờ chuông SignalR` $\rightarrow$ `gọi GET đọc lại chốt kết quả` $\rightarrow$ `tự động kết thúc`.
+
+---
+
+### Bước 6 Kết quả: Hai cập nhật đến từ máy chủ mà máy khách không hề hỏi
+![Bước 6 kết quả - máy khách nhận hai cập nhật thời gian thực](img/Bước%206%20kết%20quả%20-%20máy%20khách%20nhận%20hai%20cập%20nhật%20thời%20gian%20thực%20từ%20máy%20chủ.png)
+* **Kết quả hiển thị tại máy khách (đúng chuẩn 8 dòng):**
+  ```text
+  Da ket noi SignalR.
+  Chon bai tap: 1 - Bai tap SignalR
+  Da tao luot nop: ea702ca2-f52b-49cc-a675-851a81c743d1
+  Trang thai REST ban dau: received
+  Dang cho thong bao trang thai tu may chu...
+  Thong bao SignalR: ea702ca2-f52b-49cc-a675-851a81c743d1 -> processing
+  Thong bao SignalR: ea702ca2-f52b-49cc-a675-851a81c743d1 -> graded
+  Trang thai doc lai bang REST: graded
+  ```
+
+---
+
+### Bước 7: Bảng 5 thí nghiệm phân tán (Slide 58 - 59)
 | STT | Thí nghiệm | Dự đoán | Kết quả chạy thật | Bài học phân tán |
 |:---:|:---|:---|:---|:---|
 | **1** | Chạy 2 máy khách SV001 và SV002 cùng lúc | Mỗi máy khách chỉ nhận thông báo về bài nộp của chính mình. | Cửa sổ SV001 chỉ in thông báo bài SV001, SV002 chỉ in thông báo bài SV002. | Nhóm `submission:{id}` giúp cô lập phạm vi gửi, đảm bảo tính riêng tư dữ liệu và tiết kiệm băng thông mạng. |
@@ -129,28 +181,36 @@ Trang thai doc lai bang REST: graded
 | **4** | Sửa `On("SubmissionStatusChanged")` thành `On("SubmissionStatusChange")` | Không in được thông báo trạng thái, không báo lỗi biên dịch. | Chương trình chạy bình thường, im lặng không in thông báo, 10s sau báo "Qua thoi gian cho thong bao graded". | SignalR là "hợp đồng theo tên chuỗi". Lệch tên sự kiện ở chiều hub gửi xuống máy khách sẽ bị bỏ qua trong im lặng, rất khó phát hiện. |
 | **5** | Chờ 4 giây rồi mới gọi `WatchSubmission` | Không nhận được thông điệp thời gian thực nào. | Không nhận được thông báo SignalR nào (`processing`/`graded`). Nhưng khi gọi REST đọc lại thì vẫn ra `graded`. | Vào nhóm muộn sẽ bị lỡ tin nhắn do SignalR không giữ tin cũ. REST chính là nguồn sự thật giúp cứu vãn tình trạng lỡ tin. |
 
-### 3. Kiểm thử 9 ca trong `requests.http` (Slide 61)
-1. `GET /`: Kiểm tra máy chủ (Mã 200 OK).
-2. `GET /api/assignments`: Lấy danh sách bài tập (Mã 200 OK).
-3. `POST /api/assignments/1/submissions`: Tạo lượt nộp bài hợp lệ (Mã 201 Created + header `Location`).
-4. `GET /api/submissions/{id}`: Đọc lại trạng thái lượt nộp (Mã 200 OK, thấy chuyển từ `received` -> `processing` -> `graded`).
-5. `POST /api/assignments/1/submissions` thiếu dữ liệu: Thiếu studentCode/repositoryUrl (Mã 400 Bad Request).
-6. `POST /api/assignments/999/submissions`: Nộp vào bài tập không tồn tại (Mã 404 Not Found).
-7. `GET /api/submissions/{guid_khong_ton_tai}`: Đọc bài nộp không tồn tại (Mã 404 Not Found).
-8. `POST /hubs/submissions/negotiate?negotiateVersion=1`: Bắt tay SignalR hợp lệ (Mã 200 OK + `connectionId`).
-9. `POST /hub/submissions/negotiate?negotiateVersion=1`: Sai đường dẫn hub (Mã 404 Not Found).
+---
+
+### Bước 8: requests.http gom các ca REST và bước bắt tay của hub
+![Bước 8 - requests.http gom 9 ca REST và bước bắt tay của hub](img/Bước%208%20-%20requests.http%20gom%209%20ca%20REST%20và%20bước%20bắt%20tay%20của%20hub.png)
+1. `GET /`: Kiểm tra máy chủ đang chạy (200 OK).
+2. `GET /api/assignments`: Lấy danh sách bài tập (200 OK).
+3. `POST /api/assignments/1/submissions`: Tạo lượt nộp hợp lệ (201 Created + header `Location`).
+4. `GET /api/submissions/{id}`: Đọc lại trạng thái lượt nộp (200 OK, thấy đổi dần `received` $\rightarrow$ `processing` $\rightarrow$ `graded`).
+5. `POST /api/assignments/1/submissions` thiếu dữ liệu: Thiếu studentCode/repositoryUrl (400 Bad Request).
+6. `POST /api/assignments/999/submissions`: Nộp vào bài tập không tồn tại (404 Not Found).
+7. `GET /api/submissions/{guid_khong_ton_tai}`: Đọc bài nộp không tồn tại (404 Not Found).
+8. `POST /hubs/submissions/negotiate?negotiateVersion=1`: Bắt tay SignalR hợp lệ (200 OK + `connectionId`).
+9. `POST /hub/submissions/negotiate?negotiateVersion=1`: Sai đường dẫn hub (404 Not Found).
 
 ---
 
-## IV. Bài tập mở rộng & Thảo luận (Slide 62, 68)
+## IV. Vận dụng nâng cao (Bài tập 2 - Điểm cộng Slide 62)
 
-### 1. Bài tập mở rộng (Bài tập 2 - Trạng thái failed)
-* Hệ thống kiểm tra `RepositoryUrl`. Nếu không bắt đầu bằng `https://`, tác vụ chấm bài sẽ chuyển trạng thái cuối cùng thành `failed`.
-* Máy khách bắt trạng thái `failed` và in cảnh báo màu đỏ: `!!! CANH BAO: luot nop ... cham LOI (failed)`.
+### Xử lý trạng thái failed và cảnh báo trực quan
+![Vận dụng - bài tập mở rộng trạng thái failed với cảnh báo đỏ](img/Vận%20dụng%20-%20bài%20tập%20mở%20rộng%20trạng%20thái%20failed%20với%20cảnh%20báo%20đỏ.png)
+* **Máy chủ:** Kiểm tra `RepositoryUrl`. Nếu không bắt đầu bằng `https://`, tác vụ chấm bài sẽ chuyển trạng thái cuối cùng thành `failed`.
+* **Máy khách:** Khi nhận trạng thái `failed`, máy khách đổi màu console sang màu đỏ và phát cảnh báo: `!!! CANH BAO: luot nop ... cham LOI (failed)`.
+* **Đối soát REST:** Khi gọi lại `GET /api/submissions/{id}`, REST cũng xác nhận trạng thái cuối cùng là `failed`.
 
-### 2. Thảo luận
-* **Hàng trăm sinh viên cùng theo dõi:** Nên dùng nhóm `Clients.Group("submission:{id}")` thay vì `Clients.All`. Nhóm theo ID đảm bảo chỉ gửi đúng 1 thông báo cho người quan tâm, tiết kiệm tối đa băng thông so với việc broadcast cho toàn bộ kết nối rồi để máy khách tự lọc.
+---
+
+## V. Thảo luận & Mở rộng (Slide 68)
+
+* **Hàng trăm sinh viên cùng theo dõi:** Sử dụng nhóm `Clients.Group("submission:{id}")` là giải pháp tối ưu. Nó đảm bảo tính riêng tư tuyệt đối (sinh viên này không xem được bài của sinh viên khác) và tiết kiệm băng thông tối đa (máy chủ chỉ gửi đúng 1 thông báo cho người quan tâm, thay vì gửi cho hàng trăm kết nối để máy khách tự lọc).
 * **Tình huống nên dùng Polling thay vì SignalR:**
-  1. Dữ liệu rất ít thay đổi (ví dụ tỷ giá ngân hàng, thời tiết cập nhật theo giờ), độ trễ vài chục giây không ảnh hưởng đến nghiệp vụ.
-  2. Môi trường mạng khắt khe (firewall hoặc proxy chặn kết nối kéo dài và nâng cấp giao thức WebSocket).
-* **Mở rộng nhiều bản sao (Scale-out):** Khi chạy nhiều instance API phía sau Load Balancer, bộ nhớ Hub ở các node là độc lập, kết nối của sinh viên ở server A sẽ không nhận được tin do server B phát ra. Cách giải quyết là sử dụng một **Backplane** tập trung (như Redis Backplane hoặc Azure SignalR Service) để định tuyến thông điệp giữa các server.
+  1. Dữ liệu rất ít biến động (như bảng giá định kỳ, thời tiết), độ trễ vài chục giây là chấp nhận được.
+  2. Hệ thống chạy trong môi trường mạng doanh nghiệp khắt khe chặn kết nối lâu dài và nâng cấp giao thức WebSocket.
+* **Mở rộng quy mô (Scale-out):** Khi triển khai nhiều máy chủ API phía sau Load Balancer, các kết nối WebSocket được phân tán ở nhiều máy chủ khác nhau. Cần sử dụng một **Backplane** tập trung (như Redis Backplane hoặc Azure SignalR Service) làm kênh trao đổi tin nhắn trung gian để thông điệp phát ở máy chủ A có thể chuyển tiếp tới máy khách đang kết nối ở máy chủ B.
