@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">VS Code mockup - README PingSignalR</title>
+  <desc id="desc">Giao dien mo phong VS Code mo README va terminal build, khong phai screenshot.</desc>
+  <defs>
+    <style>
+      .ui{font:13px 'Segoe UI',Arial,sans-serif;fill:#cccccc}.muted{fill:#858585}.code{font:14px Consolas,monospace;fill:#d4d4d4}.ln{font:13px Consolas,monospace;fill:#858585}.mdh{font:700 23px 'Segoe UI',Arial,sans-serif;fill:#4fc1ff}.md{font:15px Consolas,monospace;fill:#d4d4d4}.green{fill:#89d185}.yellow{fill:#dcdcaa}.blue{fill:#9cdcfe}.orange{fill:#ce9178}.gray{fill:#6a9955}
+    </style>
+  </defs>
+  <rect width="1600" height="900" fill="#1e1e1e"/>
+  <rect width="1600" height="34" fill="#323233"/>
+  <text x="18" y="23" class="ui" fill="#75beff">◆</text>
+  <text x="43" y="23" class="ui">File   Edit   Selection   View   Go   Run   Terminal   Help</text>
+  <text x="800" y="23" class="ui muted" text-anchor="middle">README.md - Bai3 - Visual Studio Code</text>
+  <text x="1545" y="23" class="ui muted">—   □   ×</text>
+  <rect y="34" width="1600" height="34" fill="#252526"/>
+  <rect x="0" y="34" width="48" height="832" fill="#333333"/>
+  <text x="15" y="108" class="ui" font-size="21">▤</text><text x="15" y="157" class="ui muted" font-size="21">⌕</text>
+  <text x="15" y="205" class="ui muted" font-size="21">⑂</text><text x="15" y="253" class="ui muted" font-size="21">▷</text>
+  <text x="15" y="301" class="ui muted" font-size="21">▧</text><text x="15" y="348" class="ui muted" font-size="21">⬡</text>
+  <rect x="48" y="68" width="244" height="798" fill="#252526"/>
+  <text x="64" y="96" class="ui">EXPLORER</text><text x="265" y="96" class="ui muted">···</text>
+  <text x="64" y="128" class="ui">⌄  BAI3</text>
+  <text x="82" y="155" class="ui muted">⌄  anh</text>
+  <text x="101" y="179" class="ui muted">00-bai3-overview.svg</text>
+  <text x="101" y="202" class="ui muted">01-build-api-results.svg</text>
+  <text x="101" y="225" class="ui muted">02-signalr-scopes.svg</text>
+  <text x="101" y="248" class="ui muted">03-two-client-test.svg</text>
+  <text x="82" y="277" class="ui muted">⌄  src</text>
+  <text x="101" y="301" class="ui muted">⌄  Ping.Api</text>
+  <text x="120" y="325" class="ui muted">Program.cs</text>
+  <text x="101" y="349" class="ui muted">⌄  Ping.Client</text>
+  <text x="120" y="373" class="ui muted">Program.cs</text>
+  <text x="82" y="402" class="ui muted">PingSignalR.slnx</text>
+  <rect x="48" y="429" width="244" height="24" fill="#37373d"/>
+  <text x="82" y="446" class="ui">README.md</text>
+  <text x="82" y="476" class="ui muted">requests.http</text>
+  <rect x="292" y="68" width="1308" height="34" fill="#252526"/>
+  <rect x="292" y="68" width="159" height="34" fill="#1e1e1e"/>
+  <text x="312" y="90" class="ui">▤ README.md</text><text x="431" y="90" class="ui muted">×</text>
+  <text x="1455" y="90" class="ui muted">Markdown Preview</text>
+  <rect x="292" y="102" width="1308" height="440" fill="#1e1e1e"/>
+  <text x="324" y="130" class="ln">1</text><text x="357" y="130" class="mdh"># PingSignalR - Bai 3 SignalR</text>
+  <text x="324" y="158" class="ln">2</text><text x="357" y="158" class="md">Bai thuc hanh tao may chu ASP.NET Core SignalR va hai client console.</text>
+  <text x="324" y="203" class="ln">3</text><text x="357" y="203" class="mdh">## Yeu cau moi truong</text>
+  <text x="324" y="231" class="ln">4</text><text x="357" y="231" class="md">- Windows 10/11 va .NET SDK 10.0</text>
+  <text x="324" y="259" class="ln">5</text><text x="357" y="259" class="md">- PowerShell; REST Client la tuy chon</text>
+  <text x="324" y="304" class="ln">6</text><text x="357" y="304" class="mdh">## Chay API va client</text>
+  <text x="324" y="332" class="ln">7</text><text x="357" y="332" class="md">Terminal 1 - may chu: dotnet run --project src/Ping.Api --urls http://localhost:5200</text>
+  <text x="324" y="360" class="ln">8</text><text x="357" y="360" class="md">Terminal 2/3 - client An va Binh, sau do nhap lenh echo/broadcast/group</text>
+  <text x="324" y="405" class="ln">9</text><text x="357" y="405" class="mdh">## Hop dong SignalR</text>
+  <text x="324" y="433" class="ln">10</text><text x="357" y="433" class="md">Echo -> Caller | Broadcast -> All | SendToGroup -> Group</text>
+  <text x="324" y="478" class="ln">11</text><text x="357" y="478" class="mdh">## Anh minh chung va nop bai</text>
+  <text x="324" y="506" class="ln">12</text><text x="357" y="506" class="md">Luu anh trong anh/; commit theo moc: Bai3: PingSignalR buoc 1-7</text>
+  <rect x="292" y="542" width="1308" height="324" fill="#1e1e1e"/>
+  <rect x="292" y="542" width="1308" height="31" fill="#252526"/>
+  <text x="312" y="563" class="ui muted">PROBLEMS</text><text x="415" y="563" class="ui muted">OUTPUT</text><text x="493" y="563" class="ui">TERMINAL</text>
+  <rect x="490" y="569" width="73" height="2" fill="#007acc"/>
+  <text x="318" y="603" class="code"><tspan fill="#569cd6">PS</tspan> C:\Users\My-PC\Downloads\Bai3&gt; dotnet build</text>
+  <text x="318" y="631" class="code">Restore complete (0.4s)</text>
+  <text x="318" y="659" class="code green">Build succeeded.</text>
+  <text x="318" y="687" class="code">    0 Warning(s)</text>
+  <text x="318" y="715" class="code">    0 Error(s)</text>
+  <text x="318" y="753" class="code"><tspan fill="#569cd6">PS</tspan> C:\Users\My-PC\Downloads\Bai3&gt;</text>
+  <text x="318" y="795" class="ui muted">Terminal PowerShell</text>
+  <rect y="866" width="1600" height="34" fill="#007acc"/>
+  <text x="16" y="888" class="ui" fill="#ffffff">&gt;&lt;  Bai3</text><text x="1210" y="888" class="ui" fill="#ffffff">Ln 1, Col 1   Spaces: 4   UTF-8   CRLF   Markdown</text>
+  <rect x="1363" y="837" width="220" height="22" rx="4" fill="#3c341d" stroke="#ad8e42"/>
+  <text x="1473" y="852" text-anchor="middle" class="ui" fill="#ffe09a" font-size="11">MOCKUP TAO TU NOI DUNG THAT</text>
+</svg>
