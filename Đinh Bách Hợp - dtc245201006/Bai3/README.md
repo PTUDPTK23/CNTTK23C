@@ -89,6 +89,12 @@ Giải thích: UpdatedAt cho biết lần đổi trạng thái gần nhất; loc
 Thấy: negotiate ở /hubs/submissions trả connectionId cùng 3 cách truyền tải; sai đường dẫn /hub/submissions trả 404.
 Giải thích: hub chỉ có một việc là đưa kết nối vào nhóm submission:{id}. Nhóm theo lượt nộp giúp riêng tư (SV này không thấy bài SV khác) và tiết kiệm băng thông.
 
+## EduSubmit - Bước 4: IHubContext và mô phỏng chấm bài nền
+
+![rest-doi-dan](anh/edusubmit-b4-rest-doi-dan.png)
+Thấy: ba lần GET cho trạng thái received → processing → graded, updatedAt tăng dần; máy chủ in [Push] processing và graded.
+Giải thích: POST trả 201 ngay rồi tác vụ nền chấm bài (Task.Delay giả lập). Máy chủ lưu dữ liệu trước, đẩy thông báo sau, nên ai đọc REST ngay khi nhận tin cũng thấy đúng. Ngoài hub phải dùng IHubContext để gửi, vì đối tượng hub chỉ sống trong một lời gọi.
+
 ## Trả lời 3 câu hỏi đầu giờ
 
 1. **Máy chủ có thể chủ động báo cho máy khách không?**
