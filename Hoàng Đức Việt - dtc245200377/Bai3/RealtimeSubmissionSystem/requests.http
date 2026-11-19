@@ -1,0 +1,47 @@
+@host = http://localhost:5000
+
+### 1. Kiem tra REST API trang thai dich vu (Mong doi: 200 OK)
+GET {{host}}/
+
+### 2. Lay danh sach bai tap (Mong doi: 200 OK)
+GET {{host}}/api/assignments
+
+### 3. Tao luot nop hop le (Mong doi: 201 Created + Location header, status = received)
+# @name createSubmission
+POST {{host}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "SV001",
+  "repositoryUrl": "https://example.com/sv001/signalr"
+}
+
+### 4. Doc lai trang thai luot nop: received -> processing -> graded (Mong doi: 200 OK)
+GET {{host}}/api/submissions/{{createSubmission.response.body.$.id}}
+
+### 5. Tao luot nop thieu du lieu (Mong doi: 400 Bad Request - INVALID_SUBMISSION)
+POST {{host}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "",
+  "repositoryUrl": ""
+}
+
+### 6. Tao luot nop vao bai tap da dong (Mong doi: 400 Bad Request - ASSIGNMENT_CLOSED)
+POST {{host}}/api/assignments/3/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "SV001",
+  "repositoryUrl": "https://example.com/sv001/signalr"
+}
+
+### 7. Doc luot nop voi ID khong ton tai (Mong doi: 404 Not Found - SUBMISSION_NOT_FOUND)
+GET {{host}}/api/submissions/00000000-0000-0000-0000-000000000000
+
+### 8. Bat tay SignalR Negotiate lay connectionId (Mong doi: 200 OK)
+POST {{host}}/hubs/submissions/negotiate?negotiateVersion=1
+
+### 9. Sai duong dan Hub (Mong doi: 404 Not Found)
+POST {{host}}/hub/submissions/negotiate?negotiateVersion=1
