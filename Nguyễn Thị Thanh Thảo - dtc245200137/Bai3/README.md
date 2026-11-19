@@ -59,3 +59,30 @@ Trang thai doc lai bang REST: graded
 ### Minh chứng 8
 ![Minh chứng 8](images/image8.png)
 
+
+## Ảnh chụp minh chứng kết quả thực hành
+
+### image1
+![image1](images/image1.png)
+
+### image2
+![image2](images/image2.png)
+
+### image3
+![image3](images/image3.png)
+
+### image4
+![image4](images/image4.png)
+
+### image5
+![image5](images/image5.png)
+
+### image6
+![image6](images/image6.png)
+
+### image7
+![image7](images/image7.png)
+
+### image8
+![image8](images/image8.png)
+
