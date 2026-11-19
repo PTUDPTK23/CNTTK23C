@@ -1,0 +1,50 @@
+@api = http://localhost:5000
+
+### 1. Lay danh sach bai tap (mong doi 200 OK)
+GET {{api}}/api/assignments
+
+### 2. Lay bai tap khong ton tai (mong doi 404 Not Found + ApiError ASSIGNMENT_NOT_FOUND)
+GET {{api}}/api/assignments/999
+
+### 3. Nop bai hop le vao bai tap dang mo (mong doi 201 Created + header Location)
+# @name createSubmission
+POST {{api}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "dtc245200377",
+  "repositoryUrl": "https://github.com/hoangducviet04012006-ux/CNTTK23C"
+}
+
+### 4. Doc lai luot nop vua tao theo id tu response truoc (mong doi 200 OK)
+GET {{api}}/api/submissions/{{createSubmission.response.body.$.id}}
+
+### 5. Doc luot nop khong ton tai (mong doi 404 Not Found + ApiError SUBMISSION_NOT_FOUND)
+GET {{api}}/api/submissions/00000000-0000-0000-0000-000000000000
+
+### 6. Nop bai vao bai tap da dong id=3 (mong doi 400 Bad Request + ApiError ASSIGNMENT_CLOSED)
+POST {{api}}/api/assignments/3/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "dtc245200377",
+  "repositoryUrl": "https://github.com/hoangducviet04012006-ux/CNTTK23C"
+}
+
+### 7. Nop bai thieu du lieu studentCode / repositoryUrl (mong doi 400 Bad Request + ApiError INVALID_SUBMISSION)
+POST {{api}}/api/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentCode": "",
+  "repositoryUrl": ""
+}
+
+### 8. Gui POST thieu header Content-Type (mong doi 415 Unsupported Media Type)
+POST {{api}}/api/assignments/1/submissions
+
+{
+  "studentCode": "dtc245200377",
+  "repositoryUrl": "https://github.com/hoangducviet04012006-ux/CNTTK23C"
+}
+
