@@ -1,0 +1,49 @@
+using Microsoft.AspNetCore.SignalR;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddSignalR();
+
+var app = builder.Build();
+
+app.MapGet("/", () => Results.Ok(new { service = "PingApi", status = "running" }));
+app.MapHub<PingHub>("/hubs/ping");
+
+app.Run();
+
+sealed class PingHub : Hub
+{
+    public async Task Echo(string message)
+    {
+        await Clients.Caller.SendAsync("EchoResponse", $"Echo: {message}");
+    }
+
+    public async Task Broadcast(string message)
+        => await Clients.All.SendAsync("BroadcastMessage", message);
+
+    public async Task JoinGroup(string groupName)
+    {
+        await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+        await Clients.Group(groupName).SendAsync("GroupMessage", 
+            $"{Context.ConnectionId[..8]} da tham gia nhom {groupName}");
+    }
+
+    public async Task SendToGroup(string groupName, string message)
+        => await Clients.Group(groupName).SendAsync("GroupMessage", message);
+
+    public override async Task OnConnectedAsync()
+    {
+        Console.WriteLine($"[+] Ket noi moi: {Context.ConnectionId}");
+        await Clients.Others.SendAsync("SystemNotice", 
+            $"Nguoi dung {Context.ConnectionId[..8]} vua tham gia.");
+        await base.OnConnectedAsync();
+    }
+
+    public override async Task OnDisconnectedAsync(Exception? exception)
+    {
+        Console.WriteLine($"[-] Ngat ket noi: {Context.ConnectionId}");
+        await Clients.Others.SendAsync("SystemNotice", 
+            $"Nguoi dung {Context.ConnectionId[..8]} da roi di.");
+        await base.OnDisconnectedAsync(exception);
+    }
+}
