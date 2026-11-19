@@ -107,6 +107,24 @@ Giải thích: máy khách dùng HttpClient cho REST và HubConnection cho Signa
 Thấy: máy khách (bên phải) in đủ 8 dòng; hai thông báo SignalR (processing, graded) cách nhau khoảng 2 giây mà máy khách không hề hỏi. Máy chủ (bên trái) in [Hub] theo dõi rồi [Push] processing, graded.
 Giải thích: REST tạo lượt nộp (201) và đọc trạng thái cuối; SignalR chỉ báo các thay đổi phát sinh sau đó. Thứ tự phải đúng: On → StartAsync → POST → Watch → GET. Trạng thái cuối luôn lấy lại bằng REST vì tin đẩy có thể bị lỡ.
 
+## EduSubmit - Bước 7: 5 thí nghiệm phân tán
+
+### Thí nghiệm 1: chạy 2 máy khách SV001 và SV002 cùng lúc
+
+**Dự đoán:** mỗi máy khách chỉ nhận thông báo của lượt nộp do chính nó tạo, không thấy của máy kia.
+
+## EduSubmit - Bước 7: 5 thí nghiệm phân tán
+
+### Thí nghiệm 1: chạy 2 máy khách SV001 và SV002 cùng lúc
+
+**Dự đoán:** mỗi máy khách chỉ nhận thông báo của lượt nộp do chính nó tạo, không thấy thông báo của máy kia.
+
+![tn1](anh/edusubmit-tn1.png)
+
+**Kết quả thật:** SV001 tạo lượt nộp 8cb1cadb và chỉ nhận processing, graded của lượt nộp này. SV002 tạo lượt nộp b3f06b91 và chỉ nhận processing, graded của lượt nộp b3f06b91. Hai id khác nhau, thông báo không bị trộn lẫn. Máy chủ ghi hai dòng [Hub] theo dõi hai nhóm submission khác nhau.
+
+**Giải thích:** mỗi máy khách gọi WatchSubmission với id của chính mình nên được thêm vào nhóm submission:{id} riêng. Máy chủ gửi bằng Clients.Group nên chỉ thành viên của nhóm đó nhận được. Nhóm tách người nhận, giữ riêng tư cho từng sinh viên và tiết kiệm đường truyền.
+
 ## Trả lời 3 câu hỏi đầu giờ
 
 1. **Máy chủ có thể chủ động báo cho máy khách không?**
