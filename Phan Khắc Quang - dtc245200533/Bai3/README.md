@@ -1,302 +1,197 @@
-# BÁO CÁO THỰC HÀNH BÀI 3 — PHẦN 2: PINGSIGNALR (BƯỚC 1.1 ĐẾN BƯỚC 7)
+# BÁO CÁO THỰC HÀNH BÀI 3 — GIAO TIẾP THỜI GIAN THỰC VỚI SIGNALR
 
-**Học phần:** Phát triển ứng dụng phân tán  
-**Giảng viên:** TS. Dương Thu Mây  
-**Sinh viên thực hiện:** Phan Khắc Quang  
-**Mã sinh viên:** `dtc245200533`  
-**Lớp:** CNTT K23C  
-**Thư mục thực hành:** `Buoi3/PingSignalR/`  
+- **Học phần:** Phát triển ứng dụng phân tán  
+- **Giảng viên:** TS. Dương Thu Mây  
+- **Sinh viên thực hiện:** Phan Khắc Quang  
+- **Mã sinh viên:** `dtc245200533`  
+- **Lớp:** CNTT K23C  
+- **Thư mục nộp bài:** `Phan Khắc Quang - dtc245200533/Bai3/`  
+- **Pull Request:** `#74` (`Bai3-dtc245200533-Phan Khắc Quang`)
 
 ---
 
-## TỔNG QUAN HỢP ĐỒNG HUB PINGSIGNALR
+## 1. CẤU TRÚC THƯ MỤC NỘP BÀI (ĐỦ 2 SOLUTION)
 
+```text
+Bai3/
+├── README.md                      # Báo cáo thực hành chi tiết (trả lời 3 câu hỏi + 5 thí nghiệm)
+├── anh/                           # Toàn bộ ảnh kết quả terminal VS Code chuẩn mẫu
+│   ├── buoc1-build.png            # PingSignalR: Bước 1 build
+│   ├── buoc2-negotiate.png        # PingSignalR: Bước 2 negotiate
+│   ├── buoc4-echo.png             # PingSignalR: Bước 4 Echo
+│   ├── buoc5-nhom.png             # PingSignalR: Bước 5 Nhóm & Broadcast
+│   ├── buoc6-noilai.png           # PingSignalR: Bước 6 Vòng đời & Reconnect
+│   ├── buoc7-loi1.png             # PingSignalR: Bước 7 Lỗi 1 (Server tắt)
+│   ├── buoc7-loi2.png             # PingSignalR: Bước 7 Lỗi 2 (Sai URL)
+│   ├── buoc7-loi3.png             # PingSignalR: Bước 7 Lỗi 3 (Sai tên On)
+│   ├── edusubmit-b1-build.png     # EduSubmit: Bước 1 build solution
+│   ├── edusubmit-b2-rest.png      # EduSubmit: Bước 2 POST tạo lượt nộp (201)
+│   ├── edusubmit-b3-negotiate.png # EduSubmit: Bước 3 negotiate & 404
+│   ├── edusubmit-b4-grading.png   # EduSubmit: Bước 4 Chấm bài ngầm 3 trạng thái
+│   ├── edusubmit-b6-client.png    # EduSubmit: Bước 6 Máy khách in đủ 8 dòng
+│   ├── edusubmit-b7-thi-nghiem.png# EduSubmit: Bước 7 Năm thí nghiệm phân tán
+│   └── edusubmit-b8-requests-http.png # EduSubmit: Bước 8 Đạt đủ 9 ca requests.http
+├── PingSignalR/                   # Solution 1: PingSignalR (.NET 10, cổng 5200)
+│   ├── .gitignore
+│   ├── PingSignalR.slnx
+│   └── src/
+│       ├── Ping.Api/
+│       │   ├── Ping.Api.csproj
+│       │   └── Program.cs
+│       └── Ping.Client/
+│           ├── Ping.Client.csproj
+│           └── Program.cs
+└── RealtimeSubmissionSystem/      # Solution 2: EduSubmit Realtime (.NET 10, cổng 5000)
+    ├── .gitignore
+    ├── RealtimeSubmissionSystem.slnx
+    ├── requests.http              # Đủ 9 ca kiểm thử REST & SignalR
+    └── src/
+        ├── Submission.RealtimeApi/
+        │   ├── Submission.RealtimeApi.csproj
+        │   └── Program.cs
+        └── Submission.RealtimeClient/
+            ├── Submission.RealtimeClient.csproj
+            └── Program.cs
+```
+
+---
+
+## 2. TRẢ LỜI 3 CÂU HỎI ĐẦU GIỜ (SLIDE 65)
+
+### Câu 1: Máy chủ có thể chủ động báo cho máy khách mà không cần máy khách hỏi không?
+> **Trả lời:**  
+> **Có thể được.** Điều kiện là máy khách phải chủ động thiết lập một kết nối 2 chiều lâu dài tới máy chủ (qua giao thức **WebSocket** được quản lý bởi **SignalR**). Khi có sự kiện xảy ra trên máy chủ (ví dụ trạng thái lượt nộp bài thay đổi), máy chủ chủ động gọi `Clients.Group(...).SendAsync(...)` để đẩy thông điệp xuống máy khách. Khi phát thông điệp từ bên ngoài Hub (như từ API controller hoặc tác vụ nền), ASP.NET Core sử dụng dịch vụ **`IHubContext<THub>`**.
+
+### Câu 2: Đã có REST rồi, vì sao còn cần thêm SignalR? Hai thứ chia việc thế nào?
+> **Trả lời:**  
+> REST và SignalR giải quyết hai khía cạnh bổ trợ cho nhau trong hệ phân tán, SignalR không thay thế REST:
+> - **REST (Yêu cầu – Phản hồi):** Đóng vai trò là **nguồn sự thật (Source of Truth)**. Dùng để thực hiện các thao tác tạo tài nguyên (`POST` nộp bài trả mã `201`), kiểm tra tính hợp lệ (`400`, `404`) và đọc dữ liệu hiện hành (`GET`).
+> - **SignalR (Đẩy dữ liệu thời gian thực):** Dùng để **đẩy các biến động trạng thái phát sinh sau đó** (`received` → `processing` → `graded`). Giúp máy khách nhận tin tức thì mà không cần tốn băng thông liên tục gửi yêu cầu thăm dò (Polling).
+> - **Quy tắc phối hợp:** "Push để nhanh, REST để chắc".
+
+### Câu 3: Nếu đứt mạng đúng lúc máy chủ báo "đã chấm xong" (graded) thì sao?
+> **Trả lời:**  
+> - Thông điệp phát đi trong lúc mất kết nối sẽ **bị mất hẳn** vì SignalR hoạt động trên cơ chế đẩy trực tiếp (fire-and-forget), không có hàng đợi lưu đệm tin nhắn chờ gửi lại.
+> - Khi có mạng trở lại, cơ chế `WithAutomaticReconnect()` sẽ tự động kết nối lại máy chủ với một **`ConnectionId` hoàn toàn mới**. Do nhóm (Group) gắn với `ConnectionId` cũ nên máy khách cần gọi lại `WatchSubmission` trong sự kiện `Reconnected`.
+> - Để đảm bảo tính nhất quán dữ liệu, máy khách luôn có bước chốt chặn cuối cùng: **gọi lại `GET /api/submissions/{id}` qua REST** để lấy trạng thái chính xác nhất từ cơ sở dữ liệu.
+
+---
+
+## 3. PHẦN 2: PINGSIGNALR (CỔNG 5200 — BƯỚC 1 ĐẾN BƯỚC 7)
+
+### 3.1. Hợp đồng Hub PingSignalR
 | Máy khách gọi (`InvokeAsync`) | Máy chủ gửi về (`On`) | Phạm vi nhận | Ý nghĩa nghiệp vụ |
 |:---|:---|:---|:---|
-| `Echo(message)` | `EchoResponse` | `Clients.Caller` | Trả lời RIÊNG cho máy khách vừa gọi. |
-| `Broadcast(message)` | `BroadcastMessage` | `Clients.All` | Phát rộng cho mọi kết nối đang mở. |
-| `JoinGroup(groupName)` | `GroupMessage` | `Clients.Group` | Gia nhập nhóm, thông báo cho cả nhóm. |
-| `SendToGroup(group, msg)` | `GroupMessage` | `Clients.Group` | Gửi tin nhắn tới tất cả thành viên trong nhóm. |
-| *(Tự động khi nối / ngắt)* | `SystemMessage` | `Clients.All` | Sự kiện vòng đời `OnConnectedAsync` / `OnDisconnectedAsync`. |
+| `Echo(message)` | `EchoResponse` | `Clients.Caller` | Trả lời riêng cho người gọi. |
+| `Broadcast(message)` | `BroadcastMessage` | `Clients.All` | Phát cho mọi kết nối đang mở. |
+| `JoinGroup(groupName)` | `GroupMessage` | `Clients.Group` | Vào nhóm, thông báo cho cả nhóm. |
+| `SendToGroup(group, msg)` | `GroupMessage` | `Clients.Group` | Gửi tin nhắn tới thành viên nhóm. |
 
-*Quy tắc cốt lõi của SignalR:* Hợp đồng là sự khớp nối chính xác từng ký tự giữa **tên phương thức hub**, **tên thông điệp** và **kiểu dữ liệu**. Sai tên ở chiều máy chủ gửi về máy khách sẽ dẫn đến hiện tượng **im lặng**, không hề có lỗi biên dịch hay lỗi lúc chạy.
-
----
-
-## BƯỚC 1: TẠO THƯ MỤC, SOLUTION VÀ HAI PROJECT (BƯỚC 1.1 & 1.2)
-
-### 1.1. Lệnh khởi tạo cấu trúc
-Mở PowerShell tại thư mục `Buoi3/`:
-```powershell
-mkdir PingSignalR
-cd PingSignalR
-dotnet new sln -n PingSignalR
-dotnet new web -n Ping.Api -o src/Ping.Api
-dotnet new console -n Ping.Client -o src/Ping.Client
-```
-
-### 1.2. Ghi danh project, cài đặt gói SignalR Client và build thử
-```powershell
-dotnet sln add src/Ping.Api/Ping.Api.csproj
-dotnet sln add src/Ping.Client/Ping.Client.csproj
-dotnet add src/Ping.Client package Microsoft.AspNetCore.SignalR.Client --version 10.0.15
-dotnet new gitignore
-dotnet build
-```
-
-* **Vì sao chỉ cài gói ở máy khách?** Máy chủ dùng SDK Web (`Microsoft.AspNetCore.App`) đã tích hợp sẵn thư viện SignalR Server. Máy khách là Console App thông thường nên cần cài thêm `Microsoft.AspNetCore.SignalR.Client`.
-* **Phiên bản 10.0.15:** Cố định phiên bản ổn định cho toàn lớp, tránh cảnh báo bảo mật NU1903 của bản 10.0.0.
-
-### Kết quả biên dịch Bước 1:
-Biên dịch thành công cả 2 project: `Build succeeded. 0 Warning(s), 0 Error(s)`.
-
-![Kết quả dotnet build](anh/buoc1-build.png)
+### 3.2. Kết quả các bước PingSignalR
+- **Bước 1 (1.1 - 1.2):** Tạo solution, 2 project, cài `Microsoft.AspNetCore.SignalR.Client` 10.0.15. `Build succeeded, 0 Error(s)`.  
+  ![Bước 1 - Build](anh/buoc1-build.png)
+- **Bước 2:** Đăng ký `AddSignalR()`, ánh xạ `/hubs/ping`. Gọi `curl` negotiate trả về `connectionId` và các phương thức truyền tải:  
+  ![Bước 2 - Negotiate](anh/buoc2-negotiate.png)
+- **Bước 3 & 4:** Viết `Echo` trên Hub và gọi từ máy khách An qua `InvokeAsync`:  
+  ![Bước 4 - Echo](anh/buoc4-echo.png)
+- **Bước 5:** Thử nghiệm Broadcast và Group giữa 2 máy khách An và Bình:  
+  ![Bước 5 - Nhóm & Broadcast](anh/buoc5-nhom.png)
+- **Bước 6:** Vòng đời kết nối `OnConnectedAsync`/`OnDisconnectedAsync` và tự kết nối lại `WithAutomaticReconnect()`:  
+  ![Bước 6 - Kết nối lại](anh/buoc6-noilai.png)
+- **Bước 7:** Ba thí nghiệm lỗi cố ý (Server tắt, Sai URL Hub, Sai tên sự kiện `EchoRespone`):  
+  ![Lỗi 1](anh/buoc7-loi1.png)  
+  ![Lỗi 2](anh/buoc7-loi2.png)  
+  ![Lỗi 3](anh/buoc7-loi3.png)
 
 ---
 
-## BƯỚC 2: MÁY CHỦ THÊM DỊCH VỤ VÀ TUYẾN HUB SIGNALR
+## 4. PHẦN 3: EDUSUBMIT REALTIME (CỔNG 5000 — BƯỚC 1 ĐẾN BƯỚC 8)
 
-### 2.1. Cấu hình tại `src/Ping.Api/Program.cs`
-Máy chủ chỉ cần 2 việc chính:
-1. `builder.Services.AddSignalR()`: Đăng ký dịch vụ quản lý kết nối, nhóm, serializer JSON vào DI container trước khi `builder.Build()`.
-2. `app.MapHub<PingHub>("/hubs/ping")`: Ánh xạ tuyến đường dẫn WebSocket/SignalR trước `app.Run()`.
-
-```csharp
-using Microsoft.AspNetCore.SignalR;
-
-var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddSignalR(); // Đăng ký dịch vụ
-
-var app = builder.Build();
-
-app.MapGet("/", () => Results.Ok(new { service = "PingApi", status = "running" }));
-app.MapHub<PingHub>("/hubs/ping"); // Tuyến hub
-
-app.Run();
-
-sealed class PingHub : Hub { }
-```
-
-### 2.2. Kiểm tra bắt tay `negotiate` bằng curl (chưa cần máy khách)
-Chạy máy chủ tại cổng 5200:
-```powershell
-dotnet run --project src/Ping.Api --urls http://localhost:5200
-```
-Mở terminal thứ hai chạy 3 lệnh kiểm tra:
-```powershell
-# 1. Endpoint REST bình thường
-curl.exe http://localhost:5200/
-# -> {"service":"PingApi","status":"running"}
-
-# 2. Bước bắt tay negotiate của SignalR
-curl.exe -X POST "http://localhost:5200/hubs/ping/negotiate?negotiateVersion=1"
-# -> Trả về connectionId, connectionToken và danh sách 3 cơ chế truyền tải dự phòng:
-#    availableTransports: WebSockets, ServerSentEvents, LongPolling
-
-# 3. Gọi trực tiếp tới tuyến hub bằng HTTP GET
-curl.exe -i http://localhost:5200/hubs/ping
-# -> HTTP/1.1 400 Bad Request: Connection ID required (Hub từ chối vì yêu cầu kết nối WebSocket hợp lệ)
-```
-
-### Ảnh kết quả Bước 2:
-![Kết quả negotiate](anh/buoc2-negotiate.png)
+### 4.1. Thiết kế kênh thời gian thực (Khung 4 câu hỏi - Slide 46)
+1. **Sự kiện kích hoạt:** Trạng thái lượt nộp thay đổi (`received` → `processing` → `graded`).
+2. **Gửi cho ai:** Chỉ máy khách đang theo dõi đúng lượt nộp đó qua nhóm `Clients.Group("submission:{id}")`.
+3. **Dữ liệu gửi kèm:** Dữ liệu tối thiểu `record SubmissionStatusMessage(Guid SubmissionId, string Status, DateTimeOffset UpdatedAt)`.
+4. **Mất kết nối:** Gọi lại REST `GET /api/submissions/{id}` để cập nhật trạng thái mới nhất.
 
 ---
 
-## BƯỚC 3: PHƯƠNG THỨC ECHO — MÁY CHỦ TRẢ LỜI RIÊNG NGƯỜI VỪA GỌI
+### 4.2. Chi tiết 8 bước thực hiện EduSubmit
 
-Cập nhật lớp `PingHub` trong `src/Ping.Api/Program.cs`:
-```csharp
-sealed class PingHub : Hub
-{
-    // Máy khách gọi Echo -> trả lời RIÊNG cho người gọi
-    public async Task Echo(string message)
-    {
-        await Clients.Caller.SendAsync("EchoResponse", $"Echo: {message}");
-    }
-}
-```
+#### Bước 1: Khởi tạo solution và project (Slide 48)
+- Tạo solution `RealtimeSubmissionSystem`, Web API `Submission.RealtimeApi` (cổng 5000) và Console App `Submission.RealtimeClient`.
+- Cài đặt gói `Microsoft.AspNetCore.SignalR.Client` 10.0.15 cho Client.
+- Biên dịch thành công 0 Warning, 0 Error:
+  ![EduSubmit Bước 1 - Build](anh/edusubmit-b1-build.png)
 
-* **Mẫu câu gửi SignalR:** `Clients.Caller.SendAsync("TênThôngĐiệp", dữ liệu)`
-* **`Clients.Caller`:** Đảm bảo chỉ đúng kết nối vừa phát lời gọi `Echo` mới nhận được tin phản hồi. Các máy khách khác đang trực tuyến sẽ không nhìn thấy thông điệp này.
+#### Bước 2: Dán phần REST Bài 2, thêm `UpdatedAt` và `lock` (Slide 49)
+- Hỗ trợ `GET /api/assignments`, `GET /api/submissions/{id}`, `POST /api/assignments/{id}/submissions`.
+- Dùng `lock (submissionsLock)` để đồng bộ luồng khi tác vụ nền và HTTP request cùng cập nhật danh sách.
+- `POST` trả mã `201 Created`, header `Location` và body chứa `status: "received"`, `updatedAt`:
+  ![EduSubmit Bước 2 - REST](anh/edusubmit-b2-rest.png)
 
----
+#### Bước 3: Hub mỏng `SubmissionHub` và nhóm `submission:{id}` (Slide 50)
+- Ánh xạ Hub tại `/hubs/submissions`.
+- Phương thức `WatchSubmission(string submissionId)` thêm kết nối vào nhóm qua `Groups.AddToGroupAsync`.
+- Kiểm tra negotiate trả `connectionId` và đường dẫn sai `/hub/submissions` trả `404 Not Found`:
+  ![EduSubmit Bước 3 - Negotiate](anh/edusubmit-b3-negotiate.png)
 
-## BƯỚC 4: MÁY KHÁCH XÂY KẾT NỐI, ĐĂNG KÝ VÀ GỌI ECHO
+#### Bước 4: `IHubContext` và mô phỏng chấm bài ở nền (Slide 52, 53, 54)
+- Khi nhận yêu cầu `POST`, máy chủ khởi chạy tác vụ nền không chặn luồng:
+  ```csharp
+  _ = SimulateGradingAsync(submission.Id, submissions, submissionsLock, hubContext, submission.RepositoryUrl);
+  ```
+- Tác vụ nền chuyển trạng thái sau 1 giây thành `processing`, sau 2 giây tiếp theo thành `graded`.
+- Kiểm tra bằng 3 lần gọi GET qua REST thấy rõ sự biến thiên trạng thái:
+  ![EduSubmit Bước 4 - Chấm bài nền](anh/edusubmit-b4-grading.png)
 
-### 4.1. Quy trình 4 bước ở máy khách
-1. **Build:** Khởi tạo đối tượng kết nối `HubConnectionBuilder().WithUrl(...).WithAutomaticReconnect().Build()`.
-2. **On:** Đăng ký hàm xử lý sự kiện cho tên thông điệp `EchoResponse` **trước khi mở kết nối**.
-3. **StartAsync:** Mở kết nối (thực hiện negotiate và nâng cấp lên WebSockets).
-4. **InvokeAsync:** Gửi yêu cầu gọi phương thức `Echo` trên Hub và đợi kết quả.
+#### Bước 5 & 6: Máy khách mở hai kênh và nhận đủ 8 dòng kết quả (Slide 55, 56, 57)
+- Máy khách mở kênh REST (`HttpClient`) và kênh SignalR (`HubConnectionBuilder`).
+- Sử dụng `TaskCompletionSource` làm "chuông" đón trạng thái `graded`.
+- Kết quả chạy thực tế của máy khách in đúng chuẩn **8 dòng** và tự kết thúc sau khi nhận trạng thái `graded`:
+  1. `Da ket noi SignalR.`
+  2. `Chon bai tap: 1 - Bai tap SignalR`
+  3. `Da tao luot nop: ed4ea537-e2cc-4a6a-a2ad-a024ba757b18`
+  4. `Trang thai REST ban dau: received`
+  5. `Dang cho thong bao trang thai tu may chu...`
+  6. `Thong bao SignalR: ed4ea537-... -> processing luc 09:53:28`
+  7. `Thong bao SignalR: ed4ea537-... -> graded luc 09:53:30`
+  8. `Trang thai doc lai bang REST: graded`
 
-### 4.2. Mã nguồn `src/Ping.Client/Program.cs`
-```csharp
-using Microsoft.AspNetCore.SignalR.Client;
-
-var serverUrl = args.Length > 0 ? args[0].TrimEnd('/') : "http://localhost:5200";
-var name = args.Length > 1 ? args[1] : "Client";
-
-await using var connection = new HubConnectionBuilder()
-    .WithUrl($"{serverUrl}/hubs/ping")
-    .WithAutomaticReconnect()
-    .Build();
-
-connection.On<string>("EchoResponse", msg => Console.WriteLine($"[Echo] {msg}"));
-
-await connection.StartAsync();
-Console.WriteLine($"{name} da ket noi den PingApi.");
-
-await connection.InvokeAsync("Echo", $"Xin chao SignalR tu {name}");
-
-Console.WriteLine("Dang cho thong diep... Nhan Enter de thoat.");
-Console.ReadLine();
-```
-
-### 4.3. Chạy kiểm thử:
-```powershell
-dotnet run --project src/Ping.Client -- http://localhost:5200 An
-```
-
-### Ảnh kết quả Bước 4:
-Máy khách in đúng dòng `[Echo] Echo: Xin chao SignalR tu An`.
-
-![Kết quả Echo](anh/buoc4-echo.png)
+  ![EduSubmit Bước 6 - Kết quả 8 dòng máy khách](anh/edusubmit-b6-client.png)
 
 ---
 
-## BƯỚC 5: PHÁT RỘNG (BROADCAST) VÀ NHÓM (GROUP)
+### 4.3. Bước 7: Bảng 5 thí nghiệm phân tán (Slide 58, 59)
 
-### 5.1. Bổ sung tại `Ping.Api` (`PingHub`)
-```csharp
-// Phát rộng tới mọi kết nối đang mở
-public async Task Broadcast(string message)
-    => await Clients.All.SendAsync("BroadcastMessage", message);
+| # | Thí nghiệm | Dự đoán kết quả | Kết quả chạy thực tế | Bài học phân tán rút ra |
+|:---:|:---|:---|:---|:---|
+| **1** | **Chạy 2 máy khách SV001 và SV002 cùng lúc** | Mỗi máy khách chỉ thấy thông báo bài nộp của chính mình. | SV001 chỉ nhận thông báo của `id1`, SV002 chỉ nhận thông báo của `id2`. Không bị lẫn lộn. | Cơ chế nhóm `submission:{id}` do máy chủ quản lý giúp phân tách chính xác người nhận, bảo vệ quyền riêng tư và tối ưu băng thông. |
+| **2** | **Chạy máy khách khi máy chủ chưa chạy** | Ném ngoại lệ lỗi kết nối, chương trình dừng. | `HttpRequestException: Connection refused (localhost:5000)`. | Cơ chế `WithAutomaticReconnect()` chỉ tự thử lại khi kết nối ĐÃ ĐƯỢC MỞ trước đó. Lần nối đầu thất bại sẽ ném lỗi ngay. |
+| **3** | **Sửa WithUrl thành `/hub/submissions` (thiếu chữ s)** | Báo lỗi 404 Not Found. | `HttpRequestException: Response status code does not indicate success: 404 (Not Found)` tại negotiate. | Bắt tay negotiate diễn ra ở tầng HTTP. URL máy khách gọi lên phải khớp từng ký tự với `app.MapHub(...)` của máy chủ. |
+| **4** | **Sửa On thành `SubmissionStatusChange` (sai tên)** | Không báo lỗi, nhưng máy khách không nhận được tin. | Không có lỗi runtime; 10 giây sau in `Qua thoi gian cho thong bao graded`. REST đọc lại vẫn ra `graded`. | Tên sự kiện gửi từ Hub về Client nếu sai chính tả sẽ bị nuốt lỗi (im lặng). Bổ sung timeout bằng `Task.WhenAny` là phương pháp phòng thủ cần thiết. |
+| **5** | **Chờ 4 giây rồi mới gọi `WatchSubmission`** | Không nhận được thông báo thời gian thực vì bài đã chấm xong. | Không nhận được thông báo SignalR nào; nhưng dòng cuối đọc lại bằng REST vẫn trả về `graded`. | Vào nhóm muộn sẽ bị lỡ thông điệp thời gian thực (SignalR không lưu đệm tin cũ). Do đó, REST luôn là nguồn sự thật cuối cùng. |
 
-// Tham gia nhóm có tên và gửi lời chào vào nhóm
-public async Task JoinGroup(string groupName)
-{
-    await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
-    await Clients.Group(groupName).SendAsync("GroupMessage",
-        $"{Context.ConnectionId[..8]} da tham gia nhom {groupName}");
-}
-
-// Gửi tin nhắn tới nhóm chỉ định
-public async Task SendToGroup(string groupName, string message)
-    => await Clients.Group(groupName).SendAsync("GroupMessage", message);
-```
-
-### 5.2. Bổ sung tại `Ping.Client`
-```csharp
-// Đăng ký nhận tin nhắn phát rộng và tin nhắn nhóm
-connection.On<string>("BroadcastMessage", m => Console.WriteLine($"[Broadcast] {m}"));
-connection.On<string>("GroupMessage", m => Console.WriteLine($"[Group] {m}"));
-
-// Sau khi gọi Echo, thực hiện vào nhóm và phát tin:
-await connection.InvokeAsync("JoinGroup", "lop-hoc-01");
-await connection.InvokeAsync("SendToGroup", "lop-hoc-01", $"Thong bao nhom tu {name}");
-await connection.InvokeAsync("Broadcast", $"Xin chao tat ca tu {name}");
-```
-
-### 5.3. Chạy 3 Terminal kiểm thử (Máy chủ, An, Bình)
-1. **Terminal 1:** `dotnet run --project src/Ping.Api --urls http://localhost:5200`
-2. **Terminal 2 (An):** `dotnet run --project src/Ping.Client -- http://localhost:5200 An`
-3. **Terminal 3 (Bình):** `dotnet run --project src/Ping.Client -- http://localhost:5200 Binh`
-
-**Hiện tượng quan sát:**
-* Cửa sổ **An** thấy: Tin `[Group]` Bình vào nhóm, `[Group]` thông báo nhóm từ Bình, `[Broadcast]` từ Bình.
-* Cửa sổ **An KHÔNG thấy:** Tin `[Echo]` của Bình (vì `Echo` chỉ gửi cho `Clients.Caller`).
-
-### Ảnh kết quả Bước 5:
-![Kết quả nhóm và broadcast](anh/buoc5-nhom.png)
-
-### Bảng thử thách 3 phút (Slide 36, 37):
-Giả sử có 3 máy khách: An (nhóm `lop-hoc-01`), Bình (nhóm `lop-hoc-01`), Chi (không ở nhóm nào).
-
-| Lời gọi thực thi | An nhận? | Bình nhận? | Chi nhận? | Phạm vi SignalR | Lý do & Ghi chú |
-|:---|:---:|:---:|:---:|:---|:---|
-| ① An gọi `Echo("hi")` | **✓ Nhận** | ✗ Không | ✗ Không | `Clients.Caller` | Chỉ người gọi nhận được phản hồi. |
-| ② Chi gọi `SendToGroup("lop-hoc-01", "x")` | **✓ Nhận** | **✓ Nhận** | ✗ Không | `Clients.Group` | **Bẫy câu 2:** Chi gửi được vào nhóm nhưng Chi không nhận, vì Chi không phải thành viên nhóm. |
-| ③ Bình gọi `Broadcast("y")` | **✓ Nhận** | **✓ Nhận** | **✓ Nhận** | `Clients.All` | Phát rộng cho toàn bộ kết nối đang mở. |
+![EduSubmit Bước 7 - Thí nghiệm phân tán](anh/edusubmit-b7-thi-nghiem.png)
 
 ---
 
-## BƯỚC 6: VÒNG ĐỜI KẾT NỐI VÀ TỰ ĐỘNG KẾT NỐI LẠI
+### 4.4. Bước 8: Kiểm thử 9 ca trong `requests.http` (Slide 61)
 
-### 6.1. Sự kiện vòng đời tại `Ping.Api`
-Ghi đè hai phương thức của lớp `Hub`:
-```csharp
-public override async Task OnConnectedAsync()
-{
-    Console.WriteLine($"[Hub] + {Context.ConnectionId[..8]} ket noi");
-    await Clients.All.SendAsync("SystemMessage", $"Client {Context.ConnectionId[..8]} da ket noi.");
-    await base.OnConnectedAsync();
-}
+Tệp `RealtimeSubmissionSystem/requests.http` chứa đầy đủ 9 ca kiểm thử:
+1. `GET /` → `200 OK`
+2. `GET /api/assignments` → `200 OK`
+3. `POST /api/assignments/1/submissions` → `201 Created` kèm header `Location`
+4. `GET /api/submissions/{id}` → `200 OK` (chuyển dần từ received → processing → graded)
+5. `POST /api/assignments/1/submissions` (thiếu `studentCode`) → `400 Bad Request`
+6. `POST /api/assignments/999/submissions` (bài không tồn tại) → `404 Not Found`
+7. `GET /api/submissions/00000000-...` (id rỗng) → `404 Not Found`
+8. `POST /hubs/submissions/negotiate?negotiateVersion=1` → `200 OK` (trả `connectionId`)
+9. `POST /hub/submissions/negotiate?negotiateVersion=1` (sai URL) → `404 Not Found`
 
-public override async Task OnDisconnectedAsync(Exception? ex)
-{
-    Console.WriteLine($"[Hub] - {Context.ConnectionId[..8]} ngat");
-    await Clients.All.SendAsync("SystemMessage", $"Client {Context.ConnectionId[..8]} da ngat ket noi.");
-    await base.OnDisconnectedAsync(ex);
-}
-```
-
-### 6.2. Đăng ký xử lý tại `Ping.Client` (trước `StartAsync`)
-```csharp
-connection.On<string>("SystemMessage", m => Console.WriteLine($"[System] {m}"));
-
-connection.Reconnecting += _ => {
-    Console.WriteLine("[Lifecycle] Dang ket noi lai...");
-    return Task.CompletedTask;
-};
-
-connection.Reconnected += newId => {
-    Console.WriteLine($"[Lifecycle] Da ket noi lai: {newId?[..8]}");
-    return Task.CompletedTask;
-};
-
-connection.Closed += _ => {
-    Console.WriteLine("[Lifecycle] Ket noi da dong.");
-    return Task.CompletedTask;
-};
-```
-
-### 6.3. Thí nghiệm ngắt mạng và kết nối lại
-* Khi chạy Client An, terminal in `An da ket noi den PingApi. ConnectionId: xjzRwXNI`.
-* Tắt máy chủ (`Ctrl + C` ở Terminal 1): Client lập tức kích hoạt sự kiện `[Lifecycle] Dang ket noi lai...`. Lịch thử lại mặc định của `WithAutomaticReconnect` là: `0s -> 2s -> 10s -> 30s -> Closed`.
-* Bật lại máy chủ: Client tự động nối lại thành công, in `[Lifecycle] Da ket noi lai: FlTOOZp8`.
-
-*Bài học quan trọng về hệ phân tán:*
-1. **`ConnectionId` bị thay đổi:** Máy chủ coi đây là kết nối hoàn toàn mới (`xjzRwXNI` -> `FlTOOZp8`).
-2. **Mất nhóm:** Nhóm chỉ gắn với `ConnectionId` cũ. Muốn duy trì nhóm sau khi rớt mạng, client phải tự gọi lại `JoinGroup` trong sự kiện `Reconnected`.
-3. **Mất thông điệp:** Tin nhắn phát đi trong lúc client bị ngắt mạng sẽ mất hẳn vì SignalR không có hàng đợi đệm tin nhắn chờ gửi lại.
-
-### Ảnh kết quả Bước 6:
-![Kết quả kết nối lại](anh/buoc6-noilai.png)
+![EduSubmit Bước 8 - Requests HTTP](anh/edusubmit-b8-requests-http.png)
 
 ---
 
-## BƯỚC 7: BA THÍ NGHIỆM LỖI VÀ BÀI HỌC VỀ KẾT NỐI PHÂN TÁN
-
-| Thí nghiệm | Thao tác thực hiện | Hiện tượng quan sát được | Bài học rút ra |
-|:---:|:---|:---|:---|
-| **1. Máy chủ chưa chạy** | Chạy máy khách `Ping.Client` khi Terminal máy chủ đã tắt. | `HttpRequestException: Connection refused (localhost:5200)`. Chương trình ném ngoại lệ dừng lại. | `StartAsync()` ném lỗi ngay khi lần kết nối đầu tiên thất bại. Cơ chế `WithAutomaticReconnect` **chỉ có tác dụng với kết nối ĐÃ ĐƯỢC MỞ** trước đó rồi bị rớt. |
-| **2. Sai đường dẫn hub** | Sửa `WithUrl` ở Client thành `/hub/ping` (thiếu chữ `s`). | `HttpRequestException: Response status code does not indicate success: 404 (Not Found)`. | Lỗi phát sinh ngay tại bước bắt tay ban đầu (`negotiate`). Đường dẫn ở Client (`WithUrl`) bắt buộc phải khớp 100% với `app.MapHub(...)` ở Server. |
-| **3. Sai tên thông điệp** | Sửa `connection.On<string>("EchoRespone", ...)` (sai chính tả). | Không có bất kỳ lỗi biên dịch hay lỗi lúc chạy nào. Client kết nối thành công nhưng **hoàn toàn im lặng, không in được dòng `[Echo]`**. | Chiều gửi từ Hub xuống Client nếu sai tên sự kiện sẽ bị nuốt lỗi (im lặng). Bất cứ khi nào client "không nhận được gì", việc đầu tiên phải làm là kiểm tra khớp tên giữa `SendAsync` và `On`. |
-
-### Ảnh minh chứng 3 thí nghiệm lỗi:
-- **Thí nghiệm 1:**  
-  ![Lỗi 1 - Máy chủ chưa chạy](anh/buoc7-loi1.png)
-- **Thí nghiệm 2:**  
-  ![Lỗi 2 - Sai đường dẫn hub](anh/buoc7-loi2.png)
-- **Thí nghiệm 3:**  
-  ![Lỗi 3 - Sai tên thông điệp](anh/buoc7-loi3.png)
-
----
-
-## TỔNG KẾT: 4 PHẠM VI GỬI THÔNG ĐIỆP TRONG SIGNALR
-
-1. **`Clients.All`:** Gửi cho mọi máy khách đang mở kết nối (kể cả chính người gửi). Ví dụ: Thông báo bảo trì hệ thống, tin tức toàn trường.
-2. **`Clients.Caller`:** Chỉ gửi riêng cho máy khách phát sinh cuộc gọi. Ví dụ: Phản hồi kết quả của hàm Echo, xác nhận đăng ký theo dõi.
-3. **`Clients.Group(groupName)`:** Chỉ gửi cho các máy khách đã được thêm vào nhóm. Ví dụ: Kênh chat lớp học `lop-hoc-01`, nhóm theo dõi tiến độ nộp bài `submission:{id}`.
-4. **`Clients.Client(connectionId)`:** Gửi trực tiếp cho một mã kết nối cụ thể (ít dùng trong thực tế vì `connectionId` thay đổi sau mỗi lần reconnect).
+### 4.5. Bài tập vận dụng (Slide 62)
+- **Bài tập 2 (Xử lý trạng thái `failed`):**  
+  Máy chủ kiểm tra nếu `repositoryUrl` không bắt đầu bằng `https://` thì trạng thái cuối cùng chuyển thành `failed`. Máy khách khi nhận được `failed` sẽ in cảnh báo màu đỏ: `!!! CANH BAO: luot nop {id} cham LOI (failed)`.
