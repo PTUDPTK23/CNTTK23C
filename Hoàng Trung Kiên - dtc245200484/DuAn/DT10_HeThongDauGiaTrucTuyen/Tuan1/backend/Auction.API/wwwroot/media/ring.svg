@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-label="Imperial emerald ring">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="44%" r="68%">
+      <stop offset="0" stop-color="#14261f"/>
+      <stop offset=".55" stop-color="#081310"/>
+      <stop offset="1" stop-color="#03070a"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f6e7b4"/>
+      <stop offset=".45" stop-color="#d4af37"/>
+      <stop offset="1" stop-color="#7a5a1c"/>
+    </linearGradient>
+    <radialGradient id="emerald" cx="38%" cy="30%" r="80%">
+      <stop offset="0" stop-color="#8ef0c4"/>
+      <stop offset=".35" stop-color="#34d399"/>
+      <stop offset=".75" stop-color="#047857"/>
+      <stop offset="1" stop-color="#022c22"/>
+    </radialGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="20" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="900" fill="url(#bg)"/>
+  <circle cx="600" cy="430" r="310" fill="#34d399" opacity=".07" filter="url(#glow)"/>
+  <circle cx="600" cy="430" r="300" fill="none" stroke="#d4af37" stroke-opacity=".16"/>
+  <circle cx="600" cy="430" r="250" fill="none" stroke="#34d399" stroke-opacity=".12" stroke-dasharray="2 12"/>
+
+  <g transform="translate(600 470)">
+    <ellipse cx="0" cy="150" rx="200" ry="60" fill="none" stroke="url(#gold)" stroke-width="32"/>
+    <ellipse cx="0" cy="150" rx="200" ry="60" fill="none" stroke="#f6e7b4" stroke-opacity=".25" stroke-width="5"/>
+    <ellipse cx="0" cy="150" rx="170" ry="40" fill="none" stroke="#7a5a1c" stroke-opacity=".6" stroke-width="4"/>
+
+    <path d="M-44 -40 L-150 30 L-110 92 L0 130 L110 92 L150 30 L44 -40 Z" fill="url(#gold)"/>
+    <path d="M-44 -40 L0 -120 L44 -40 L0 130 Z" fill="url(#emerald)"/>
+    <path d="M-44 -40 L0 -120 L-150 30 Z" fill="#0e6a4f" opacity=".9"/>
+    <path d="M44 -40 L0 -120 L150 30 Z" fill="#0a5540" opacity=".9"/>
+    <path d="M-150 30 L0 130 L-110 92 Z" fill="#0d5c45" opacity=".95"/>
+    <path d="M150 30 L0 130 L110 92 Z" fill="#084737" opacity=".95"/>
+    <path d="M-44 -40 L0 -120 L44 -40 L0 130 Z" fill="none" stroke="#a7f3d0" stroke-opacity=".55" stroke-width="2"/>
+    <path d="M0 -120 L-30 -66 L0 -20 L30 -66 Z" fill="#c7ffe9" opacity=".45"/>
+
+    <g fill="#f6e7b4">
+      <circle cx="-200" cy="150" r="6"/>
+      <circle cx="200" cy="150" r="6"/>
+      <circle cx="-110" cy="92" r="4"/>
+      <circle cx="110" cy="92" r="4"/>
+    </g>
+  </g>
+
+  <g font-family="Helvetica, sans-serif">
+    <text x="80" y="120" font-size="13" letter-spacing="7" fill="#67e8f9" opacity=".75">IMPERIAL EMERALD</text>
+    <text x="80" y="152" font-size="12" letter-spacing="4" fill="#94a3b8" opacity=".5">18K GOLD · COLOMBIAN STONE</text>
+  </g>
+</svg>
