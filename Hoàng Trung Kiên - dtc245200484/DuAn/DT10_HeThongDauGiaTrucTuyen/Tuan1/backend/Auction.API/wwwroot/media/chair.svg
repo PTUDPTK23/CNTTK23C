@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-label="Aurelian lounge chair">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="70%">
+      <stop offset="0" stop-color="#2a1e14"/>
+      <stop offset=".55" stop-color="#130e09"/>
+      <stop offset="1" stop-color="#04060c"/>
+    </radialGradient>
+    <linearGradient id="leather" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9a6034"/>
+      <stop offset=".5" stop-color="#6b3f22"/>
+      <stop offset="1" stop-color="#3a2111"/>
+    </linearGradient>
+    <linearGradient id="wood" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#4a2c18"/>
+      <stop offset=".5" stop-color="#6b4426"/>
+      <stop offset="1" stop-color="#2b180d"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f6e7b4"/>
+      <stop offset=".5" stop-color="#d4af37"/>
+      <stop offset="1" stop-color="#8a6a1c"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="900" fill="url(#bg)"/>
+  <circle cx="600" cy="430" r="330" fill="#d4af37" opacity=".05"/>
+  <circle cx="600" cy="440" r="320" fill="none" stroke="#d4af37" stroke-opacity=".14"/>
+  <ellipse cx="600" cy="742" rx="400" ry="54" fill="#05080f" opacity=".8"/>
+
+  <g transform="translate(600 470)">
+    <path d="M-260 -190 C-150 -230 -30 -220 20 -190 L60 -20 L-250 -20 Z" fill="url(#leather)"/>
+    <path d="M-230 -160 C-150 -190 -60 -180 -10 -158 L20 -50 L-240 -50 Z" fill="#7a4a28" opacity=".65"/>
+    <path d="M-280 -30 C-140 -60 160 -60 280 -20 L300 70 C160 100 -160 100 -300 62 Z" fill="url(#leather)"/>
+    <path d="M-260 20 C-140 0 160 0 270 22" fill="none" stroke="#d4af37" stroke-opacity=".35" stroke-width="2"/>
+    <path d="M-300 62 L-320 110 M300 70 L320 118" stroke="#3a2111" stroke-width="14" stroke-linecap="round"/>
+
+    <g stroke="url(#wood)" stroke-width="22" stroke-linecap="round">
+      <path d="M-220 86 L-250 190"/>
+      <path d="M230 90 L262 194"/>
+      <path d="M-180 96 L-196 186"/>
+      <path d="M190 98 L208 188"/>
+    </g>
+    <g stroke="url(#gold)" stroke-width="4" stroke-linecap="round" opacity=".8">
+      <path d="M-250 190h-36M262 194h36M-196 186h-30M208 188h30"/>
+    </g>
+
+    <rect x="330" y="-30" width="20" height="160" rx="10" fill="url(#wood)"/>
+    <path d="M300 -40 C340 -90 420 -84 440 -30" fill="none" stroke="#6b4426" stroke-width="12" stroke-linecap="round"/>
+    <circle cx="340" cy="-30" r="18" fill="url(#gold)" opacity=".55"/>
+  </g>
+
+  <g font-family="Helvetica, sans-serif">
+    <text x="80" y="120" font-size="13" letter-spacing="7" fill="#67e8f9" opacity=".75">AURELIAN · LOUNGE</text>
+    <text x="80" y="152" font-size="12" letter-spacing="4" fill="#94a3b8" opacity=".5">PATINATED LEATHER · WALNUT</text>
+  </g>
+</svg>

@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-label="Vintage analog synthesizer">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="70%">
+      <stop offset="0" stop-color="#1b2233"/>
+      <stop offset=".55" stop-color="#0b101b"/>
+      <stop offset="1" stop-color="#03050a"/>
+    </radialGradient>
+    <linearGradient id="case" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5a3a22"/>
+      <stop offset=".5" stop-color="#3b2415"/>
+      <stop offset="1" stop-color="#20130b"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#d8c9a8"/>
+      <stop offset="1" stop-color="#b9a480"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f6e7b4"/>
+      <stop offset=".5" stop-color="#d4af37"/>
+      <stop offset="1" stop-color="#8a6a1c"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="900" fill="url(#bg)"/>
+  <circle cx="600" cy="420" r="320" fill="#22d3ee" opacity=".05"/>
+  <circle cx="600" cy="430" r="330" fill="none" stroke="#d4af37" stroke-opacity=".14"/>
+  <path d="M110 700h980" stroke="#d4af37" stroke-opacity=".22"/>
+
+  <g transform="translate(600 460)">
+    <path d="M-430 -150 L430 -150 L470 -40 L470 150 L-470 150 L-470 -40 Z" fill="url(#case)"/>
+    <rect x="-430" y="-150" width="860" height="330" rx="10" fill="url(#panel)" opacity=".92"/>
+    <rect x="-430" y="-150" width="860" height="330" rx="10" fill="none" stroke="#6b4a2c" stroke-width="3"/>
+
+    <g stroke="#3b2415" stroke-opacity=".7" fill="none">
+      <path d="M-410 -120h820"/>
+    </g>
+
+    <g>
+      <circle cx="-330" cy="-70" r="38" fill="#1a1109" stroke="#d4af37" stroke-width="2"/>
+      <path d="M-330 -100 L-310 -70 L-330 -40" stroke="#f6e7b4" stroke-width="3" fill="none"/>
+      <circle cx="-220" cy="-70" r="38" fill="#1a1109" stroke="#d4af37" stroke-width="2"/>
+      <path d="M-220 -70 L-190 -84" stroke="#f6e7b4" stroke-width="3"/>
+      <circle cx="-110" cy="-70" r="38" fill="#1a1109" stroke="#d4af37" stroke-width="2"/>
+      <path d="M-110 -70 L-82 -54" stroke="#f6e7b4" stroke-width="3"/>
+      <circle cx="0" cy="-70" r="38" fill="#1a1109" stroke="#d4af37" stroke-width="2"/>
+      <path d="M0 -70 L0 -100" stroke="#f6e7b4" stroke-width="3"/>
+    </g>
+
+    <g fill="#1a1109">
+      <rect x="120" y="-116" width="240" height="92" rx="6"/>
+    </g>
+    <g stroke="#22d3ee" stroke-width="2" opacity=".85" fill="none">
+      <path d="M140 -60 L160 -100 L180 -40 L200 -96 L220 -56 L240 -92 L260 -44 L280 -84 L300 -60 L320 -88 L340 -56"/>
+    </g>
+
+    <g>
+      <rect x="-420" y="20" width="840" height="26" rx="4" fill="#1a1109"/>
+      <g fill="#f6efdd">
+        <rect x="-400" y="20" width="34" height="26" rx="2"/>
+        <rect x="-356" y="20" width="34" height="26" rx="2"/>
+        <rect x="-312" y="20" width="34" height="26" rx="2"/>
+        <rect x="-268" y="20" width="34" height="26" rx="2"/>
+        <rect x="-180" y="20" width="34" height="26" rx="2"/>
+        <rect x="-136" y="20" width="34" height="26" rx="2"/>
+        <rect x="-92" y="20" width="34" height="26" rx="2"/>
+        <rect x="-48" y="20" width="34" height="26" rx="2"/>
+        <rect x="-4" y="20" width="34" height="26" rx="2"/>
+        <rect x="40" y="20" width="34" height="26" rx="2"/>
+        <rect x="84" y="20" width="34" height="26" rx="2"/>
+        <rect x="128" y="20" width="34" height="26" rx="2"/>
+        <rect x="172" y="20" width="34" height="26" rx="2"/>
+        <rect x="260" y="20" width="34" height="26" rx="2"/>
+        <rect x="304" y="20" width="34" height="26" rx="2"/>
+        <rect x="348" y="20" width="34" height="26" rx="2"/>
+      </g>
+      <g fill="#0b0805">
+        <rect x="-224" y="20" width="22" height="26" rx="2"/>
+        <rect x="216" y="20" width="22" height="26" rx="2"/>
+      </g>
+    </g>
+
+    <g fill="url(#gold)">
+      <circle cx="-360" cy="100" r="16"/>
+      <circle cx="-300" cy="100" r="16"/>
+      <circle cx="-240" cy="100" r="16"/>
+      <circle cx="-180" cy="100" r="16"/>
+      <circle cx="-120" cy="100" r="16"/>
+      <circle cx="-60" cy="100" r="16"/>
+    </g>
+    <g fill="#0b0805">
+      <circle cx="-360" cy="100" r="5"/>
+      <circle cx="-300" cy="100" r="5"/>
+      <circle cx="-240" cy="100" r="5"/>
+      <circle cx="-180" cy="100" r="5"/>
+      <circle cx="-120" cy="100" r="5"/>
+      <circle cx="-60" cy="100" r="5"/>
+    </g>
+
+    <rect x="60" y="78" width="330" height="44" rx="8" fill="#0b0805"/>
+    <rect x="80" y="90" width="80" height="20" rx="4" fill="#22d3ee" opacity=".55"/>
+    <text x="230" y="108" font-family="Helvetica, sans-serif" font-size="16" letter-spacing="5" fill="#d4af37">AURELIA · SYNTH</text>
+  </g>
+
+  <g font-family="Helvetica, sans-serif">
+    <text x="80" y="120" font-size="13" letter-spacing="7" fill="#67e8f9" opacity=".75">MODULAR · SERIES 5</text>
+    <text x="80" y="152" font-size="12" letter-spacing="4" fill="#94a3b8" opacity=".5">ANALOG · FULLY SERVICED</text>
+  </g>
+</svg>

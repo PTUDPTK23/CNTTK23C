@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+option csharp_namespace = "BidValidation.Contracts";
+
+package bidvalidation;
+
+// Independent Bid Validation Service. Every bid must pass this check before the
+// Auction API opens its write transaction. Amounts are strings to preserve decimal precision.
+service BidValidationService {
+  rpc ValidateBid (BidValidationRequest) returns (BidValidationResponse);
+  rpc GetHealth (HealthRequest) returns (HealthResponse);
+}
+
+message BidValidationRequest {
+  string auction_id = 1;
+  string bidder_id = 2;
+  string amount = 3;
+}
+
+message BidValidationResponse {
+  bool is_valid = 1;
+  string code = 2;
+  string message = 3;
+  string current_price = 4;
+  string minimum_next_bid = 5;
+  string server_time_utc = 6;
+  string auction_status = 7;
+}
+
+message HealthRequest {}
+
+message HealthResponse {
+  string status = 1;
+  string service = 2;
+  string server_time_utc = 3;
+}

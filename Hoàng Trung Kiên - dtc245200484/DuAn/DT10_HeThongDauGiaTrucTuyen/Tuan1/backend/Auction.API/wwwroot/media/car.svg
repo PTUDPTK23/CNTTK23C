@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-label="1967 grand tourer coupe">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="72%">
+      <stop offset="0" stop-color="#13243a"/>
+      <stop offset=".55" stop-color="#080f1b"/>
+      <stop offset="1" stop-color="#03050a"/>
+    </radialGradient>
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#33506f"/>
+      <stop offset=".4" stop-color="#122036"/>
+      <stop offset="1" stop-color="#050a12"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#67e8f9" stop-opacity=".7"/>
+      <stop offset="1" stop-color="#0a1524" stop-opacity=".9"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f6e7b4"/>
+      <stop offset=".5" stop-color="#d4af37"/>
+      <stop offset="1" stop-color="#8a6a1c"/>
+    </linearGradient>
+    <radialGradient id="floor" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#d4af37" stop-opacity=".18"/>
+      <stop offset="1" stop-color="#d4af37" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="900" fill="url(#bg)"/>
+  <ellipse cx="600" cy="700" rx="470" ry="120" fill="url(#floor)"/>
+  <path d="M80 700h1040" stroke="#d4af37" stroke-opacity=".2"/>
+  <circle cx="600" cy="420" r="330" fill="none" stroke="#22d3ee" stroke-opacity=".08" stroke-dasharray="3 16"/>
+
+  <g transform="translate(600 520)">
+    <path d="M-470 40 C-420 -20 -360 -40 -280 -48 L-120 -80 C-40 -150 40 -160 140 -142 L250 -80 C320 -66 390 -40 440 10 L470 44 C476 62 468 78 446 82 L-446 82 C-466 78 -476 62 -470 40 Z"
+      fill="url(#body)" stroke="#efd794" stroke-opacity=".35" stroke-width="2"/>
+    <path d="M-110 -70 C-30 -128 46 -134 126 -120 L212 -70 Z" fill="url(#glass)" opacity=".8"/>
+    <path d="M-110 -70 L-170 -24 M212 -70 L268 -20" stroke="#67e8f9" stroke-opacity=".3"/>
+    <path d="M-430 48 L-300 26 L-120 22 L120 22 L300 26 L430 48" fill="none" stroke="#d4af37" stroke-opacity=".55" stroke-width="2"/>
+    <path d="M-430 58h860" stroke="#67e8f9" stroke-opacity=".28"/>
+    <rect x="60" y="34" width="70" height="10" rx="5" fill="url(#gold)"/>
+    <rect x="-120" y="34" width="46" height="10" rx="5" fill="url(#gold)" opacity=".8"/>
+
+    <g fill="#05080f" stroke="#d4af37" stroke-opacity=".5" stroke-width="3">
+      <circle cx="-290" cy="74" r="74"/>
+      <circle cx="300" cy="74" r="74"/>
+    </g>
+    <g fill="none" stroke="#33506f" stroke-width="10">
+      <circle cx="-290" cy="74" r="46"/>
+      <circle cx="300" cy="74" r="46"/>
+    </g>
+    <g fill="#d4af37" opacity=".7">
+      <circle cx="-290" cy="74" r="10"/>
+      <circle cx="300" cy="74" r="10"/>
+    </g>
+
+    <path d="M-446 44 L-490 30 L-492 52 L-446 64 Z" fill="#d4af37" opacity=".8"/>
+    <circle cx="-470" cy="46" r="10" fill="#f6e7b4" opacity=".9"/>
+    <circle cx="452" cy="46" r="9" fill="#f6e7b4" opacity=".9"/>
+  </g>
+
+  <g font-family="Helvetica, sans-serif">
+    <text x="80" y="120" font-size="13" letter-spacing="7" fill="#67e8f9" opacity=".75">1967 · GRAND TOURER</text>
+    <text x="80" y="152" font-size="12" letter-spacing="4" fill="#94a3b8" opacity=".5">MATCHING NUMBERS · RESTORED</text>
+  </g>
+</svg>

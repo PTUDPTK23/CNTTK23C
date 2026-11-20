@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-label="Art Deco diamond necklace">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="70%">
+      <stop offset="0" stop-color="#151f33"/>
+      <stop offset=".55" stop-color="#080d18"/>
+      <stop offset="1" stop-color="#02040a"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f6e7b4"/>
+      <stop offset=".5" stop-color="#d4af37"/>
+      <stop offset="1" stop-color="#8a6a1c"/>
+    </linearGradient>
+    <radialGradient id="diamond" cx="35%" cy="28%" r="80%">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset=".4" stop-color="#bae6fd"/>
+      <stop offset=".8" stop-color="#38bdf8"/>
+      <stop offset="1" stop-color="#0369a1"/>
+    </radialGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="14" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="900" fill="url(#bg)"/>
+  <circle cx="600" cy="440" r="320" fill="#38bdf8" opacity=".05"/>
+  <circle cx="600" cy="440" r="310" fill="none" stroke="#d4af37" stroke-opacity=".15"/>
+  <circle cx="600" cy="440" r="260" fill="none" stroke="#67e8f9" stroke-opacity=".08" stroke-dasharray="2 12"/>
+
+  <g transform="translate(600 420)">
+    <path d="M-330 -120 C-220 120 220 120 330 -120" fill="none" stroke="url(#gold)" stroke-width="7"/>
+    <path d="M-330 -120 C-220 120 220 120 330 -120" fill="none" stroke="#f6e7b4" stroke-opacity=".3" stroke-width="2"/>
+
+    <g filter="url(#glow)">
+      <path d="M0 86 L36 150 L0 214 L-36 150 Z" fill="url(#diamond)"/>
+      <path d="M-120 66 L-92 118 L-120 170 L-148 118 Z" fill="url(#diamond)" opacity=".95"/>
+      <path d="M120 66 L148 118 L120 170 L92 118 Z" fill="url(#diamond)" opacity=".95"/>
+      <path d="M-230 12 L-208 56 L-230 100 L-252 56 Z" fill="url(#diamond)" opacity=".85"/>
+      <path d="M230 12 L252 56 L230 100 L208 56 Z" fill="url(#diamond)" opacity=".85"/>
+    </g>
+
+    <g fill="url(#gold)">
+      <circle cx="0" cy="82" r="9"/>
+      <circle cx="-120" cy="62" r="7"/>
+      <circle cx="120" cy="62" r="7"/>
+      <circle cx="-230" cy="8" r="6"/>
+      <circle cx="230" cy="8" r="6"/>
+    </g>
+
+    <g stroke="#bae6fd" stroke-opacity=".7" fill="none">
+      <path d="M0 86 L0 214 M-36 150 H36"/>
+      <path d="M-120 66 L-120 170 M-148 118 H-92"/>
+      <path d="M120 66 L120 170 M92 118 H148"/>
+    </g>
+
+    <path d="M-330 -120 C-260 -60 -180 -30 -120 -10" fill="none" stroke="#d4af37" stroke-opacity=".35"/>
+    <path d="M330 -120 C260 -60 180 -30 120 -10" fill="none" stroke="#d4af37" stroke-opacity=".35"/>
+  </g>
+
+  <g font-family="Helvetica, sans-serif">
+    <text x="80" y="120" font-size="13" letter-spacing="7" fill="#67e8f9" opacity=".75">ART DECO · NECKLACE</text>
+    <text x="80" y="152" font-size="12" letter-spacing="4" fill="#94a3b8" opacity=".5">PLATINUM · OLD EUROPEAN CUTS</text>
+  </g>
+</svg>

@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-label="First edition illuminated manuscript">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="70%">
+      <stop offset="0" stop-color="#241a12"/>
+      <stop offset=".55" stop-color="#120c08"/>
+      <stop offset="1" stop-color="#04060c"/>
+    </radialGradient>
+    <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f2e7c9"/>
+      <stop offset=".5" stop-color="#e2d2ab"/>
+      <stop offset="1" stop-color="#c9b183"/>
+    </linearGradient>
+    <linearGradient id="leather" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5b3320"/>
+      <stop offset="1" stop-color="#2a170d"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f6e7b4"/>
+      <stop offset=".5" stop-color="#d4af37"/>
+      <stop offset="1" stop-color="#8a6a1c"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="900" fill="url(#bg)"/>
+  <circle cx="600" cy="450" r="330" fill="#d4af37" opacity=".06"/>
+  <circle cx="600" cy="450" r="320" fill="none" stroke="#d4af37" stroke-opacity=".14"/>
+  <path d="M140 740h920" stroke="#d4af37" stroke-opacity=".25"/>
+
+  <g transform="translate(600 460)">
+    <path d="M-330 -160 C-240 -230 -80 -220 0 -120 C80 -220 240 -230 330 -160 L330 190 C240 130 80 140 0 230 C-80 140 -240 130 -330 190 Z" fill="url(#leather)"/>
+    <path d="M-300 -136 C-220 -196 -70 -186 0 -96 L0 196 C-70 106 -220 100 -300 158 Z" fill="url(#paper)"/>
+    <path d="M300 -136 C220 -196 70 -186 0 -96 L0 196 C70 106 220 100 300 158 Z" fill="url(#paper)"/>
+    <path d="M0 -96 L0 196" stroke="#8a6a1c" stroke-opacity=".55" stroke-width="2"/>
+
+    <g stroke="#8a6a1c" stroke-opacity=".5">
+      <path d="M-260 -60h200M-260 -20h200M-260 20h170M-260 60h200M-260 100h150"/>
+      <path d="M60 -60h200M60 -20h200M60 20h170M60 60h200M60 100h150"/>
+    </g>
+
+    <g transform="translate(-170 -20)">
+      <rect x="-46" y="-70" width="96" height="140" fill="#d4af37" opacity=".18" stroke="#d4af37" stroke-opacity=".8"/>
+      <circle cx="2" cy="-14" r="26" fill="none" stroke="#d4af37" stroke-width="2"/>
+      <path d="M2 -40V12M-24 -14H28" stroke="#d4af37" stroke-width="1.5"/>
+      <path d="M-20 34h44M-14 46h32" stroke="#8a6a1c" stroke-opacity=".8"/>
+    </g>
+
+    <g transform="translate(170 -10)">
+      <circle cx="0" cy="0" r="52" fill="none" stroke="#d4af37" stroke-opacity=".7" stroke-width="2"/>
+      <path d="M0 -38 L10 -10 L38 -10 L16 6 L24 34 L0 18 L-24 34 L-16 6 L-38 -10 L-10 -10 Z" fill="#d4af37" opacity=".55"/>
+    </g>
+
+    <g fill="none" stroke="url(#gold)" stroke-width="6">
+      <path d="M-330 -160 L-300 -200 L330 -200 L330 -160"/>
+      <path d="M-330 190 L-300 230 L330 230 L330 190"/>
+    </g>
+    <path d="M0 -200 L0 -96 M0 230 L0 196" stroke="#d4af37" stroke-opacity=".7"/>
+  </g>
+
+  <g font-family="Georgia, serif">
+    <text x="80" y="120" font-size="13" letter-spacing="7" fill="#67e8f9" opacity=".7" font-family="Helvetica, sans-serif">CODEX · 1897</text>
+    <text x="80" y="152" font-size="12" letter-spacing="4" fill="#94a3b8" opacity=".5" font-family="Helvetica, sans-serif">HAND-ILLUMINATED · FIRST EDITION</text>
+  </g>
+</svg>

@@ -1,0 +1,13 @@
+<Solution>
+  <Project Path="Auction.API/Auction.API.csproj" />
+  <Project Path="Auction.Application/Auction.Application.csproj" />
+  <Project Path="Auction.AuditWorker/Auction.AuditWorker.csproj" />
+  <Project Path="Auction.Contracts/Auction.Contracts.csproj" />
+  <Project Path="Auction.Domain/Auction.Domain.csproj" />
+  <Project Path="Auction.HubConsumer/Auction.HubConsumer.csproj" />
+  <Project Path="Auction.Infrastructure/Auction.Infrastructure.csproj" />
+  <Project Path="Auction.Messaging/Auction.Messaging.csproj" />
+  <Project Path="Auction.Tests/Auction.Tests.csproj" />
+  <Project Path="BidValidation.Contracts/BidValidation.Contracts.csproj" />
+  <Project Path="BidValidation.Service/BidValidation.Service.csproj" />
+</Solution>

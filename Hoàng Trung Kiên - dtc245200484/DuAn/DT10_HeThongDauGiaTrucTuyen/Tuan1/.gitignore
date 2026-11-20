@@ -1,0 +1,26 @@
+# .NET
+**/bin/
+**/obj/
+*.user
+*.suo
+.vs/
+.idea/
+TestResults/
+coverage/
+
+# Node / Vite
+**/node_modules/
+**/dist/
+*.local
+
+# Runtime & secrets
+.env
+.env.*
+!.env.example
+appsettings.*.local.json
+*.log
+erl_crash.dump
+
+# OS
+Thumbs.db
+.DS_Store
